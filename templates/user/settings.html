@@ -1,0 +1,91 @@
+{% extends "app_base.html" %}
+
+{% block app_content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
+    <p class="mt-2 text-gray-600">Manage your profile and account preferences.</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Profile Section -->
+    <div class="lg:col-span-2 space-y-8">
+        <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Profile Information</h3>
+                <p class="mt-1 text-sm text-gray-500">Update your personal details.</p>
+            </div>
+            <div class="p-6">
+                <form action="{{ url_for('user.settings') }}" method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="action" value="update_profile">
+                    
+                    <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
+                        <div class="sm:col-span-2">
+                            <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <div class="mt-1">
+                                <input type="text" name="full_name" id="full_name" value="{{ user.full_name }}" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                            </div>
+                        </div>
+                        
+                        <div class="sm:col-span-2">
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email Address (Read-only)</label>
+                            <div class="mt-1">
+                                <input type="email" name="email" id="email" value="{{ user.email }}" disabled class="bg-gray-50 shadow-sm block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border text-gray-500 cursor-not-allowed">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit" class="bg-blue-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Password Section -->
+        <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Change Password</h3>
+                <p class="mt-1 text-sm text-gray-500">Ensure your account is using a long, random password to stay secure.</p>
+            </div>
+            <div class="p-6">
+                <form action="{{ url_for('user.settings') }}" method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="action" value="change_password">
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password</label>
+                            <div class="mt-1">
+                                <input type="password" name="current_password" id="current_password" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="new_password" class="block text-sm font-medium text-gray-700">New Password</label>
+                            <div class="mt-1">
+                                <input type="password" name="new_password" id="new_password" required minlength="8" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                            <div class="mt-1">
+                                <input type="password" name="confirm_password" id="confirm_password" required minlength="8" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit" class="bg-gray-800 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+                            Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "admin_base.html" %}
+
+{% block app_content %}
+<div class="mb-6 flex justify-between items-center">
+    <a href="{{ url_for('admin_students.index') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm font-medium">
+        <i class="ph ph-arrow-left mr-1"></i> Back to Course List
+    </a>
+</div>
+
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Submissions: {{ course.title }}</h1>
+    <p class="mt-1 text-sm text-gray-500">Enter the score for each assessment. PASSED/FAILED is calculated automatically based on the passing score threshold.</p>
+</div>
+
+{% for item in students %}
+<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <div>
+            <div class="text-sm font-semibold text-gray-900">{{ item.user.full_name }}</div>
+            <div class="text-xs text-gray-500">{{ item.user.email }}</div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-xs text-gray-500">Progress: <span class="font-bold text-gray-700">{{ item.enrollment.progress }}%</span></div>
+            {% if item.grade %}
+            <div class="text-xs text-gray-500">Final Grade: <span class="font-bold {% if item.grade.final_grade >= 90 %}text-green-600{% elif item.grade.final_grade >= 70 %}text-indigo-600{% else %}text-red-600{% endif %}">{{ "%.1f"|format(item.grade.final_grade) }}%</span></div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if item.assessments %}
+    <form action="{{ url_for('admin_students.detail', course_id=course.id) }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="user_id" value="{{ item.user.id }}">
+
+        <div class="p-6 space-y-4">
+            {% for a in item.assessments %}
+            <div class="border border-gray-100 rounded-lg p-4 bg-gray-50">
+                <div class="flex flex-wrap items-start justify-between gap-4">
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-800 mb-1">{{ a.title }}</div>
+                        <div class="text-xs text-gray-500 mb-2">Max: {{ a.max_score }} &nbsp;|&nbsp; Passing: {{ a.passing_score }}</div>
+
+                        <!-- Status Badge -->
+                        {% if a.current_status == 'PASSED' %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="ph ph-check-circle mr-1"></i> PASSED
+                        </span>
+                        {% elif a.current_status == 'FAILED' %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <i class="ph ph-x-circle mr-1"></i> FAILED
+                        </span>
+                        {% elif a.current_status == 'REVIEW' %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 animate-pulse">
+                            <i class="ph ph-clock mr-1"></i> AWAITING GRADE
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+                            Not Submitted
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Attempt History -->
+                    {% if a.attempts %}
+                    <div class="text-xs text-gray-500 min-w-[180px]">
+                        <div class="font-semibold text-gray-600 mb-1">Attempt History</div>
+                        {% for att in a.attempts %}
+                        <div class="flex items-center gap-2 py-0.5">
+                            <span class="text-gray-400">#{{ att.attempt_number }}</span>
+                            {% if att.score is not none %}
+                                <span class="font-medium {% if att.status == 'PASSED' %}text-green-600{% else %}text-red-600{% endif %}">
+                                    {{ att.score }}/{{ att.max_score }}
+                                </span>
+                                <span class="{% if att.status == 'PASSED' %}text-green-500{% else %}text-red-500{% endif %}">{{ att.status }}</span>
+                            {% else %}
+                                <span class="text-yellow-600">REVIEW</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Grade Input (only if REVIEW) -->
+                    {% if a.current_status == 'REVIEW' %}
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-medium text-gray-600">Enter Score:</label>
+                        <input type="number" name="score_{{ a.id }}" placeholder="0–{{ a.max_score }}"
+                               min="0" max="{{ a.max_score }}" step="0.1"
+                               class="w-24 border border-yellow-300 focus:ring-yellow-500 focus:border-yellow-500 rounded-md py-1.5 px-2 text-sm">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% set has_review = item.assessments | selectattr('current_status', 'eq', 'REVIEW') | list %}
+        {% if has_review %}
+        <div class="px-6 pb-4 flex justify-end">
+            <button type="submit" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700">
+                <i class="ph ph-floppy-disk mr-1"></i> Save Grades
+            </button>
+        </div>
+        {% endif %}
+    </form>
+    {% else %}
+    <div class="px-6 py-4 text-sm text-gray-400 italic">No graded assessments for this course.</div>
+    {% endif %}
+</div>
+{% else %}
+<div class="bg-white shadow-sm rounded-xl border border-gray-200 p-8 text-center text-sm text-gray-400">
+    No students enrolled in this course.
+</div>
+{% endfor %}
+{% endblock %}

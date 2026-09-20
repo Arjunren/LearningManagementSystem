@@ -1,0 +1,22 @@
+<div class="fixed top-4 right-4 z-50 flex flex-col space-y-2 max-w-sm w-full">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% set color = 'blue' %}
+                {% if category == 'success' %} {% set color = 'green' %}
+                {% elif category == 'danger' %} {% set color = 'red' %}
+                {% elif category == 'warning' %} {% set color = 'yellow' %}
+                {% endif %}
+                
+                <div class="bg-white border-l-4 border-{{ color }}-500 p-4 rounded shadow-lg flex justify-between items-start" role="alert" id="alert-{{ loop.index }}">
+                    <div>
+                        <p class="font-medium text-gray-800">{{ message }}</p>
+                    </div>
+                    <button onclick="document.getElementById('alert-{{ loop.index }}').remove()" class="text-gray-400 hover:text-gray-600">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>

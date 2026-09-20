@@ -1,0 +1,64 @@
+{% extends "teacher_base.html" %}
+{% block teacher_title %}Teacher Dashboard{% endblock %}
+
+{% block app_content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Welcome, {{ user.full_name }}!</h1>
+    <p class="mt-2 text-gray-600">Here's an overview of the courses you are managing.</p>
+</div>
+
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 mb-8">
+    <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-emerald-100 flex items-center p-6">
+        <div class="p-3 rounded-full bg-emerald-100 text-emerald-600 mr-4">
+            <i class="ph ph-books text-2xl"></i>
+        </div>
+        <div>
+            <p class="text-sm font-medium text-gray-500 truncate">Assigned Courses</p>
+            <p class="mt-1 text-3xl font-semibold text-gray-900">{{ courses|length }}</p>
+        </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-blue-100 flex items-center p-6">
+        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+            <i class="ph ph-users text-2xl"></i>
+        </div>
+        <div>
+            <p class="text-sm font-medium text-gray-500 truncate">Total Students Enrolled</p>
+            <p class="mt-1 text-3xl font-semibold text-gray-900">{{ total_students }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden mb-8">
+    <div class="px-6 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Your Courses</h3>
+        <a href="{{ url_for('teacher.my_courses') }}" class="text-sm font-medium text-emerald-600 hover:text-emerald-500">View all &rarr;</a>
+    </div>
+    <div class="divide-y divide-gray-200">
+        {% for course in courses[:5] %}
+        <div class="p-6 hover:bg-gray-50 transition-colors flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 h-12 w-12 rounded-lg bg-gray-200 overflow-hidden">
+                    <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="h-full w-full object-cover">
+                </div>
+                <div class="ml-4">
+                    <h4 class="text-lg font-bold text-gray-900">{{ course.title }}</h4>
+                    <p class="text-sm text-gray-500">{{ course.procedures|length }} procedures</p>
+                </div>
+            </div>
+            <div>
+                <a href="{{ url_for('teacher_submissions.detail', course_id=course.id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                    <i class="ph ph-check-square mr-2"></i> Grade Submissions
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="p-12 text-center">
+            <i class="ph ph-books text-4xl text-gray-300 mb-3"></i>
+            <h3 class="text-lg font-medium text-gray-900">No Courses Assigned</h3>
+            <p class="mt-1 text-gray-500">You haven't been assigned to any courses yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

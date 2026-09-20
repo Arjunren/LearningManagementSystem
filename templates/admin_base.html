@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block page_title %}BuildByte Academy — Admin{% endblock %}
+
+{% block content %}
+<div class="flex h-screen overflow-hidden bg-gray-100">
+    <!-- Admin Sidebar -->
+    <aside class="w-64 bg-gray-900 text-white hidden md:flex flex-col h-full shadow-lg z-10">
+        <div class="h-16 flex items-center px-5 border-b border-gray-800 bg-gray-950">
+            <img src="/static/images/Icon.png" alt="Logo" class="h-8 w-8 mr-2 rounded" onerror="this.style.display='none'">
+            <div>
+                <div class="text-sm font-bold text-white leading-tight">BuildByte Academy</div>
+                <div class="text-xs text-indigo-400 font-semibold uppercase tracking-widest">Admin Console</div>
+            </div>
+        </div>
+        <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+            <a href="{{ url_for('admin.dashboard') }}" class="flex items-center px-3 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors {% if request.endpoint == 'admin.dashboard' %}bg-gray-800 text-white font-medium border-l-4 border-indigo-500 pl-2{% endif %}">
+                <i class="ph ph-squares-four text-xl mr-3"></i> Dashboard
+            </a>
+            <a href="{{ url_for('admin_students.index') }}" class="flex items-center px-3 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors {% if request.endpoint and 'admin_students' in request.endpoint %}bg-gray-800 text-white font-medium border-l-4 border-indigo-500 pl-2{% endif %}">
+                <i class="ph ph-files text-xl mr-3"></i> Submissions
+            </a>
+            <a href="{{ url_for('admin_courses.index') }}" class="flex items-center px-3 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors {% if request.endpoint and 'admin_courses' in request.endpoint %}bg-gray-800 text-white font-medium border-l-4 border-indigo-500 pl-2{% endif %}">
+                <i class="ph ph-books text-xl mr-3"></i> Courses
+            </a>
+            <a href="{{ url_for('admin_users.index') }}" class="flex items-center px-3 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors {% if request.endpoint and 'admin_users' in request.endpoint %}bg-gray-800 text-white font-medium border-l-4 border-indigo-500 pl-2{% endif %}">
+                <i class="ph ph-users text-xl mr-3"></i> Users
+            </a>
+            <a href="{{ url_for('admin_certificates.index') }}" class="flex items-center px-3 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors {% if request.endpoint and 'admin_certificates' in request.endpoint %}bg-gray-800 text-white font-medium border-l-4 border-indigo-500 pl-2{% endif %}">
+                <i class="ph ph-certificate text-xl mr-3"></i> Certificates
+            </a>
+            <a href="{{ url_for('admin.settings') }}" class="flex items-center px-3 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors {% if request.endpoint == 'admin.settings' %}bg-gray-800 text-white font-medium border-l-4 border-indigo-500 pl-2{% endif %}">
+                <i class="ph ph-gear text-xl mr-3"></i> Settings
+            </a>
+        </nav>
+        <div class="p-4 border-t border-gray-800 bg-gray-950">
+            <div class="text-xs text-gray-500 mb-2 px-3">Signed in as</div>
+            <div class="text-sm text-gray-300 font-medium px-3 mb-3">{{ session.get('admin_name') }}</div>
+            <a href="{{ url_for('admin.logout') }}" class="flex items-center px-3 py-2 text-gray-400 hover:text-red-400 transition-colors rounded-md hover:bg-gray-800">
+                <i class="ph ph-sign-out text-xl mr-3"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <div class="flex flex-col flex-1 w-0 overflow-hidden">
+        <!-- Admin Navbar -->
+        <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-6 shadow-sm">
+            <div class="flex items-center">
+                <button class="md:hidden mr-4 text-gray-500" onclick="document.getElementById('admin-mobile-sidebar').classList.toggle('hidden')">
+                    <i class="ph ph-list text-2xl"></i>
+                </button>
+                <span class="text-base font-semibold text-gray-700">{% block admin_title %}Admin{% endblock %}</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="text-sm font-medium text-gray-600 border border-gray-200 py-1 px-3 rounded-full bg-gray-50">
+                    <i class="ph-fill ph-shield-check mr-1 text-indigo-600"></i> Admin
+                </span>
+            </div>
+        </header>
+
+        <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
+            <div class="py-8 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
+                {% block app_content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block page_title %}BuildByte Academy — Teacher Portal{% endblock %}
+
+{% block content %}
+<div class="flex h-screen overflow-hidden bg-gray-50">
+    <!-- Teacher Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col h-full">
+        <div class="h-16 flex items-center px-5 border-b border-gray-200">
+            <img src="/static/images/Icon.png" alt="Logo" class="h-8 w-8 mr-2" onerror="this.style.display='none'">
+            <div>
+                <div class="text-sm font-bold text-blue-700 leading-tight">BuildByte Academy</div>
+                <div class="text-xs text-emerald-600 font-semibold uppercase tracking-widest">Teacher</div>
+            </div>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+            <a href="{{ url_for('teacher.dashboard') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors {% if request.endpoint == 'teacher.dashboard' %}bg-emerald-50 text-emerald-700 font-medium border-l-4 border-emerald-500{% endif %}">
+                <i class="ph ph-squares-four text-xl mr-3"></i> Dashboard
+            </a>
+            <a href="{{ url_for('teacher.my_courses') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors {% if request.endpoint == 'teacher.my_courses' %}bg-emerald-50 text-emerald-700 font-medium border-l-4 border-emerald-500{% endif %}">
+                <i class="ph ph-books text-xl mr-3"></i> My Courses
+            </a>
+            <a href="{{ url_for('teacher_submissions.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors {% if request.endpoint and 'teacher_submissions' in request.endpoint %}bg-emerald-50 text-emerald-700 font-medium border-l-4 border-emerald-500{% endif %}">
+                <i class="ph ph-files text-xl mr-3"></i> Submissions
+            </a>
+        </nav>
+        <div class="p-4 border-t border-gray-200">
+            <div class="text-xs text-gray-400 mb-1 px-1">{{ session.get('user_name') }}</div>
+            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                <i class="ph ph-sign-out text-xl mr-3"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <div class="flex flex-col flex-1 w-0 overflow-hidden">
+        <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-6 shadow-sm">
+            <span class="text-base font-semibold text-gray-700">{% block teacher_title %}Teacher Portal{% endblock %}</span>
+            <span class="text-sm font-medium text-gray-600 border border-emerald-200 py-1 px-3 rounded-full bg-emerald-50 text-emerald-700">
+                <i class="ph-fill ph-chalkboard-teacher mr-1"></i> Teacher
+            </span>
+        </header>
+        <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
+            <div class="py-8 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
+                {% block app_content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

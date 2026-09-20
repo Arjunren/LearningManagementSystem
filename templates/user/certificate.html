@@ -1,0 +1,71 @@
+{% extends "app_base.html" %}
+
+{% block app_content %}
+<div class="mb-6 flex justify-between items-center">
+    <a href="{{ url_for('user.dashboard') }}" class="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium">
+        <i class="ph ph-arrow-left mr-1"></i> Back to Dashboard
+    </a>
+    <div class="flex space-x-3">
+        {% if enrollment.certificate_filename %}
+        <form action="{{ url_for('certificates.send', enrollment_id=enrollment.id) }}" method="POST" class="inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" {% if not can_resend %}disabled{% endif %} class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="ph ph-envelope mr-2"></i> {% if not can_resend %}Email Sent Recently{% else %}Email Certificate{% endif %}
+            </button>
+        </form>
+        {% endif %}
+        <button onclick="printCertificate()" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <i class="ph ph-printer mr-2"></i> Print
+        </button>
+        {% if enrollment.certificate_filename %}
+        <a href="{{ url_for('certificates.download', filename=enrollment.certificate_filename) }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+            <i class="ph ph-download-simple mr-2"></i> Download PDF
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden text-center py-12 px-4">
+    <div class="mx-auto h-20 w-20 text-yellow-400 mb-6 bg-yellow-50 rounded-full flex items-center justify-center border border-yellow-200">
+        <i class="ph-fill ph-medal text-5xl"></i>
+    </div>
+    
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Certificate of Completion</h1>
+    <p class="text-gray-600 max-w-lg mx-auto mb-10">Congratulations! This is to verify that you have successfully completed the course.</p>
+    
+    <!-- Certificate Preview Box -->
+    <!-- Certificate Preview Box -->
+    <div class="max-w-4xl mx-auto flex justify-center">
+        {% set student_name = user.full_name %}
+        {% set course_name = course.title %}
+        {% set issue_date = enrollment.completed_at[:10] if enrollment.completed_at else 'N/A' %}
+        {% set cert_id = enrollment.certificate_id %}
+        {% set qr_url = 'https://buildbyteacademy.vercel.app/certificate.html?id=' ~ enrollment.certificate_id %}
+        
+        {% include "shared/certificate_layout.html" %}
+    </div>
+</div>
+
+<script>
+function printCertificate() {
+    window.print();
+}
+</script>
+
+<style>
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #certificate-container, #certificate-container * {
+        visibility: visible;
+    }
+    #certificate-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: scale(1); /* Ensure it prints full size */
+    }
+}
+</style>
+{% endblock %}

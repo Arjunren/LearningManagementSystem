@@ -1,0 +1,95 @@
+{% extends "app_base.html" %}
+
+{% block page_title %}Play Ground - BuildByte Academy{% endblock %}
+
+{% block app_content %}
+<div id="playground-wrapper" class="h-[calc(100vh-6rem)] flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden bg-gray-50">
+    
+    <!-- Top Toolbar -->
+    <div class="flex flex-col sm:flex-row items-center justify-between p-4 border-b border-gray-200 bg-white">
+        <div class="flex items-center space-x-4 w-full sm:w-auto mb-4 sm:mb-0">
+            <h2 class="text-xl font-bold text-gray-800 hidden md:block">Play Ground</h2>
+            
+            <select id="language-selector" onchange="changeLanguage(this.value)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+                <!-- Options populated by JS -->
+            </select>
+            
+            <span id="language-badge" class="text-xs font-semibold px-2.5 py-0.5 rounded bg-blue-100 text-blue-800">
+                ● Python
+            </span>
+        </div>
+        
+        <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+            <div id="auto-run-container" class="hidden items-center mr-4">
+                <input id="auto-run" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                <label for="auto-run" class="ml-2 text-sm font-medium text-gray-900">Auto Run</label>
+            </div>
+            
+            <button id="run-btn" onclick="runCode()" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition">
+                <i class="ph ph-play mr-2"></i> Run
+            </button>
+            <button id="stop-btn" onclick="stopPython()" class="hidden flex items-center bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition">
+                <i class="ph ph-stop mr-2"></i> Stop
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Workspace (Editor + Output) -->
+    <div class="flex flex-col lg:flex-row flex-1 overflow-hidden">
+        
+        <!-- Editor Section -->
+        <div class="flex flex-col flex-1 border-b lg:border-b-0 lg:border-r border-gray-200 min-h-[300px] lg:min-h-0 bg-white">
+            <div class="flex justify-between items-center px-4 py-2 border-b border-gray-100 bg-gray-50 text-xs text-gray-600">
+                <span class="font-semibold uppercase tracking-wider text-gray-500">Editor</span>
+                <div class="flex space-x-3">
+                    <button onclick="resetCode()" class="hover:text-gray-900 transition" title="Reset Code"><i class="ph ph-arrow-counter-clockwise"></i> Reset</button>
+                    <button id="copy-btn" onclick="copyCode()" class="hover:text-gray-900 transition" title="Copy"><i class="ph ph-copy"></i> Copy</button>
+                    <button onclick="downloadCode()" class="hover:text-gray-900 transition" title="Download"><i class="ph ph-download-simple"></i> Download</button>
+                    <button id="fullscreen-btn" onclick="toggleFullscreen()" class="hover:text-gray-900 transition" title="Toggle Fullscreen"><i class="ph ph-corners-out"></i> Fullscreen</button>
+                </div>
+            </div>
+            <!-- Monaco Editor Container -->
+            <div id="editor-container" class="flex-1 w-full h-full relative z-0"></div>
+        </div>
+
+        <!-- Output Section -->
+        <div class="flex flex-col flex-1 lg:max-w-md xl:max-w-lg bg-gray-900 text-gray-100 min-h-[300px] lg:min-h-0">
+            <div class="flex justify-between items-center px-4 py-2 border-b border-gray-700 bg-gray-800 text-xs">
+                <span class="font-semibold uppercase tracking-wider text-gray-400">Output</span>
+                <button onclick="clearOutput()" class="text-gray-400 hover:text-white transition">
+                    <i class="ph ph-trash"></i> Clear
+                </button>
+            </div>
+            
+            <div class="flex-1 relative overflow-hidden">
+                <!-- Console Output -->
+                <pre id="console-output" class="absolute inset-0 p-4 font-mono text-sm whitespace-pre-wrap overflow-y-auto m-0">Welcome to Play Ground
+Practice coding directly in your browser.
+Choose a language, write your code, and press Run.
+No installation required.</pre>
+                
+                <!-- Web Preview Output (iframe) -->
+                <div id="preview-output" class="hidden absolute inset-0 bg-white">
+                    <iframe id="preview-iframe" class="w-full h-full border-0" sandbox="allow-scripts allow-modals"></iframe>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- StatusBar -->
+    <div class="flex justify-between items-center px-4 py-2 border-t border-gray-200 bg-gray-50 text-xs text-gray-500">
+        <div class="flex items-center space-x-2">
+            <span>Status:</span>
+            <span id="status-indicator" class="font-medium text-gray-700">Ready</span>
+        </div>
+        <div>
+            Press <kbd class="px-1 py-0.5 bg-gray-200 border border-gray-300 rounded-md text-gray-700 font-sans mx-1 shadow-sm">Ctrl</kbd> + <kbd class="px-1 py-0.5 bg-gray-200 border border-gray-300 rounded-md text-gray-700 font-sans shadow-sm">Enter</kbd> to run
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block app_scripts %}
+<script src="/static/js/playground.js"></script>
+{% endblock %}

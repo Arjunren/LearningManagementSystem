@@ -1,0 +1,28 @@
+{% extends "admin_base.html" %}
+
+{% block app_content %}
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Student Submissions</h1>
+    <p class="mt-1 text-sm text-gray-500">Select a course to view and grade student submissions.</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for stat in courses %}
+    <a href="{{ url_for('admin_students.detail', course_id=stat.course.id) }}" class="block bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition group">
+        <div class="h-32 bg-indigo-50 flex items-center justify-center p-6 text-center">
+            <h3 class="text-xl font-bold text-indigo-900 group-hover:text-indigo-600 transition">{{ stat.course.title }}</h3>
+        </div>
+        <div class="px-6 py-4 flex justify-between items-center bg-white">
+            <div class="flex items-center text-gray-500 text-sm">
+                <i class="ph ph-users mr-2 text-lg"></i> {{ stat.student_count }} Students Enrolled
+            </div>
+            <i class="ph ph-caret-right text-gray-400 group-hover:text-indigo-500"></i>
+        </div>
+    </a>
+    {% else %}
+    <div class="col-span-full text-center py-12 bg-white rounded-xl border border-gray-200">
+        <p class="text-gray-500 text-sm">No courses found.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

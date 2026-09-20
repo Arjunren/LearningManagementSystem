@@ -1,0 +1,132 @@
+{% extends "app_base.html" %}
+
+{% block app_content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ user.full_name }}!</h1>
+    <p class="mt-2 text-gray-600">Here's your learning progress overview.</p>
+</div>
+
+<!-- Tabs -->
+<div class="border-b border-gray-200 mb-6">
+    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+        <button id="tab-progress" onclick="switchTab('progress')" class="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none">
+            In Progress
+        </button>
+        <button id="tab-completed" onclick="switchTab('completed')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none">
+            Completed
+        </button>
+    </nav>
+</div>
+
+<!-- In Progress Tab -->
+<div id="content-progress">
+    {% if in_progress %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for item in in_progress %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-md">
+                <div class="h-40 bg-blue-100 flex items-center justify-center">
+                    {% if item.course.thumbnail %}
+                        <img src="{{ item.course.thumbnail }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <i class="ph ph-image text-4xl text-blue-300"></i>
+                    {% endif %}
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">{{ item.course.title }}</h3>
+                    <p class="text-sm text-gray-500 mb-4 flex-1 line-clamp-2">{{ item.course.description }}</p>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Progress</span>
+                            <span>{{ item.enrollment.progress }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: {{ item.enrollment.progress }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('courses.learn', enrollment_id=item.enrollment.id) }}" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 text-center">
+                        Resume Course
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
+                <i class="ph ph-books text-5xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900">No courses in progress</h3>
+            <p class="mt-1 text-sm text-gray-500">Get started by enrolling in a new course.</p>
+            <div class="mt-6">
+                <a href="{{ url_for('courses.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                    Browse Courses
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Completed Tab -->
+<div id="content-completed" class="hidden">
+    {% if completed %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for item in completed %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-md">
+                <div class="h-40 bg-green-100 flex items-center justify-center relative">
+                    <div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">COMPLETED</div>
+                    {% if item.course.thumbnail %}
+                        <img src="{{ item.course.thumbnail }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <i class="ph ph-check-circle text-4xl text-green-400"></i>
+                    {% endif %}
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">{{ item.course.title }}</h3>
+                    <p class="text-sm text-gray-500 mb-4 flex-1">Completed on: {{ item.enrollment.completed_at[:10] if item.enrollment.completed_at else 'Unknown' }}</p>
+                    
+                    <div class="mt-auto flex space-x-3">
+                        <a href="{{ url_for('courses.learn', enrollment_id=item.enrollment.id) }}" class="flex-1 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 text-center">
+                            Review
+                        </a>
+                        <form action="{{ url_for('certificates.generate', enrollment_id=item.enrollment.id) }}" method="POST" class="flex-1">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 text-center">
+                                Certificate
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
+                <i class="ph ph-certificate text-5xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900">No completed courses</h3>
+            <p class="mt-1 text-sm text-gray-500">Keep learning to earn your first certificate!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block app_scripts %}
+<script>
+    function switchTab(tab) {
+        if (tab === 'progress') {
+            document.getElementById('tab-progress').className = "border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none";
+            document.getElementById('tab-completed').className = "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none";
+            document.getElementById('content-progress').classList.remove('hidden');
+            document.getElementById('content-completed').classList.add('hidden');
+        } else {
+            document.getElementById('tab-completed').className = "border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none";
+            document.getElementById('tab-progress').className = "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none";
+            document.getElementById('content-completed').classList.remove('hidden');
+            document.getElementById('content-progress').classList.add('hidden');
+        }
+    }
+</script>
+{% endblock %}

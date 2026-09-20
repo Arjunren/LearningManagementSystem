@@ -1,0 +1,84 @@
+<style>
+    .cert-wrapper {
+        width: 297mm;
+        height: 210mm;
+        position: relative;
+        background-color: white;
+        overflow: hidden;
+        font-family: 'DejaVu Sans', 'Liberation Sans', Arial, Helvetica, sans-serif;
+        background-size: cover;
+        background-position: center;
+        {% if template_config and template_config.bg_image_url %}
+        background-image: url('{{ template_config.bg_image_url }}');
+        {% endif %}
+    }
+
+    .cert-element {
+        position: absolute;
+        left: 0;
+        right: 0;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .cert-qr-container {
+        position: absolute;
+    }
+
+    .cert-qr {
+        background-color: white;
+        border-radius: 4px;
+        padding: 4px;
+        border: 1px solid #e2e8f0;
+    }
+</style>
+
+<div class="cert-wrapper">
+    {% if template_config and template_config.elements %}
+        {% for el in template_config.elements %}
+            {% if el.type == 'text' %}
+                <div class="cert-element" style="top: {{ el.y }}%;">
+                    <div style="font-size: {{ (el.fontSize | float * 2.97) | round(1) }}mm;
+                                font-family: '{{ el.fontFamily }}', 'DejaVu Sans', Arial, sans-serif;
+                                font-weight: {{ el.fontWeight }};
+                                color: {{ el.color }}; line-height: 1.1;">
+                        {% if el.content == '{{student_name}}' %}
+                            {{ student_name }}
+                        {% elif el.content == '{{course_name}}' %}
+                            {{ course_name }}
+                        {% elif el.content == '{{issue_date}}' %}
+                            {{ issue_date }}
+                        {% elif el.content == '{{cert_id}}' %}
+                            {{ cert_id }}
+                        {% else %}
+                            {{ el.content }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% elif el.type == 'qr' %}
+                <div class="cert-qr-container" style="left: {{ el.x }}%; top: {{ el.y }}%;">
+                    {% if qr_data_uri %}
+                    <img src="{{ qr_data_uri }}"
+                        class="cert-qr" alt="QR Code"
+                        style="width: {{ (el.width | float * 2.97) | round(1) }}mm; height: {{ (el.height | float * 2.97) | round(1) }}mm;">
+                    {% else %}
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ qr_url | urlencode }}"
+                        class="cert-qr" alt="QR Code"
+                        style="width: {{ (el.width | float * 2.97) | round(1) }}mm; height: {{ (el.height | float * 2.97) | round(1) }}mm;">
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <!-- Fallback if no elements defined -->
+        <div class="cert-element" style="top: 40%;">
+            <div style="font-size: 18mm; font-weight: 800; font-family: 'DejaVu Sans', Arial, sans-serif;">{{ student_name }}</div>
+        </div>
+        <div class="cert-element" style="top: 55%;">
+            <div style="font-size: 10mm; color: #64748b; font-family: 'DejaVu Sans', Arial, sans-serif;">{{ course_name }}</div>
+        </div>
+        <div class="cert-element" style="top: 70%;">
+            <div style="font-size: 7mm; color: #94a3b8; font-family: 'DejaVu Sans', Arial, sans-serif;">{{ issue_date }}</div>
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Inter', Helvetica, Arial, sans-serif; color: #333; background-color: #f9fafb; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h2 { color: #111827; font-size: 24px; margin-top: 0; }
+        .otp-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0; }
+        .otp-code { font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1d4ed8; }
+        .footer { margin-top: 40px; font-size: 12px; color: #6b7280; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome to LMS System</h2>
+        <p>Your verification code is:</p>
+        
+        <div class="otp-box">
+            <div class="otp-code">{{ otp }}</div>
+        </div>
+        
+        <p>This code will expire in 5 minutes.</p>
+        <p>If you didn't request this verification code, you can safely ignore this email.</p>
+        
+        <div class="footer">
+            &copy; LMS System
+        </div>
+    </div>
+</body>
+</html>

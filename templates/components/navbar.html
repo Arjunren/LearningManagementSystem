@@ -1,0 +1,105 @@
+<header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center md:hidden">
+        <button onclick="toggleSidebar()" class="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded-md">
+            <i class="ph ph-list text-2xl"></i>
+        </button>
+    </div>
+    <div class="hidden md:block flex-1">
+        <!-- Search or breadcrumbs could go here -->
+    </div>
+    <div class="flex items-center ml-4 space-x-4">
+        
+        {% if session.get('role') == 'student' %}
+        <!-- Notifications Dropdown -->
+        <div class="relative" id="notification-dropdown-container">
+            <button onclick="toggleNotifications()" class="relative p-2 text-gray-500 hover:text-gray-700 focus:outline-none transition">
+                <i class="ph ph-bell text-xl"></i>
+                {% if unread_count is defined and unread_count > 0 %}
+                <span class="absolute top-1 right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full transform translate-x-1 -translate-y-1">{{ unread_count }}</span>
+                {% endif %}
+            </button>
+            
+            <div id="notification-panel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden z-50">
+                <div class="px-4 py-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                    <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
+                    {% if unread_count is defined and unread_count > 0 %}
+                    <button onclick="markAllAsRead()" class="text-xs text-blue-600 hover:text-blue-800 focus:outline-none">Mark all read</button>
+                    {% endif %}
+                </div>
+                <div class="max-h-96 overflow-y-auto">
+                    {% if notifications is defined and notifications %}
+                        {% for notif in notifications %}
+                        <div id="notif-{{ notif.id }}" class="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition cursor-pointer {% if not notif.read %}bg-blue-50{% endif %}" onclick="readNotification('{{ notif.id }}', '{{ notif.course_id }}')">
+                            <p class="text-sm font-medium text-gray-900">{{ notif.title }}</p>
+                            <p class="text-xs text-gray-600 mt-1">{{ notif.message }}</p>
+                            <p class="text-xs text-gray-400 mt-2">{{ notif.created_at[:10] }}</p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="px-4 py-6 text-center text-gray-500 text-sm">
+                            No notifications yet.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <span class="text-sm font-medium text-gray-700">Hello, {{ session.get('user_name') }}</span>
+        <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase">
+            {{ session.get('user_name')[0] if session.get('user_name') else 'U' }}
+        </div>
+    </div>
+</header>
+
+<script>
+    function toggleNotifications() {
+        const panel = document.getElementById('notification-panel');
+        if (panel) {
+            panel.classList.toggle('hidden');
+        }
+    }
+
+    const csrfToken = "{{ csrf_token() }}";
+
+    async function readNotification(notifId, courseId) {
+        try {
+            await fetch(`/user/notifications/read/${notifId}`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                }
+            });
+            const notifEl = document.getElementById(`notif-${notifId}`);
+            if(notifEl) {
+                notifEl.classList.remove('bg-blue-50');
+            }
+            if (courseId && courseId !== 'None') {
+                window.location.href = `/courses/${courseId}`;
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    async function markAllAsRead() {
+        try {
+            await fetch(`/user/notifications/read_all`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                }
+            });
+            window.location.reload();
+        } catch(e) { console.error(e); }
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const container = document.getElementById('notification-dropdown-container');
+        const panel = document.getElementById('notification-panel');
+        if (container && panel && !container.contains(event.target)) {
+            panel.classList.add('hidden');
+        }
+    });
+</script>

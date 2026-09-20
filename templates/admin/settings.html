@@ -1,0 +1,98 @@
+{% extends "admin_base.html" %}
+
+{% block app_content %}
+<div class="mb-6 flex justify-between items-center">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">System Settings</h1>
+        <p class="mt-1 text-sm text-gray-500">Configure global application settings and integrations.</p>
+    </div>
+</div>
+
+<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden mb-8">
+    <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">SMTP Settings</h3>
+        <p class="mt-1 text-sm text-gray-500">Configure email delivery for OTP verification and notifications.</p>
+    </div>
+    <div class="p-6">
+        <form action="{{ url_for('admin.settings') }}" method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="save_smtp">
+            
+            <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
+                <div>
+                    <label for="smtp_host" class="block text-sm font-medium text-gray-700">SMTP Host</label>
+                    <div class="mt-1">
+                        <input type="text" name="smtp_host" id="smtp_host" value="{{ smtp.host }}" placeholder="smtp.gmail.com" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="smtp_port" class="block text-sm font-medium text-gray-700">SMTP Port</label>
+                    <div class="mt-1">
+                        <input type="number" name="smtp_port" id="smtp_port" value="{{ smtp.port }}" placeholder="587" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="smtp_email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <div class="mt-1">
+                        <input type="email" name="smtp_email" id="smtp_email" value="{{ smtp.email }}" placeholder="noreply@example.com" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="smtp_app_password" class="block text-sm font-medium text-gray-700">App Password / Secret</label>
+                    <div class="mt-1">
+                        <input type="password" name="smtp_app_password" id="smtp_app_password" value="{{ smtp.app_password }}" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end space-x-3">
+                <button type="button" id="btnTestSmtp" class="bg-white border border-gray-300 rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Test Connection
+                </button>
+                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Save Settings
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('btnTestSmtp').addEventListener('click', async () => {
+    const recipient = prompt("Enter email address to send test email to:");
+    if (!recipient) return;
+    
+    const btn = document.getElementById('btnTestSmtp');
+    const originalText = btn.innerText;
+    btn.innerText = "Testing...";
+    btn.disabled = true;
+    
+    try {
+        const response = await fetch("{{ url_for('admin.test_email') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+            },
+            body: JSON.stringify({ recipient: recipient })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            alert("Success! " + data.message);
+        } else {
+            alert("Failed: " + data.message);
+        }
+    } catch (e) {
+        alert("An error occurred while testing SMTP.");
+        console.error(e);
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+});
+</script>
+{% endblock %}

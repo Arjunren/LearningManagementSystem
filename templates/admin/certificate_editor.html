@@ -1,0 +1,370 @@
+{% extends "admin_base.html" %}
+{% block admin_title %}Certificate Editor{% endblock %}
+
+{% block app_content %}
+<div class="mb-6 flex justify-between items-center">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">Edit Certificate: {{ template.name }}</h1>
+        <p class="mt-1 text-sm text-gray-500">Drag and drop elements to design the certificate layout.</p>
+    </div>
+    <div class="flex space-x-3">
+        <a href="{{ url_for('admin_certificates.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Cancel
+        </a>
+        <button id="save-btn" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+            <i class="ph ph-floppy-disk mr-2"></i> Save Layout
+        </button>
+    </div>
+</div>
+
+<div class="flex flex-col lg:flex-row gap-6">
+    <!-- Tools Sidebar -->
+    <div class="w-full lg:w-1/4 space-y-6">
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Settings</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Template Name</label>
+                    <input type="text" id="template-name" value="{{ template.name }}" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Course</label>
+                    <select id="course-id" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="">None (Default)</option>
+                        {% for course in courses %}
+                            <option value="{{ course.id }}" {% if template.course_id == course.id %}selected{% endif %}>{{ course.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Background Image URL</label>
+                    <input type="text" id="bg-image" value="{{ template.bg_image_url }}" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="https://...">
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Elements</h3>
+            <button id="add-text-btn" class="w-full mb-3 inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                <i class="ph ph-text-t mr-2"></i> Add Text
+            </button>
+            <button id="add-qr-btn" class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                <i class="ph ph-qr-code mr-2"></i> Add QR Code
+            </button>
+            
+            <div class="mt-6 border-t border-gray-200 pt-4">
+                <h4 class="text-sm font-medium text-gray-700 mb-2">Properties</h4>
+                <div id="properties-panel" class="text-sm text-gray-500">
+                    Select an element to edit its properties.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="w-full lg:w-3/4">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6 flex justify-center bg-gray-100">
+            
+            <!-- We will use a fixed aspect ratio for A4 landscape (297x210) -->
+            <div id="canvas-container" class="relative bg-white shadow-lg overflow-hidden border border-gray-300" style="width: 800px; height: 565px; background-size: cover; background-position: center;">
+                <!-- Elements will be injected here via JS -->
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block admin_scripts %}
+<script>
+    // Initialize state
+    const templateId = "{{ template.id }}";
+    let elements = {{ template.get('elements', []) | tojson }};
+    if (!elements || elements.length === 0) {
+        elements = [
+            {"id": "element-name", "type": "text", "content": "{{ '{{student_name}}' }}", "x": 50, "y": 40, "fontSize": 5.7, "fontFamily": "Inter", "fontWeight": 800, "color": "#0f172a"},
+            {"id": "element-course", "type": "text", "content": "{{ '{{course_name}}' }}", "x": 50, "y": 64, "fontSize": 2.5, "fontFamily": "Inter", "fontWeight": 700, "color": "#0284c7"}
+        ];
+    }
+    
+    let selectedElementId = null;
+    let isDragging = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+    
+    const canvas = document.getElementById('canvas-container');
+    const propertiesPanel = document.getElementById('properties-panel');
+    const bgImageInput = document.getElementById('bg-image');
+    
+    // Background Image Live Update
+    function updateBackground() {
+        const url = bgImageInput.value.trim();
+        if (url) {
+            canvas.style.backgroundImage = `url('${url}')`;
+        } else {
+            canvas.style.backgroundImage = 'none';
+        }
+    }
+    bgImageInput.addEventListener('input', updateBackground);
+    updateBackground();
+
+    function renderCanvas() {
+        canvas.innerHTML = '';
+        
+        elements.forEach(el => {
+            const div = document.createElement('div');
+            div.id = el.id;
+            div.className = `absolute cursor-move transform -translate-x-1/2 -translate-y-1/2 ${selectedElementId === el.id ? 'ring-2 ring-indigo-500 ring-offset-2' : 'hover:ring-1 hover:ring-gray-300 hover:ring-offset-1'}`;
+            div.style.left = `${el.x}%`;
+            div.style.top = `${el.y}%`;
+            div.style.whiteSpace = 'nowrap';
+            
+            if (el.type === 'text') {
+                div.style.fontSize = `${el.fontSize}cqi`; // We use cqi for relative sizing in PDF, but here we can just map it to em or rem for preview. Actually, using relative percentage or fixed em might be easier.
+                // Let's approximate cqi as % of width for preview
+                const cqiToPx = (800 / 100); 
+                div.style.fontSize = `${el.fontSize * cqiToPx}px`;
+                div.style.fontFamily = el.fontFamily;
+                div.style.fontWeight = el.fontWeight;
+                div.style.color = el.color;
+                div.innerText = el.content;
+            } else if (el.type === 'qr') {
+                div.innerHTML = `<div style="width: ${el.width * 8}px; height: ${el.height * 8}px; background-color: #e2e8f0; display: flex; justify-content: center; align-items: center; border: 1px solid #cbd5e1;"><i class="ph ph-qr-code text-3xl text-gray-500"></i></div>`;
+            }
+            
+            // Drag events
+            div.addEventListener('mousedown', (e) => startDrag(e, el.id));
+            div.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectElement(el.id);
+            });
+            
+            canvas.appendChild(div);
+        });
+    }
+
+    // Canvas click to deselect
+    canvas.addEventListener('click', () => {
+        selectElement(null);
+    });
+
+    // Dragging logic
+    function startDrag(e, id) {
+        e.stopPropagation();
+        selectElement(id);
+        isDragging = true;
+        
+        const el = document.getElementById(id);
+        const rect = el.getBoundingClientRect();
+        
+        // Calculate offset from mouse to the center of the element
+        dragOffsetX = e.clientX - (rect.left + rect.width / 2);
+        dragOffsetY = e.clientY - (rect.top + rect.height / 2);
+        
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', stopDrag);
+    }
+
+    function onDrag(e) {
+        if (!isDragging || !selectedElementId) return;
+        
+        const canvasRect = canvas.getBoundingClientRect();
+        
+        // Calculate new position in pixels relative to canvas top-left
+        let xPx = e.clientX - canvasRect.left - dragOffsetX;
+        let yPx = e.clientY - canvasRect.top - dragOffsetY;
+        
+        // Convert to percentages
+        let xPct = (xPx / canvasRect.width) * 100;
+        let yPct = (yPx / canvasRect.height) * 100;
+        
+        // Clamp
+        xPct = Math.max(0, Math.min(100, xPct));
+        yPct = Math.max(0, Math.min(100, yPct));
+        
+        // Update data
+        const elIndex = elements.findIndex(el => el.id === selectedElementId);
+        if (elIndex > -1) {
+            elements[elIndex].x = parseFloat(xPct.toFixed(2));
+            elements[elIndex].y = parseFloat(yPct.toFixed(2));
+            
+            // Update UI
+            const elDom = document.getElementById(selectedElementId);
+            elDom.style.left = `${elements[elIndex].x}%`;
+            elDom.style.top = `${elements[elIndex].y}%`;
+            
+            // Update properties panel if active
+            updatePropertiesPanel();
+        }
+    }
+
+    function stopDrag() {
+        isDragging = false;
+        document.removeEventListener('mousemove', onDrag);
+        document.removeEventListener('mouseup', stopDrag);
+    }
+
+    function selectElement(id) {
+        selectedElementId = id;
+        renderCanvas(); // to update selection rings
+        updatePropertiesPanel();
+    }
+
+    function updatePropertiesPanel() {
+        if (!selectedElementId) {
+            propertiesPanel.innerHTML = 'Select an element to edit its properties.';
+            return;
+        }
+        
+        const el = elements.find(e => e.id === selectedElementId);
+        if (!el) return;
+        
+        let html = `<div class="space-y-3">
+            <div class="flex space-x-2">
+                <div class="w-1/2">
+                    <label class="block text-xs font-medium text-gray-700">X (%)</label>
+                    <input type="number" id="prop-x" value="${el.x}" class="w-full px-2 py-1 text-sm border rounded">
+                </div>
+                <div class="w-1/2">
+                    <label class="block text-xs font-medium text-gray-700">Y (%)</label>
+                    <input type="number" id="prop-y" value="${el.y}" class="w-full px-2 py-1 text-sm border rounded">
+                </div>
+            </div>`;
+            
+        if (el.type === 'text') {
+            html += `
+                <div>
+                    <label class="block text-xs font-medium text-gray-700">Content</label>
+                    <input type="text" id="prop-content" value="${el.content}" class="w-full px-2 py-1 text-sm border rounded">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700">Font Size (cqi)</label>
+                    <input type="number" step="0.1" id="prop-size" value="${el.fontSize}" class="w-full px-2 py-1 text-sm border rounded">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700">Color</label>
+                    <input type="color" id="prop-color" value="${el.color}" class="w-full h-8 px-1 py-1 border rounded">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700">Font Weight</label>
+                    <select id="prop-weight" class="w-full px-2 py-1 text-sm border rounded">
+                        <option value="400" ${el.fontWeight == 400 ? 'selected' : ''}>Normal (400)</option>
+                        <option value="600" ${el.fontWeight == 600 ? 'selected' : ''}>Semibold (600)</option>
+                        <option value="700" ${el.fontWeight == 700 ? 'selected' : ''}>Bold (700)</option>
+                        <option value="800" ${el.fontWeight == 800 ? 'selected' : ''}>Extra Bold (800)</option>
+                        <option value="900" ${el.fontWeight == 900 ? 'selected' : ''}>Black (900)</option>
+                    </select>
+                </div>
+            `;
+        }
+        
+        html += `
+            <button id="btn-delete" class="w-full mt-2 inline-flex justify-center items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200">
+                <i class="ph ph-trash mr-1"></i> Delete Element
+            </button>
+        </div>`;
+        
+        propertiesPanel.innerHTML = html;
+        
+        // Attach listeners
+        document.getElementById('prop-x').addEventListener('input', (e) => updateProp('x', parseFloat(e.target.value)));
+        document.getElementById('prop-y').addEventListener('input', (e) => updateProp('y', parseFloat(e.target.value)));
+        
+        if (el.type === 'text') {
+            document.getElementById('prop-content').addEventListener('input', (e) => updateProp('content', e.target.value));
+            document.getElementById('prop-size').addEventListener('input', (e) => updateProp('fontSize', parseFloat(e.target.value)));
+            document.getElementById('prop-color').addEventListener('input', (e) => updateProp('color', e.target.value));
+            document.getElementById('prop-weight').addEventListener('change', (e) => updateProp('fontWeight', parseInt(e.target.value)));
+        }
+        
+        document.getElementById('btn-delete').addEventListener('click', () => {
+            elements = elements.filter(e => e.id !== selectedElementId);
+            selectElement(null);
+            renderCanvas();
+        });
+    }
+
+    function updateProp(key, value) {
+        if (!selectedElementId) return;
+        const elIndex = elements.findIndex(e => e.id === selectedElementId);
+        if (elIndex > -1) {
+            elements[elIndex][key] = value;
+            renderCanvas();
+        }
+    }
+
+    // Adding elements
+    document.getElementById('add-text-btn').addEventListener('click', () => {
+        elements.push({
+            id: 'text-' + Date.now(),
+            type: 'text',
+            content: 'New Text',
+            x: 50,
+            y: 50,
+            fontSize: 2.0,
+            fontFamily: 'Inter',
+            fontWeight: 700,
+            color: '#0f172a'
+        });
+        renderCanvas();
+    });
+
+    document.getElementById('add-qr-btn').addEventListener('click', () => {
+        elements.push({
+            id: 'qr-' + Date.now(),
+            type: 'qr',
+            content: '{{qr_url}}',
+            x: 50,
+            y: 50,
+            width: 7,
+            height: 7
+        });
+        renderCanvas();
+    });
+
+    // Initial render
+    renderCanvas();
+
+    // Save logic
+    document.getElementById('save-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('save-btn');
+        btn.innerHTML = '<i class="ph ph-spinner animate-spin mr-2"></i> Saving...';
+        btn.disabled = true;
+        
+        const payload = {
+            name: document.getElementById('template-name').value,
+            course_id: document.getElementById('course-id').value || null,
+            bg_image_url: document.getElementById('bg-image').value,
+            elements: elements
+        };
+        
+        try {
+            const res = await fetch(`/admin/certificates/${templateId}/api/save`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            if (res.ok) {
+                window.location.href = "{{ url_for('admin_certificates.index') }}";
+            } else {
+                alert("Failed to save.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error saving.");
+        } finally {
+            btn.innerHTML = '<i class="ph ph-floppy-disk mr-2"></i> Save Layout';
+            btn.disabled = false;
+        }
+    });
+
+</script>
+{% endblock %}

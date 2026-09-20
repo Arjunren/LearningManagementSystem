@@ -1,0 +1,80 @@
+{% extends "app_base.html" %}
+
+{% block app_content %}
+<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">Course Catalog</h1>
+        <p class="mt-2 text-gray-600">Discover new skills and expand your knowledge.</p>
+    </div>
+    <div class="w-full md:w-72 relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ph ph-magnifying-glass text-gray-400"></i>
+        </div>
+        <input type="text" id="courseSearch" placeholder="Search courses..."
+            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="courseGrid">
+    {% for course in courses %}
+    <div class="course-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-md"
+        data-title="{{ course.title | lower }}" data-desc="{{ course.description | lower }}">
+        <div class="h-48 bg-gray-200 flex items-center justify-center relative">
+            {% if course.id in enrolled_course_ids %}
+            <div class="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">ENROLLED
+            </div>
+            {% endif %}
+            {% if course.thumbnail %}
+            <img src="{{ course.thumbnail }}" class="w-full h-full object-cover">
+            {% else %}
+            <i class="ph ph-image text-5xl text-gray-400"></i>
+            {% endif %}
+        </div>
+        <div class="p-5 flex-1 flex flex-col">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="text-xl font-bold text-gray-900">{{ course.title }}</h3>
+            </div>
+            <div class="flex items-center text-sm text-gray-500 mb-3 space-x-4">
+                <span class="flex items-center"><i class="ph ph-user mr-1"></i> {{ course.instructor }}</span>
+                <span class="flex items-center"><i class="ph ph-chart-bar mr-1"></i> {{ course.difficulty }}</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-6 flex-1 line-clamp-3">{{ course.description }}</p>
+
+            <div class="mt-auto">
+                <a href="{{ url_for('courses.detail', course_id=course.id) }}"
+                    class="w-full block py-2 px-4 border border-blue-600 rounded-md shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-blue-50 text-center transition">
+                    View Details
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-span-full bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <h3 class="text-lg font-medium text-gray-900">No courses available</h3>
+        <p class="mt-1 text-sm text-gray-500">Check back later for new content.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById('courseSearch');
+        const cards = document.querySelectorAll('.course-card');
+
+        searchInput.addEventListener('input', function (e) {
+            const term = e.target.value.toLowerCase().trim();
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title') || '';
+                const desc = card.getAttribute('data-desc') || '';
+
+                if (title.includes(term) || desc.includes(term)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

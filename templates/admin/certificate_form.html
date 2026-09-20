@@ -1,0 +1,289 @@
+{% extends "admin_base.html" %}
+
+{% block app_content %}
+<div class="mb-6 flex justify-between items-center">
+    <div>
+        <a href="{{ url_for('admin_certificates.index') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm font-medium mb-2">
+            <i class="ph ph-arrow-left mr-1"></i> Back to Certificates
+        </a>
+        <h1 class="text-3xl font-bold text-gray-900">{{ 'Edit' if template else 'Create' }} Certificate Configuration</h1>
+    </div>
+</div>
+
+<div class="flex flex-col lg:flex-row gap-6">
+    <!-- Form Side -->
+    <div class="lg:w-1/3 bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+        <form action="" method="POST" class="p-6 space-y-6" id="cert-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Template Name</label>
+                <input type="text" name="name" value="{{ template.name if template else '' }}" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Assign to Course</label>
+                <select name="course_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="">-- No Course --</option>
+                    {% for course in courses %}
+                        <option value="{{ course.id }}" {% if template and template.course_id == course.id %}selected{% endif %}>{{ course.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="pt-4 border-t border-gray-200">
+                <h3 class="text-md font-medium text-gray-900 mb-3">Issuer Settings</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Signature Name</label>
+                        <input type="text" id="input-sig-name" name="signature_name" value="{{ template.signature_name if template else 'ARJUNREN VON' }}" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Signature Title / Role</label>
+                        <input type="text" id="input-sig-role" name="signature_title" value="{{ template.signature_title if template else 'CLOUD ENGINEER' }}" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 text-sm">
+                    </div>
+                    <div class="col-span-2 pt-2">
+                        <label class="block text-xs font-medium text-gray-700 mb-2">Draw Signature (Optional)</label>
+                        <div class="border border-gray-300 rounded bg-gray-50" style="width: 100%; height: 100px; position: relative;">
+                            <canvas id="signature-pad" class="w-full h-full cursor-crosshair"></canvas>
+                            <button type="button" id="clear-signature" class="absolute top-1 right-1 text-xs text-gray-500 hover:text-red-500 bg-white px-1.5 py-0.5 rounded shadow-sm border border-gray-200">Clear</button>
+                        </div>
+                        <input type="hidden" name="signature_image_data" id="signature_image_data" value="{{ template.signature_image_data if template else '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-gray-200">
+                <h3 class="text-md font-medium text-gray-900 mb-3">Name Typography</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Font Size (cqi)</label>
+                        <input type="number" step="0.1" id="input-font-size" name="font_size" value="{{ template.font_size if template else '5.7' }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Font Weight</label>
+                        <select id="input-font-weight" name="font_weight" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 text-sm">
+                            <option value="400" {% if template and template.font_weight == 400 %}selected{% endif %}>Normal</option>
+                            <option value="600" {% if template and template.font_weight == 600 %}selected{% endif %}>Semi Bold</option>
+                            <option value="700" {% if template and template.font_weight == 700 %}selected{% endif %}>Bold</option>
+                            <option value="800" {% if template and template.font_weight == 800 %}selected{% endif %}>Extra Bold</option>
+                            <option value="900" {% if template and template.font_weight == 900 %}selected{% endif %}>Black</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-gray-200">
+                <h3 class="text-md font-medium text-gray-900 mb-3">Positioning (Drag preview to edit)</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Student Name X (%)</label>
+                        <input type="number" step="0.1" id="input-name-x" name="name_x" value="{{ template.name_x if template else '50' }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Student Name Y (%)</label>
+                        <input type="number" step="0.1" id="input-name-y" name="name_y" value="{{ template.name_y if template else '40' }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 text-sm">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full">
+                    {% if template %}Save Configuration{% else %}Create Template{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Preview Side -->
+    <div class="lg:w-2/3 bg-gray-100 rounded-xl border border-gray-300 p-6 flex items-center justify-center overflow-x-auto relative">
+        <div class="absolute top-4 left-4 flex items-center space-x-2 text-sm text-gray-500 font-medium bg-white px-3 py-1 rounded shadow-sm border border-gray-200 z-10">
+            <i class="ph ph-eye"></i>
+            <span>Live Visual Preview</span>
+        </div>
+        
+        <!-- Render the shared certificate layout -->
+        {% set template_config = template %}
+        {% include "shared/certificate_layout.html" %}
+    </div>
+</div>
+
+<style>
+    /* Styling for drag interactions */
+    #cert-drag-name {
+        cursor: grab;
+        border: 2px border transparent;
+        padding: 5px;
+        transition: border 0.2s;
+    }
+    #cert-drag-name:hover {
+        border: 2px dashed #3b82f6;
+    }
+    #cert-drag-name:active {
+        cursor: grabbing;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const dragEl = document.getElementById('cert-drag-name');
+        const container = document.getElementById('certificate-container');
+        
+        const inputX = document.getElementById('input-name-x');
+        const inputY = document.getElementById('input-name-y');
+        
+        const previewName = document.getElementById('cert-preview-name');
+        const inputFontSize = document.getElementById('input-font-size');
+        const inputFontWeight = document.getElementById('input-font-weight');
+        
+        const previewSigName = document.getElementById('cert-preview-prof-name');
+        const previewSigRole = document.getElementById('cert-preview-prof-role');
+        const inputSigName = document.getElementById('input-sig-name');
+        const inputSigRole = document.getElementById('input-sig-role');
+        
+        // Sync styling
+        inputFontSize.addEventListener('input', (e) => {
+            previewName.style.fontSize = `${e.target.value}cqi`;
+        });
+        
+        inputFontWeight.addEventListener('change', (e) => {
+            previewName.style.fontWeight = e.target.value;
+        });
+        
+        inputSigName.addEventListener('input', (e) => {
+            previewSigName.textContent = e.target.value.toUpperCase();
+        });
+        
+        inputSigRole.addEventListener('input', (e) => {
+            previewSigRole.textContent = e.target.value.toUpperCase();
+        });
+        
+        // Sync inputs to position
+        inputX.addEventListener('input', (e) => {
+            dragEl.style.left = `${e.target.value}%`;
+        });
+        inputY.addEventListener('input', (e) => {
+            dragEl.style.top = `${e.target.value}%`;
+        });
+        
+        // Drag logic
+        let isDragging = false;
+
+        dragEl.addEventListener('mousedown', (e) => {
+            isDragging = true;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const rect = container.getBoundingClientRect();
+            
+            // Calculate mouse position relative to container
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+            
+            // Clamp within bounds
+            if (x < 0) x = 0;
+            if (x > rect.width) x = rect.width;
+            if (y < 0) y = 0;
+            if (y > rect.height) y = rect.height;
+            
+            // Convert to percentages
+            let xPercent = (x / rect.width) * 100;
+            let yPercent = (y / rect.height) * 100;
+            
+            // Update element style
+            dragEl.style.left = `${xPercent}%`;
+            dragEl.style.top = `${yPercent}%`;
+            
+            // Update inputs
+            inputX.value = xPercent.toFixed(1);
+            inputY.value = yPercent.toFixed(1);
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Signature Pad Logic
+        const canvas = document.getElementById('signature-pad');
+        const ctx = canvas.getContext('2d');
+        const hiddenInput = document.getElementById('signature_image_data');
+        const clearBtn = document.getElementById('clear-signature');
+        
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            if (hiddenInput.value) {
+                const img = new Image();
+                img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                img.src = hiddenInput.value;
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        // Delay slight to ensure layout is done
+        setTimeout(resizeCanvas, 100);
+
+        let isDrawingSig = false;
+
+        function getSigPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches && e.touches.length > 0) {
+                return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+            }
+            return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        }
+
+        function startDrawing(e) {
+            isDrawingSig = true;
+            const pos = getSigPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            e.preventDefault(); // prevent scrolling on touch
+        }
+
+        function draw(e) {
+            if (!isDrawingSig) return;
+            const pos = getSigPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+            e.preventDefault();
+        }
+
+        function stopDrawing() {
+            if (isDrawingSig) {
+                isDrawingSig = false;
+                hiddenInput.value = canvas.toDataURL('image/png');
+                const previewImg = document.getElementById('cert-preview-sig-img');
+                if (previewImg) {
+                    previewImg.src = hiddenInput.value;
+                    previewImg.style.display = 'block';
+                }
+            }
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hiddenInput.value = '';
+            const previewImg = document.getElementById('cert-preview-sig-img');
+            if (previewImg) {
+                previewImg.src = '';
+                previewImg.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,307 @@
+<!-- shared/certificate_layout.html -->
+<!-- Requires Tailwind CSS to be loaded in the parent document -->
+<style>
+    .cert-wrapper {
+        container-type: inline-size;
+        width: 100%;
+        max-width: 1123px;
+        aspect-ratio: 1.414 / 1;
+        position: relative;
+        background-color: white;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Print specific styling */
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .cert-wrapper {
+            border: none;
+            box-shadow: none;
+            width: 297mm;
+            height: 210mm;
+            max-width: none;
+        }
+    }
+
+    /* Background Watermark 'B' */
+    .cert-watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 50cqi;
+        font-weight: 900;
+        color: #f8fafc;
+        /* slate-50 */
+        z-index: 0;
+        user-select: none;
+        line-height: 1;
+    }
+
+    .cert-content {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+    }
+
+    /* Top Bar */
+    .cert-top-bar {
+        position: absolute;
+        top: 5cqi;
+        left: 5cqi;
+        right: 5cqi;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .cert-logo-container {
+        display: flex;
+        align-items: center;
+        gap: 1cqi;
+    }
+
+    .cert-logo-text {
+        font-size: 2cqi;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .cert-active-badge {
+        background-color: #e0f2fe;
+        color: #0284c7;
+        padding: 0.5cqi 1.2cqi;
+        border-radius: 9999px;
+        font-size: 1.1cqi;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5cqi;
+    }
+
+    .cert-active-dot {
+        width: 0.8cqi;
+        height: 0.8cqi;
+        background-color: #3b82f6;
+        border-radius: 50%;
+    }
+
+    /* Dynamic Elements */
+    .cert-element {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 100%;
+    }
+
+    .cert-header {
+        font-size: 1.4cqi;
+        font-weight: 700;
+        color: #0284c7;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 2cqi;
+    }
+
+    .cert-subtext {
+        font-size: 1.6cqi;
+        color: #475569;
+        margin-bottom: 2cqi;
+    }
+
+    .cert-desc {
+        font-size: 1.4cqi;
+        color: #475569;
+        max-width: 60cqi;
+        margin: 0 auto;
+        line-height: 1.5;
+        margin-top: 2cqi;
+    }
+
+    /* Footer Elements */
+    .cert-footer-label {
+        font-size: 0.9cqi;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5cqi;
+    }
+
+    .cert-footer-val {
+        font-size: 1.4cqi;
+        font-weight: 600;
+        color: #0f172a;
+    }
+
+    .cert-id-val {
+        color: #d97706;
+        font-family: monospace;
+    }
+
+    .cert-bottom-left {
+        position: absolute;
+        bottom: 5cqi;
+        left: 5cqi;
+        display: flex;
+        gap: 5cqi;
+    }
+
+    .cert-bottom-right {
+        position: absolute;
+        bottom: 5cqi;
+        right: 5cqi;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5cqi;
+    }
+
+    .cert-qr {
+        width: 7cqi;
+        height: 7cqi;
+        background-color: white;
+        border-radius: 0.5cqi;
+        padding: 0.5cqi;
+        border: 1px solid #e2e8f0;
+    }
+
+    .cert-signature {
+        position: absolute;
+        bottom: 5cqi;
+        right: 25cqi;
+        text-align: center;
+        width: 20cqi;
+    }
+
+    .cert-sig-line {
+        border-top: 1px solid #cbd5e1;
+        margin-bottom: 1cqi;
+        width: 100%;
+    }
+
+    .cert-sig-name {
+        font-size: 1.2cqi;
+        font-weight: 700;
+        color: #0f172a;
+        text-transform: uppercase;
+    }
+
+    .cert-sig-role {
+        font-size: 0.9cqi;
+        font-weight: 600;
+        color: #0284c7;
+        text-transform: uppercase;
+    }
+
+    .cert-logo-icon {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+    }
+</style>
+
+<div class="cert-wrapper" id="certificate-container">
+    <div class="cert-watermark">B</div>
+
+    <div class="cert-content">
+        <div class="cert-top-bar">
+            <div class="cert-logo-container">
+                <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="BuildByte Academy"
+                    class="cert-logo-icon">
+                <div class="cert-logo-text">BuildByte Academy</div>
+            </div>
+            <div class="cert-active-badge">
+                <div class="cert-active-dot"></div>
+                ACTIVE CERTIFICATE
+            </div>
+        </div>
+
+        <!-- Draggable elements when in edit mode -->
+
+        <!-- Header & Subtext (Fixed relative to top) -->
+        <div class="cert-element" style="left: 50%; top: 25%;">
+            <div class="cert-header">CERTIFICATE OF COMPLETION</div>
+            <div class="cert-subtext">This is successfully certified that</div>
+        </div>
+
+        <!-- Dynamic Name Position -->
+        <div class="cert-element" id="cert-drag-name" style="left: {{ template_config.name_x if template_config and template_config.name_x else 50 }}%; 
+                    top: {{ template_config.name_y if template_config and template_config.name_y else 40 }}%;">
+            <div style="font-size: {{ template_config.font_size if template_config and template_config.font_size else 5.7 }}cqi; 
+                        font-family: {{ template_config.font_family if template_config and template_config.font_family else 'Inter' }}, sans-serif;
+                        font-weight: {{ template_config.font_weight if template_config and template_config.font_weight else 800 }};
+                        color: #0f172a; line-height: 1.1;" id="cert-preview-name">
+                {{ student_name | default('Jarek Melgar') }}
+            </div>
+        </div>
+
+        <!-- Description (Fixed relative to center) -->
+        <div class="cert-element" style="left: 50%; top: 52%;">
+            <div class="cert-desc">
+                has successfully completed all laboratory exercises, capstone assessments, and code<br>
+                reviews for the professional specialization track in:
+            </div>
+        </div>
+
+        <!-- Course Title -->
+        <div class="cert-element" style="left: 50%; top: 64%;">
+            <div style="font-size: 2.5cqi; font-weight: 700; color: #0284c7;" id="cert-preview-course">
+                {{ course_name | default('Advanced AWS Architecture') }}
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="cert-bottom-left">
+            <div>
+                <div class="cert-footer-label">ISSUE DATE</div>
+                <div class="cert-footer-val" id="cert-preview-date">{{ issue_date | default('September 16, 2026') }}
+                </div>
+            </div>
+            <div>
+                <div class="cert-footer-label">CERTIFICATE ID</div>
+                <div class="cert-footer-val cert-id-val" id="cert-preview-id">{{ cert_id | default('SAMPLE-2026-X9A') }}
+                </div>
+            </div>
+        </div>
+
+        <div class="cert-signature">
+            <div class="cert-sig-name" id="cert-preview-prof-name">{{ template_config.signature_name if template_config
+                and template_config.signature_name else 'ARJUNREN VON' }}</div>
+
+            <div
+                style="position: relative; width: 100%; height: 0; margin: 0.8cqi 0; display: flex; align-items: center; justify-content: center;">
+                {% if template_config and template_config.signature_image_data %}
+                <img id="cert-preview-sig-img" src="{{ template_config.signature_image_data }}"
+                    style="position: absolute; max-height: 8cqi; max-width: 15cqi; z-index: 10;">
+                {% else %}
+                <img id="cert-preview-sig-img" src=""
+                    style="position: absolute; max-height: 8cqi; max-width: 15cqi; display: none; z-index: 10;">
+                {% endif %}
+                <div class="cert-sig-line" style="margin: 0; width: 100%; position: relative; z-index: 1;"></div>
+            </div>
+
+            <div class="cert-sig-role" id="cert-preview-prof-role">{{
+                template_config.signature_title if template_config
+                and template_config.signature_title else 'CLOUD ENGINEER' }}</div>
+        </div>
+
+        <div class="cert-bottom-right">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ qr_url | default('https://buildbyteacademy.vercel.app/certificate.html?id=SAMPLE-2026-X9A') | urlencode }}"
+                class="cert-qr" alt="QR Code">
+            <div class="cert-footer-label" style="margin-top: 0.5cqi; font-size: 0.7cqi;">SCAN TO VERIFY</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,76 @@
+{% extends "admin_base.html" %}
+
+{% block app_content %}
+<div class="mb-6 flex justify-between items-center">
+    <a href="{{ url_for('admin_courses.index') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm font-medium">
+        <i class="ph ph-arrow-left mr-1"></i> Back to Courses
+    </a>
+</div>
+
+<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+    <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">{% if course %}Edit Course{% else %}Create New Course{% endif %}</h3>
+    </div>
+    <div class="p-6">
+        <form action="" method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
+                <div class="sm:col-span-2">
+                    <label for="title" class="block text-sm font-medium text-gray-700">Course Title</label>
+                    <div class="mt-1">
+                        <input type="text" name="title" id="title" value="{{ course.title if course else '' }}" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                    </div>
+                </div>
+                
+                <div class="sm:col-span-2">
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <div class="mt-1">
+                        <textarea id="description" name="description" rows="4" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md py-2 px-3">{{ course.description if course else '' }}</textarea>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="instructor" class="block text-sm font-medium text-gray-700">Instructor Name</label>
+                    <div class="mt-1">
+                        <input type="text" name="instructor" id="instructor" value="{{ course.instructor if course else session.get('admin_name') }}" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="difficulty" class="block text-sm font-medium text-gray-700">Difficulty</label>
+                    <div class="mt-1">
+                        <select id="difficulty" name="difficulty" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                            <option value="Beginner" {% if course and course.difficulty == 'Beginner' %}selected{% endif %}>Beginner</option>
+                            <option value="Intermediate" {% if course and course.difficulty == 'Intermediate' %}selected{% endif %}>Intermediate</option>
+                            <option value="Advanced" {% if course and course.difficulty == 'Advanced' %}selected{% endif %}>Advanced</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                    <div class="mt-1">
+                        <select id="status" name="status" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                            <option value="draft" {% if course and course.status == 'draft' %}selected{% endif %}>Draft</option>
+                            <option value="published" {% if course and course.status == 'published' %}selected{% endif %}>Published</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="thumbnail" class="block text-sm font-medium text-gray-700">Thumbnail URL</label>
+                    <div class="mt-1">
+                        <input type="url" name="thumbnail" id="thumbnail" value="{{ course.thumbnail if course else '' }}" placeholder="https://example.com/image.jpg" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    {% if course %}Update Course{% else %}Create Course{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
