@@ -22,6 +22,9 @@
             <a href="{{ url_for('teacher_submissions.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors {% if request.endpoint and 'teacher_submissions' in request.endpoint %}bg-emerald-50 text-emerald-700 font-medium border-l-4 border-emerald-500{% endif %}">
                 <i class="ph ph-files text-xl mr-3"></i> Submissions
             </a>
+            <a href="{{ url_for('teacher.settings') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors {% if request.endpoint == 'teacher.settings' %}bg-emerald-50 text-emerald-700 font-medium border-l-4 border-emerald-500{% endif %}">
+                <i class="ph ph-lock-key text-xl mr-3"></i> Change Password
+            </a>
         </nav>
         <div class="p-4 border-t border-gray-200">
             <div class="text-xs text-gray-400 mb-1 px-1">{{ session.get('user_name') }}</div>

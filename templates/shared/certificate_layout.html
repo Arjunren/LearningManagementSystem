@@ -279,7 +279,7 @@
 
         <div class="cert-signature">
             <div class="cert-sig-name" id="cert-preview-prof-name">{{ template_config.signature_name if template_config
-                and template_config.signature_name else 'ARJUNREN VON' }}</div>
+                and template_config.signature_name else course.instructor if course and course.instructor else 'BuildByte Academy' }}</div>
 
             <div
                 style="position: relative; width: 100%; height: 0; margin: 0.8cqi 0; display: flex; align-items: center; justify-content: center;">
@@ -295,7 +295,7 @@
 
             <div class="cert-sig-role" id="cert-preview-prof-role">{{
                 template_config.signature_title if template_config
-                and template_config.signature_title else 'CLOUD ENGINEER' }}</div>
+                and template_config.signature_title else 'Course Instructor' }}</div>
         </div>
 
         <div class="cert-bottom-right">

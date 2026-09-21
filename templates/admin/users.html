@@ -49,7 +49,7 @@
                         {{ teacher.created_at[:10] }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="openEditTeacherModal('{{ teacher.id }}', '{{ teacher.full_name }}')" class="text-indigo-600 hover:text-indigo-900 mr-3">Manage Courses</button>
+                        <button onclick="openEditTeacherModal('{{ teacher.id }}', {{ teacher.full_name | tojson | forceescape }})" class="text-indigo-600 hover:text-indigo-900 mr-3">Manage Courses</button>
                         <form action="{{ url_for('admin_users.delete', user_id=teacher.id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this teacher?');">
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
@@ -256,9 +256,13 @@
         document.getElementById('edit_teacher_name').textContent = userName;
         document.getElementById('edit-teacher-form').action = `/admin/users/${userId}/edit-teacher`;
         
-        // In a real app we'd fetch the current assignments via AJAX. 
-        // For now, we clear them and the admin just checks the ones they want.
-        document.querySelectorAll('.edit-course-cb').forEach(cb => cb.checked = false);
+        // Assignment data is rendered from the same relationship records the
+        // server updates. This prevents an unchanged edit from silently
+        // removing existing courses.
+        const assignedCourseIds = new Set(({{ teacher_course_ids | tojson }})[userId] || []);
+        document.querySelectorAll('.edit-course-cb').forEach(cb => {
+            cb.checked = assignedCourseIds.has(cb.value);
+        });
         
         document.getElementById('edit-teacher-modal').classList.remove('hidden');
     }

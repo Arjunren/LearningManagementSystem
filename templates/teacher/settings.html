@@ -1,0 +1,17 @@
+{% extends "teacher_base.html" %}
+{% block teacher_title %}Account Settings{% endblock %}
+{% block app_content %}
+<div class="max-w-2xl">
+    <h1 class="text-3xl font-bold text-gray-900">Change Password</h1>
+    <p class="mt-2 text-gray-600">Use a new password with at least 8 characters.</p>
+    <div class="mt-7 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <form method="POST" class="p-6 space-y-5">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div><label class="block text-sm font-medium text-gray-700">Current password</label><input name="current_password" type="password" required autocomplete="current-password" class="mt-1 w-full border rounded-md px-3 py-2"></div>
+            <div><label class="block text-sm font-medium text-gray-700">New password</label><input name="new_password" type="password" required minlength="8" autocomplete="new-password" class="mt-1 w-full border rounded-md px-3 py-2"></div>
+            <div><label class="block text-sm font-medium text-gray-700">Confirm new password</label><input name="confirm_password" type="password" required minlength="8" autocomplete="new-password" class="mt-1 w-full border rounded-md px-3 py-2"></div>
+            <div class="flex justify-end"><button class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">Update Password</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}

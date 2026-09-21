@@ -1,9 +1,9 @@
-{% extends "admin_base.html" %}
+{% extends "teacher_base.html" if session.get('role') == 'teacher' else "admin_base.html" %}
 
 {% block app_content %}
 <div class="mb-6 flex justify-between items-center">
-    <a href="{{ url_for('admin_courses.index') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm font-medium">
-        <i class="ph ph-arrow-left mr-1"></i> Back to Courses
+    <a href="{{ url_for('teacher.my_courses') if session.get('role') == 'teacher' else url_for('admin_courses.index') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm font-medium">
+        <i class="ph ph-arrow-left mr-1"></i> Back to {{ 'My Courses' if session.get('role') == 'teacher' else 'Courses' }}
     </a>
 </div>
 
@@ -14,7 +14,7 @@
                 <h3 class="text-lg leading-6 font-medium text-gray-900">Add Procedure</h3>
             </div>
             <div class="p-6">
-                <form action="{{ url_for('admin_courses.content', course_id=course.id) }}" method="POST">
+                <form action="{{ url_for('admin_courses.content', course_id=course.id) }}" method="POST" enctype="multipart/form-data" onsubmit="syncHandoutEditor(this)">
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="action" value="add_procedure">
                     
@@ -48,6 +48,33 @@
                         <div id="field-instructions" class="procedure-field hidden">
                             <label for="instructions" class="block text-sm font-medium text-gray-700">Instructions / URL</label>
                             <textarea id="instructions" name="instructions" rows="4" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md py-2 px-3"></textarea>
+                        </div>
+
+                        <div id="field-handout" class="procedure-field hidden space-y-4">
+                            <div>
+                                <label for="handout_mode" class="block text-sm font-medium text-gray-700">Handout source</label>
+                                <select id="handout_mode" name="handout_mode" onchange="toggleHandoutMode()" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm">
+                                    <option value="text">Text content</option>
+                                    <option value="upload">Upload document</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Text opens in the learning page. Documents remain downloadable.</p>
+                            </div>
+                            <div id="handout-upload" class="hidden">
+                                <label for="handout_file" class="block text-sm font-medium text-gray-700">Document</label>
+                                <input id="handout_file" name="handout_file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.zip" class="mt-1 block w-full text-sm text-gray-600">
+                            </div>
+                            <div id="handout-text">
+                                <label class="block text-sm font-medium text-gray-700">Handout content</label>
+                                <div class="mt-1 flex flex-wrap gap-1 border border-gray-200 border-b-0 rounded-t-md bg-gray-50 p-2">
+                                    <button type="button" onclick="formatHandout('formatBlock', 'h2')" class="px-2 py-1 text-xs border rounded bg-white">Heading</button>
+                                    <button type="button" onclick="formatHandout('bold')" class="px-2 py-1 text-xs border rounded bg-white"><b>Bold</b></button>
+                                    <button type="button" onclick="formatHandout('italic')" class="px-2 py-1 text-xs border rounded bg-white"><i>Italic</i></button>
+                                    <button type="button" onclick="formatHandout('insertUnorderedList')" class="px-2 py-1 text-xs border rounded bg-white">List</button>
+                                    <button type="button" onclick="insertHandoutLink()" class="px-2 py-1 text-xs border rounded bg-white">Link</button>
+                                </div>
+                                <div id="handout-editor" contenteditable="true" class="min-h-40 max-h-72 overflow-y-auto border border-gray-300 rounded-b-md p-3 text-sm leading-6 focus:outline-none focus:ring-2 focus:ring-indigo-500" data-placeholder="Write or paste the handout here."></div>
+                                <input type="hidden" name="handout_content" id="handout_content">
+                            </div>
                         </div>
                         
                         <div id="field-scores" class="procedure-field hidden space-y-4">
@@ -113,6 +140,7 @@
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="action" value="delete_procedure">
                         <input type="hidden" name="procedure_id" value="{{ procedure.id }}">
+                        <a href="{{ url_for('admin_courses.edit_procedure', course_id=course.id, procedure_id=procedure.id) }}" class="text-indigo-600 hover:text-indigo-800 p-2" title="Edit procedure"><i class="ph ph-pencil-simple"></i></a>
                         <button type="submit" class="text-red-500 hover:text-red-700 p-2">
                             <i class="ph ph-trash"></i>
                         </button>
@@ -159,9 +187,32 @@
         } else if (type === 'activity' || type === 'project') {
             document.getElementById('field-instructions').classList.remove('hidden');
             document.getElementById('field-scores').classList.remove('hidden');
+        } else if (type === 'handout') {
+            document.getElementById('field-handout').classList.remove('hidden');
+            toggleHandoutMode();
         } else {
             document.getElementById('field-instructions').classList.remove('hidden');
         }
+    }
+
+    function toggleHandoutMode() {
+        const isUpload = document.getElementById('handout_mode').value === 'upload';
+        document.getElementById('handout-upload').classList.toggle('hidden', !isUpload);
+        document.getElementById('handout-text').classList.toggle('hidden', isUpload);
+    }
+
+    function formatHandout(command, value = null) {
+        document.getElementById('handout-editor').focus();
+        document.execCommand(command, false, value);
+    }
+
+    function insertHandoutLink() {
+        const url = window.prompt('Link URL (https://...)');
+        if (url) formatHandout('createLink', url);
+    }
+
+    function syncHandoutEditor(form) {
+        form.querySelector('#handout_content').value = form.querySelector('#handout-editor').innerHTML;
     }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>

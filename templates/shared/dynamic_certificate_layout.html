@@ -31,9 +31,18 @@
         padding: 4px;
         border: 1px solid #e2e8f0;
     }
+
+    /* This is intentionally independent of draggable elements so saving a
+       custom layout can never remove the signature line. */
+    .cert-signature { position: absolute; bottom: 11%; right: 16%; width: 25%; text-align: center; }
+    .cert-signature-image { display: block; max-width: 55mm; max-height: 20mm; margin: 0 auto -2mm; position: relative; z-index: 2; }
+    .cert-signature-line { border-top: 0.45mm solid #64748b; width: 100%; }
+    .cert-signature-name { margin-top: 2mm; font-size: 3.5mm; font-weight: 700; color: #0f172a; }
+    .cert-signature-title { margin-top: 1mm; font-size: 2.6mm; color: #475569; }
 </style>
 
 <div class="cert-wrapper">
+    {% set certificate_id_present = namespace(value=false) %}
     {% if template_config and template_config.elements %}
         {% for el in template_config.elements %}
             {% if el.type == 'text' %}
@@ -49,6 +58,7 @@
                         {% elif el.content == '{{issue_date}}' %}
                             {{ issue_date }}
                         {% elif el.content == '{{cert_id}}' %}
+                            {% set certificate_id_present.value = true %}
                             {{ cert_id }}
                         {% else %}
                             {{ el.content }}
@@ -81,4 +91,15 @@
             <div style="font-size: 7mm; color: #94a3b8; font-family: 'DejaVu Sans', Arial, sans-serif;">{{ issue_date }}</div>
         </div>
     {% endif %}
+    {% if not certificate_id_present.value %}
+    <div style="position: absolute; left: 8%; bottom: 10%; font-size: 3mm; color: #475569;">Certificate ID: <strong>{{ cert_id }}</strong></div>
+    {% endif %}
+    <div class="cert-signature">
+        {% if template_config and template_config.signature_image_data %}
+        <img class="cert-signature-image" src="{{ template_config.signature_image_data }}" alt="Issuer signature">
+        {% endif %}
+        <div class="cert-signature-line"></div>
+        <div class="cert-signature-name">{{ template_config.signature_name if template_config and template_config.signature_name else instructor_name or 'BuildByte Academy' }}</div>
+        <div class="cert-signature-title">{{ template_config.signature_title if template_config and template_config.signature_title else 'Course Instructor' }}</div>
+    </div>
 </div>

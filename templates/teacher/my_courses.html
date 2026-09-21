@@ -27,6 +27,9 @@
                 <div class="text-sm text-gray-500 flex items-center">
                     <i class="ph ph-list-numbers mr-1 text-emerald-500"></i> {{ course.procedures|length }} items
                 </div>
+                <a href="{{ url_for('admin_courses.content', course_id=course.id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50">
+                    <i class="ph ph-pencil-simple mr-1"></i> Manage Content
+                </a>
                 <a href="{{ url_for('teacher_submissions.detail', course_id=course.id) }}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700">
                     Grade <i class="ph ph-arrow-right ml-1"></i>
                 </a>

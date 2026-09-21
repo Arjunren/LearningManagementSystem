@@ -40,7 +40,7 @@
                 <i class="ph-fill ph-check-circle mr-1.5"></i> Course Completed
             </span>
             {% if enrollment.certificate_id %}
-            <a href="{{ url_for('certificates.view', cert_id=enrollment.certificate_id) }}" class="inline-flex items-center px-3 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+            <a href="{{ url_for('certificates.view', cert_id=enrollment.certificate_id, enrollment_id=enrollment.id) }}" class="inline-flex items-center px-3 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
                 <i class="ph ph-certificate mr-1.5"></i> View Certificate
             </a>
             {% else %}
@@ -122,18 +122,28 @@
                             </a>
                         </div>
                     {% elif procedure.type == 'handout' %}
-                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 flex items-center justify-between">
+                        {% if procedure.get('handout_mode') == 'upload' or procedure.get('file_url') %}
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 flex items-center justify-between gap-4">
                             <div class="flex items-center">
                                 <i class="ph ph-file-pdf text-3xl text-red-500 mr-4"></i>
                                 <div>
-                                    <h3 class="text-sm font-medium text-gray-900">Course Handout</h3>
-                                    <p class="text-xs text-gray-500">Download the supplementary materials.</p>
+                                    <h3 class="text-sm font-medium text-gray-900">{{ procedure.get('original_filename', 'Course handout') }}</h3>
+                                    <p class="text-xs text-gray-500">Download the supplementary material.</p>
                                 </div>
                             </div>
                             <a href="{{ url_for('static', filename='uploads/' + procedure.get('file_url', '')) }}" target="_blank" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                                 Download
                             </a>
                         </div>
+                        {% else %}
+                        <article class="mb-6 rounded-xl border border-slate-200 bg-white shadow-sm">
+                            <div class="flex items-center gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4">
+                                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600"><i class="ph ph-note text-xl"></i></span>
+                                <div><h3 class="font-semibold text-slate-900">Reading handout</h3><p class="text-xs text-slate-500">Course material</p></div>
+                            </div>
+                            <div class="handout-content px-5 py-6 text-slate-700 leading-7 sm:px-8 sm:py-8">{{ procedure.get('content_html') or procedure.get('instructions', '') | safe_handout_html | safe }}</div>
+                        </article>
+                        {% endif %}
                     {% else %}
                         <div class="prose max-w-none text-gray-600 mb-6">
                             {{ procedure.get('instructions', 'Follow the instructions provided by your instructor.') }}
@@ -228,6 +238,16 @@
 {% endblock %}
 
 {% block app_scripts %}
+<style>
+    .handout-content h1 { font-size: 1.875rem; font-weight: 700; line-height: 1.2; margin: 1.5rem 0 .75rem; color: #0f172a; }
+    .handout-content h2 { font-size: 1.5rem; font-weight: 700; line-height: 1.3; margin: 1.35rem 0 .65rem; color: #1e293b; }
+    .handout-content h3, .handout-content h4 { font-size: 1.2rem; font-weight: 700; margin: 1.1rem 0 .5rem; color: #1e293b; }
+    .handout-content p { margin: 0 0 1rem; }
+    .handout-content ul, .handout-content ol { margin: 0 0 1rem 1.5rem; }
+    .handout-content ul { list-style: disc; } .handout-content ol { list-style: decimal; }
+    .handout-content a { color: #2563eb; text-decoration: underline; font-weight: 500; }
+    .handout-content blockquote { border-left: 3px solid #c7d2fe; padding-left: 1rem; color: #475569; margin: 1rem 0; }
+</style>
 <script>
     function showProcedure(id) {
         document.getElementById('welcome-content').classList.add('hidden');
