@@ -54,17 +54,44 @@ function printCertificate() {
 
 <style>
 @media print {
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+    html,
+    body {
+        width: 297mm !important;
+        height: 210mm !important;
+        min-height: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        background: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
     body * {
-        visibility: hidden;
+        visibility: hidden !important;
     }
     #certificate-container, #certificate-container * {
-        visibility: visible;
+        visibility: visible !important;
     }
     #certificate-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        transform: scale(1); /* Ensure it prints full size */
+        position: fixed !important;
+        inset: 0 !important;
+        width: 297mm !important;
+        height: 210mm !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
     }
 }
 </style>

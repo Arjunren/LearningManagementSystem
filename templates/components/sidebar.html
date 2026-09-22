@@ -13,6 +13,12 @@
         <a href="{{ url_for('gradebook.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint and 'gradebook' in request.endpoint %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
             <i class="ph ph-exam text-xl mr-3"></i> Gradebook
         </a>
+        <a href="{{ url_for('user.profile') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint == 'user.profile' %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
+            <i class="ph ph-user-circle text-xl mr-3"></i> Profile
+        </a>
+        <a href="{{ url_for('user.ranking') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint == 'user.ranking' %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
+            <i class="ph ph-ranking text-xl mr-3"></i> Ranking
+        </a>
         <a href="{{ url_for('user.settings') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint == 'user.settings' %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
             <i class="ph ph-gear text-xl mr-3"></i> Settings
         </a>
@@ -49,6 +55,12 @@
             </a>
             <a href="{{ url_for('gradebook.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
                 <i class="ph ph-exam text-xl mr-3"></i> Gradebook
+            </a>
+            <a href="{{ url_for('user.profile') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                <i class="ph ph-user-circle text-xl mr-3"></i> Profile
+            </a>
+            <a href="{{ url_for('user.ranking') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                <i class="ph ph-ranking text-xl mr-3"></i> Ranking
             </a>
             <a href="{{ url_for('user.settings') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
                 <i class="ph ph-gear text-xl mr-3"></i> Settings

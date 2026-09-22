@@ -12,6 +12,7 @@
         border: 1px solid #e2e8f0;
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         font-family: 'Inter', sans-serif;
+        box-sizing: border-box;
     }
 
     /* Print specific styling */
@@ -32,6 +33,7 @@
             width: 297mm;
             height: 210mm;
             max-width: none;
+            box-sizing: border-box;
         }
     }
 
@@ -272,7 +274,7 @@
             </div>
             <div>
                 <div class="cert-footer-label">CERTIFICATE ID</div>
-                <div class="cert-footer-val cert-id-val" id="cert-preview-id">{{ cert_id | default('SAMPLE-2026-X9A') }}
+                <div class="cert-footer-val cert-id-val" id="cert-preview-id">{{ cert_id | default('Assigned when issued') }}
                 </div>
             </div>
         </div>
@@ -299,7 +301,7 @@
         </div>
 
         <div class="cert-bottom-right">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ qr_url | default('https://buildbyteacademy.vercel.app/certificate.html?id=SAMPLE-2026-X9A') | urlencode }}"
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ qr_url | default('https://buildbyteacademy.vercel.app/certificate.html') | urlencode }}"
                 class="cert-qr" alt="QR Code">
             <div class="cert-footer-label" style="margin-top: 0.5cqi; font-size: 0.7cqi;">SCAN TO VERIFY</div>
         </div>

@@ -46,9 +46,11 @@
         {% endif %}
 
         <span class="text-sm font-medium text-gray-700">Hello, {{ session.get('user_name') }}</span>
-        <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase">
+        {% if session.get('role') == 'student' %}
+        <a href="{{ url_for('user.profile') }}" aria-label="Open profile" class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase hover:ring-2 hover:ring-blue-400">
             {{ session.get('user_name')[0] if session.get('user_name') else 'U' }}
-        </div>
+        </a>
+        {% else %}<div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase">{{ session.get('user_name')[0] if session.get('user_name') else 'U' }}</div>{% endif %}
     </div>
 </header>
 

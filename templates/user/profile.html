@@ -1,0 +1,40 @@
+{% extends "app_base.html" %}
+{% block app_content %}
+<div class="max-w-5xl mx-auto">
+    <div class="mb-8"><h1 class="text-3xl font-bold text-gray-900">Student Profile</h1><p class="mt-2 text-gray-600">Your account and student information.</p></div>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="p-6 sm:p-8 flex items-center gap-5 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white">
+            <div class="h-16 w-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">{{ user.full_name[0]|upper }}</div>
+            <div><h2 class="text-xl font-bold text-gray-900">{{ user.full_name }}</h2><p class="text-sm text-gray-500">Student account</p></div>
+        </div>
+        <div class="p-6 sm:p-8 grid gap-6 sm:grid-cols-2">
+            <div><p class="text-xs uppercase tracking-wide font-semibold text-gray-500">Full name</p><p class="mt-1 text-gray-900">{{ user.full_name }}</p><p class="mt-1 text-xs text-gray-500">Your registered name cannot be changed here.</p></div>
+            <div><p class="text-xs uppercase tracking-wide font-semibold text-gray-500">Email</p><p class="mt-1 text-gray-900 break-all">{{ user.email }}</p><p class="mt-1 text-xs text-gray-500">Email is read-only.</p></div>
+            <div><p class="text-xs uppercase tracking-wide font-semibold text-gray-500">Student ID</p><p class="mt-1 font-mono font-semibold text-blue-700">{{ user.student_id }}</p></div>
+            <div><p class="text-xs uppercase tracking-wide font-semibold text-gray-500">Registration date</p><p class="mt-1 text-gray-900">{{ user.created_at[:10] if user.created_at else 'Not available' }}</p></div>
+        </div>
+        <form method="POST" class="border-t border-gray-100 p-6 sm:p-8 bg-gray-50">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+            <div class="mt-2 flex flex-col gap-3 sm:flex-row"><input id="username" name="username" required minlength="3" maxlength="32" pattern="[A-Za-z0-9_.-]+" value="{{ user.username }}" class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"><button class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Save Username</button></div>
+            <p class="mt-2 text-xs text-gray-500">3–32 letters, numbers, dots, hyphens, or underscores.</p>
+        </form>
+    </div>
+    <div class="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white border rounded-xl p-5"><p class="text-sm text-gray-500">Enrolled Courses</p><p class="mt-1 text-3xl font-bold text-gray-900">{{ progress.enrolled_count }}</p></div>
+        <div class="bg-white border rounded-xl p-5"><p class="text-sm text-gray-500">Completed Courses</p><p class="mt-1 text-3xl font-bold text-green-600">{{ progress.completed_count }}</p></div>
+        <div class="bg-white border rounded-xl p-5"><p class="text-sm text-gray-500">Total Stars</p><p class="mt-1 text-3xl font-bold text-amber-500"><i class="ph-fill ph-star"></i> {{ progress.total_stars }}</p></div>
+    </div>
+    <div class="mt-7 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-5 border-b bg-gray-50"><h2 class="text-lg font-semibold text-gray-900">Completed Courses</h2></div>
+        <div class="divide-y divide-gray-100">
+            {% for item in progress.completed_courses %}
+            <div class="p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div><h3 class="font-semibold text-gray-900"><i class="ph-fill ph-check-circle text-green-500 mr-2"></i>{{ item.course_title }}</h3><div class="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-gray-600"><span>Grade: {% if item.final_grade is not none %}<strong>{{ "%.1f"|format(item.final_grade|float) }}%</strong>{% else %}—{% endif %}</span><span class="text-amber-500" aria-label="{{ item.stars }} stars">{{ item.stars_display }}</span><span>Completed: {{ item.completed_at[:10] if item.completed_at else 'Not available' }}</span></div></div>
+                {% if item.certificate_id %}<a href="{{ url_for('certificates.view', cert_id=item.certificate_id, enrollment_id=item.enrollment_id) }}" class="inline-flex items-center justify-center px-3 py-2 border rounded-md text-sm font-medium text-blue-700 hover:bg-blue-50"><i class="ph ph-certificate mr-2"></i>View Certificate</a>{% else %}<span class="text-xs text-gray-400">Certificate not issued</span>{% endif %}
+            </div>
+            {% else %}<div class="p-10 text-center text-gray-500">Complete a course to see it here.</div>{% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

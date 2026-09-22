@@ -34,6 +34,10 @@
                         <p class="text-xl font-bold text-gray-900">{{ student.full_name }}</p>
                     </div>
                     <div>
+                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Student ID</p>
+                        <p class="font-mono font-medium text-gray-900">{{ student.student_id or 'Not available' }}</p>
+                    </div>
+                    <div>
                         <p class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Course</p>
                         <p class="text-lg font-bold text-blue-700">{{ course.title }}</p>
                     </div>
