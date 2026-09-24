@@ -1,0 +1,9 @@
+{
+    "full_name": "BuildByteAcademy Admin",
+    "email": "admin@buildbyteacademy.com",
+    "password_hash": "scrypt:32768:8:1$4zoQQwoanyiPwOpC$d0f703256af169c5c386702a2e8cd116aebd97744c96858621123558738acfb977d2303ec8d6c843472d7187e75f152c365e902648e090e02779d0d1675a5aa4",
+    "role": "admin",
+    "created_at": "2026-09-18T14:51:39.863999",
+    "updated_at": "2026-09-18T14:51:39.864113",
+    "id": "adm_632329422d0a"
+}

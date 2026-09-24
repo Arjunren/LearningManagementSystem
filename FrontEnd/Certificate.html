@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verify Certificate - BuildByte Academy</title>
+    <style>
+        :root {
+            --blue: #0284c7;
+            --blue-light: #e0f2fe;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --gold: #d97706;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--ink);
+            background: #f8fafc;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 72px;
+            padding: 0 5vw;
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; }
+        .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; color: #fff; background: var(--blue); }
+        main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 56px 0 72px; }
+        .intro { max-width: 720px; margin: 0 auto 32px; text-align: center; }
+        .intro h1 { margin: 0 0 12px; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: -.04em; }
+        .intro p { margin: 0; color: var(--muted); line-height: 1.7; }
+        .verify-form { display: flex; gap: 10px; max-width: 680px; margin: 28px auto 8px; }
+        .verify-form input { flex: 1; min-width: 0; padding: 14px 18px; border: 1px solid #cbd5e1; border-radius: 999px; font: inherit; }
+        .button { border: 0; border-radius: 999px; padding: 13px 22px; color: #fff; background: var(--blue); font: 700 14px/1 inherit; cursor: pointer; }
+        .button:disabled { opacity: .55; cursor: wait; }
+        .message { min-height: 24px; margin: 8px 0 28px; color: var(--muted); text-align: center; font-size: 14px; }
+        .actions { display: flex; justify-content: flex-end; width: min(1123px, 100%); margin: 0 auto 12px; }
+        .hidden { display: none !important; }
+
+        .certificate {
+            container-type: inline-size;
+            position: relative;
+            width: min(1123px, 100%);
+            aspect-ratio: 1.414 / 1;
+            margin: 0 auto;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(14, 165, 233, .10);
+        }
+
+        .watermark { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); color: #f8fafc; font-size: 50cqi; font-weight: 900; line-height: 1; }
+        .cert-header { position: absolute; top: 5cqi; left: 5cqi; right: 5cqi; display: flex; align-items: center; justify-content: space-between; }
+        .cert-brand { display: flex; align-items: center; gap: 1cqi; font-size: 2cqi; font-weight: 800; }
+        .cert-logo { display: grid; place-items: center; width: 4.5cqi; height: 4.5cqi; border-radius: 1cqi; color: #fff; background: var(--blue); font-size: 2.4cqi; }
+        .badge { display: flex; align-items: center; gap: .7cqi; padding: .6cqi 1.2cqi; border-radius: 999px; color: var(--blue); background: var(--blue-light); font-size: 1cqi; font-weight: 800; letter-spacing: .06em; }
+        .badge::before { width: .8cqi; height: .8cqi; border-radius: 50%; background: currentColor; content: ""; }
+        .badge.invalid { color: #b91c1c; background: #fee2e2; }
+        .cert-center { position: absolute; top: 24%; left: 12%; right: 12%; text-align: center; }
+        .eyebrow { margin-bottom: 2.2cqi; color: var(--blue); font-size: 1.35cqi; font-weight: 800; letter-spacing: .16em; }
+        .cert-copy { margin: 0; color: #475569; font-size: 1.5cqi; }
+        .student-name { min-height: 1.2em; margin: 1.4cqi 0 1.7cqi; overflow-wrap: anywhere; font-size: 5cqi; font-weight: 850; line-height: 1; }
+        .description { max-width: 67cqi; margin: 0 auto 1.4cqi; color: #475569; font-size: 1.3cqi; line-height: 1.55; }
+        .course-name { margin: 0; overflow-wrap: anywhere; color: var(--blue); font-size: 2.5cqi; }
+        .metadata { position: absolute; bottom: 5cqi; left: 5cqi; display: flex; gap: 3.5cqi; }
+        .meta-label { margin-bottom: .5cqi; color: #94a3b8; font-size: .85cqi; font-weight: 800; letter-spacing: .08em; }
+        .meta-value { max-width: 23cqi; overflow-wrap: anywhere; font-size: 1.2cqi; font-weight: 650; }
+        #certificateId { color: var(--gold); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+        .signature { position: absolute; right: 18cqi; bottom: 5cqi; width: 20cqi; text-align: center; }
+        .signature-name { min-height: 1.2em; font-size: 1.1cqi; font-weight: 800; text-transform: uppercase; }
+        .signature-line { width: 100%; margin: .8cqi 0; border-top: 1px solid #94a3b8; }
+        .signature-role { color: var(--blue); font-size: .9cqi; font-weight: 700; text-transform: uppercase; }
+        .qr-block { position: absolute; right: 5cqi; bottom: 4cqi; text-align: center; }
+        .qr-block img { width: 7cqi; height: 7cqi; padding: .45cqi; background: #fff; border: 1px solid var(--line); border-radius: .7cqi; }
+        .qr-label { margin-top: .4cqi; color: #94a3b8; font-size: .7cqi; font-weight: 800; }
+
+        @page { size: A4 landscape; margin: 0; }
+
+        @media print {
+            html, body {
+                width: 297mm !important;
+                height: 210mm !important;
+                min-height: 210mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+                background: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            body * { visibility: hidden !important; }
+            #certificate, #certificate * { visibility: visible !important; }
+            #certificate {
+                position: fixed !important;
+                inset: 0 !important;
+                width: 297mm !important;
+                height: 210mm !important;
+                margin: 0 !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                overflow: hidden !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+            }
+        }
+
+        @media (max-width: 700px) {
+            main { width: min(100% - 20px, 1180px); padding-top: 36px; }
+            .verify-form { flex-direction: column; }
+            .certificate { border-radius: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="brand"><span class="brand-mark">B</span>BuildByte Academy</div>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h1>Verify Your Certificate</h1>
+            <p>Enter a BuildByte Academy certificate ID to confirm the student, course, completion date, and issuer.</p>
+        </section>
+
+        <form id="verifyForm" class="verify-form">
+            <input id="certificateSearch" aria-label="Certificate ID" autocomplete="off" required placeholder="Enter certificate ID">
+            <button id="verifyButton" class="button" type="submit">Verify</button>
+        </form>
+        <p id="message" class="message" role="status">Enter a certificate ID to check its authenticity.</p>
+
+        <div id="actions" class="actions hidden">
+            <button class="button" type="button" onclick="window.print()">Print certificate</button>
+        </div>
+
+        <article id="certificate" class="certificate" aria-label="Certificate of completion">
+            <div class="watermark">B</div>
+            <header class="cert-header">
+                <div class="cert-brand"><span class="cert-logo">B</span>BuildByte Academy</div>
+                <div id="badge" class="badge">Awaiting verification</div>
+            </header>
+            <section class="cert-center">
+                <div class="eyebrow">CERTIFICATE OF COMPLETION</div>
+                <p class="cert-copy">This is to certify that</p>
+                <h2 id="studentName" class="student-name"></h2>
+                <p class="description">has successfully completed all required learning materials and assessments for:</p>
+                <h3 id="courseName" class="course-name"></h3>
+            </section>
+            <section class="metadata">
+                <div><div class="meta-label">ISSUE DATE</div><div id="completionDate" class="meta-value">—</div></div>
+                <div><div class="meta-label">CERTIFICATE ID</div><div id="certificateId" class="meta-value"></div></div>
+                <div><div class="meta-label">STUDENT ID</div><div id="studentId" class="meta-value"></div></div>
+            </section>
+            <section class="signature">
+                <div id="signatureName" class="signature-name"></div>
+                <div class="signature-line"></div>
+                <div id="signatureRole" class="signature-role"></div>
+            </section>
+            <a id="qrLink" class="qr-block" aria-label="Open certificate verification link">
+                <img id="qrImage" alt="Certificate verification QR code">
+                <div class="qr-label">SCAN TO VERIFY</div>
+            </a>
+        </article>
+    </main>
+
+    <script>
+        const API_BASE = 'https://buildbyteacademy.pythonanywhere.com';
+        const form = document.getElementById('verifyForm');
+        const search = document.getElementById('certificateSearch');
+        const button = document.getElementById('verifyButton');
+        const message = document.getElementById('message');
+        const actions = document.getElementById('actions');
+        const badge = document.getElementById('badge');
+        const fields = {
+            studentName: document.getElementById('studentName'),
+            courseName: document.getElementById('courseName'),
+            completionDate: document.getElementById('completionDate'),
+            certificateId: document.getElementById('certificateId'),
+            studentId: document.getElementById('studentId'),
+            signatureName: document.getElementById('signatureName'),
+            signatureRole: document.getElementById('signatureRole')
+        };
+        const qrImage = document.getElementById('qrImage');
+        const qrLink = document.getElementById('qrLink');
+
+        function clearCertificate() {
+            Object.values(fields).forEach((element) => { element.textContent = ''; });
+            fields.completionDate.textContent = '—';
+            qrImage.removeAttribute('src');
+            qrLink.removeAttribute('href');
+            actions.classList.add('hidden');
+        }
+
+        function formatDate(value) {
+            if (!value) return '—';
+            const parsed = new Date(value);
+            if (Number.isNaN(parsed.getTime())) return String(value).slice(0, 10);
+            return parsed.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function showCertificate(data) {
+            const certificateId = data.cert_id ?? data.certificate_id ?? '';
+            const config = data.template_config ?? data.templateConfig ?? {};
+            fields.studentName.textContent = data.student_name ?? data.student ?? '';
+            fields.courseName.textContent = data.course_title ?? data.course ?? '';
+            fields.completionDate.textContent = formatDate(data.completed_at ?? data.completedAt);
+            fields.certificateId.textContent = certificateId;
+            fields.studentId.textContent = data.student_id ?? data.studentId ?? '—';
+            fields.signatureName.textContent = config.signature_name || 'BuildByte Academy';
+            fields.signatureRole.textContent = config.signature_title || 'Course Issuer';
+            badge.className = 'badge';
+            badge.textContent = 'Verified certificate';
+
+            const verificationUrl = `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(certificateId)}`;
+            qrLink.href = verificationUrl;
+            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verificationUrl)}`;
+            actions.classList.remove('hidden');
+        }
+
+        async function verify(event) {
+            event?.preventDefault();
+            const id = search.value.trim();
+            if (!id) return;
+            button.disabled = true;
+            button.textContent = 'Checking…';
+            message.textContent = 'Checking the BuildByte certificate registry…';
+            try {
+                const response = await fetch(`${API_BASE}/certificates/api/verify/${encodeURIComponent(id)}`, {
+                    headers: { Accept: 'application/json' }
+                });
+                const data = await response.json();
+                if (!response.ok || !data.valid) {
+                    clearCertificate();
+                    badge.className = 'badge invalid';
+                    badge.textContent = 'Invalid certificate';
+                    message.textContent = data.message || 'No valid certificate was found for that ID.';
+                    return;
+                }
+                showCertificate(data);
+                message.textContent = 'Certificate verified successfully.';
+                const url = new URL(window.location.href);
+                url.searchParams.set('id', data.cert_id ?? data.certificate_id ?? id);
+                history.replaceState({}, '', url);
+            } catch (_) {
+                clearCertificate();
+                badge.className = 'badge invalid';
+                badge.textContent = 'Verification unavailable';
+                message.textContent = 'Certificate verification is temporarily unavailable. Please try again.';
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Verify';
+            }
+        }
+
+        form.addEventListener('submit', verify);
+        const requestedId = new URLSearchParams(window.location.search).get('id');
+        if (requestedId) {
+            search.value = requestedId;
+            verify();
+        }
+    </script>
+</body>
+</html>

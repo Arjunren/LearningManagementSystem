@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Certificate - BuildByte Academy</title>
+    <link rel="icon" type="image/png" href="./Icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        signature: ['Caveat', 'cursive'],
+                    },
+                    colors: {
+                        primary: '#0ea5e9',
+                        primaryHover: '#0284c7',
+                        bgWhite: '#ffffff',
+                        textMain: '#111827',
+                        textMuted: '#4b5563',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+        }
+
+
+        /* Dynamic certificate template layer.
+           The existing certificate.html UI remains the foundation; these rules
+           allow the verification API's template_config to control the certificate. */
+        #verificationResult {
+            container-type: inline-size;
+        }
+
+        .dynamic-cert-element {
+            transition: left .2s ease, top .2s ease, font-size .2s ease;
+        }
+
+        #certName {
+            overflow-wrap: anywhere;
+            line-height: 1.1;
+        }
+
+        #certCourse {
+            overflow-wrap: anywhere;
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        @media print {
+            html,
+            body {
+                width: 297mm !important;
+                height: 210mm !important;
+                min-height: 210mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+                background: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            body * {
+                visibility: hidden !important;
+            }
+
+            #verificationResult,
+            #verificationResult * {
+                visibility: visible !important;
+            }
+
+            #verificationResult {
+                position: fixed !important;
+                inset: 0 !important;
+                width: 297mm !important;
+                height: 210mm !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 14mm !important;
+                box-sizing: border-box !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                overflow: hidden !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+            }
+
+            #certificateActions {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-textMain antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="relative bg-white z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <img src="./Icon.png" alt="BuildByte Academy Logo" class="w-8 h-8 object-contain">
+                    <span class="font-bold text-xl tracking-tight">BuildByte Academy</span>
+                </a>
+
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-textMuted hover:text-primary font-medium transition-colors">Home</a>
+                    <a href="course.html" class="text-textMuted hover:text-primary font-medium transition-colors">Course</a>
+                    <a href="certificate.html" class="text-primary font-medium transition-colors">Certificate</a>
+                    <a href="contact.html" class="text-textMuted hover:text-primary font-medium transition-colors">Contact Us</a>
+                </div>
+
+                <div class="hidden md:flex items-center">
+                    <a href="https://buildbyteacademy.pythonanywhere.com"
+                        class="bg-primary hover:bg-primaryHover text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm shadow-blue-200">
+                        Get Started
+                    </a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false"
+                        class="relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 text-textMain focus:outline-none group">
+                        <span id="line-1"
+                            class="w-6 h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out origin-center"></span>
+                        <span id="line-2"
+                            class="w-6 h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out"></span>
+                        <span id="line-3"
+                            class="w-6 h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out origin-center"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu"
+            class="absolute top-20 left-0 w-full bg-white border-b border-gray-100 shadow-lg transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300 ease-in-out z-10">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="index.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-textMuted hover:text-primary hover:bg-gray-50 transition-colors">Home</a>
+                <a href="course.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-textMuted hover:text-primary hover:bg-gray-50 transition-colors">Course</a>
+                <a href="certificate.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-primary bg-blue-50 transition-colors">Certificate</a>
+                <a href="contact.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-textMuted hover:text-primary hover:bg-gray-50 transition-colors">Contact
+                    Us</a>
+                <a href="https://buildbyteacademy.pythonanywhere.com"
+                    class="block px-3 py-3 mt-6 text-center rounded-md text-base font-medium bg-primary text-white hover:bg-primaryHover transition-colors">Get
+                    Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow bg-gray-50/30 py-16 lg:py-24 relative overflow-hidden">
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-blue-50/80 to-transparent rounded-full blur-3xl -z-10 pointer-events-none">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span
+                    class="inline-block text-xs font-bold tracking-wider text-primary uppercase bg-blue-50 px-3 py-1 rounded-full border border-blue-100 mb-6">
+                    Verification
+                </span>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-textMain mb-6 tracking-tight">Verify Your
+                    Certificate</h1>
+                <p class="text-lg text-textMuted leading-relaxed">
+                    Ensure transparency. Search or cryptographically validate the authenticity of any BuildByte Academy
+                    certificate instantly.
+                </p>
+            </div>
+
+            <div class="max-w-2xl mx-auto mb-20 relative">
+                <!-- Search Form -->
+                <form id="verifyForm"
+                    class="relative flex items-center w-full h-14 rounded-full focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/30 bg-white border border-gray-200 overflow-hidden transition-all duration-300">
+                    <div class="grid place-items-center h-full w-12 text-gray-400 pl-2">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input class="peer h-full w-full outline-none text-sm text-textMain pr-2 bg-transparent placeholder-gray-400"
+                        type="text" id="search" aria-label="Certificate ID"
+                        placeholder="Enter certificate ID (e.g. LS-2026-X9A)..." />
+                    <button id="verifyButton" type="submit"
+                        class="absolute right-1.5 top-1.5 bottom-1.5 bg-primary hover:bg-primaryHover text-white px-6 rounded-full text-sm font-medium transition-colors shadow-sm">
+                        Verify
+                    </button>
+                </form>
+                <p id="verificationMessage" class="mt-3 text-center text-sm text-textMuted" role="status">Enter a
+                    certificate ID to check its authenticity.</p>
+            </div>
+
+            <!-- Certificate Display Box -->
+            <div class="max-w-4xl mx-auto">
+                <div id="certificateActions" class="hidden justify-end mb-4">
+                    <button type="button" onclick="window.print()"
+                        class="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primaryHover">
+                        Print certificate
+                    </button>
+                </div>
+                <div id="verificationResult"
+                    class="bg-white border border-gray-200 rounded-[2rem] p-8 md:p-10 shadow-[0_8px_30px_rgb(14,165,233,0.08)] relative overflow-hidden group">
+                    
+                    <!-- Faint Watermark Logo in Background -->
+                    <img src="./Icon.png" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 object-contain opacity-[0.03] pointer-events-none" alt="">
+
+                    <!-- Certificate Header with Company Info -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-16 relative z-10">
+                        <!-- Company PFP and Name -->
+                        <div class="flex items-center gap-3">
+                            <img src="./Icon.png" alt="BuildByte Academy Logo" class="w-12 h-12 object-contain bg-white rounded-lg p-1 shadow-sm border border-gray-100">
+                            <span class="font-bold text-2xl tracking-tight text-textMain">BuildByte Academy</span>
+                        </div>
+                        <!-- Status Badge -->
+                        <div id="certBadge" class="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-full">
+                            <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.6)]"></span>
+                            <span class="text-xs font-bold text-blue-700 tracking-wide uppercase">Active Certificate</span>
+                        </div>
+                    </div>
+
+                    <!-- Certificate Body -->
+                    <div class="text-center max-w-2xl mx-auto relative z-5 mb-10">
+                        <h2 class="text-sm font-bold text-primary tracking-widest uppercase mb-8">Certificate of
+                            Completion</h2>
+                        <p class="text-textMuted mb-2">This is successfully certified that</p>
+                        <h3 id="certName" class="text-4xl md:text-5xl font-extrabold text-textMain mb-6 dynamic-cert-element"></h3>
+                        <p class="text-textMuted leading-relaxed mb-6">
+                            has successfully completed all laboratory exercises, capstone assessments, and code reviews
+                            for the professional specialization track in:
+                        </p>
+                        <h4 id="certCourse" class="text-xl md:text-2xl font-bold text-primaryHover dynamic-cert-element"></h4>
+                    </div>
+
+                    <!-- Certificate Footer Metadata & Signatures -->
+                    <div class="flex flex-col md:flex-row justify-between items-end border-t border-gray-100 pt-6 relative z-10 gap-10">
+                        
+                        <!-- Left Info -->
+                        <div class="flex gap-x-12 gap-y-6">
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Issue Date</p>
+                                <p id="certDate" class="font-medium text-sm text-textMain"></p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Certificate ID</p>
+                                <p id="certId" class="text-xs font-mono font-bold text-amber-600 tracking-wider"></p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Student ID</p>
+                                <p id="certStudentId" class="text-xs font-mono font-semibold text-textMain tracking-wider"></p>
+                            </div>
+                        </div>
+
+                        <!-- Right Signature & QR Code -->
+                        <div class="flex flex-col sm:flex-row items-end gap-10">
+                            
+                            <!-- Signature Block -->
+                            <div class="text-center pb-2">
+                                <p id="sigName" class="text-[12px] text-black uppercase tracking-wider font-medium"></p>
+                                <div class="w-48 h-[1px] bg-gray-300 mx-auto mb-2"></div>
+                                <p id="sigTitle" class="text-[10px] text-primary uppercase tracking-wider font-medium"></p>
+                            </div>
+
+                            <!-- QR Code Block -->
+                            <div class="flex flex-col items-center gap-2">
+                                <a target="_blank" id="qrLink" 
+                                   class="block p-2.5 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-primary/30 transition-all">
+                                    <img alt="Verify QR Code" class="w-16 h-16 opacity-90" id="qrImage">
+                                </a>
+                                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Scan to Verify</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-50 border-t border-gray-200 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <img src="./Icon.png" alt="BuildByte Academy" class="w-6 h-6 object-contain">
+                        <span class="font-bold text-xl text-textMain tracking-tight">BuildByte Academy</span>
+                    </div>
+                    <p class="text-sm text-textMuted leading-relaxed pr-4">
+                        The modern standard for elite tech specializations. Empowering students with the actual, direct
+                        expertise demanded by scaling global software corporations.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-textMain mb-4">Quick Links</h4>
+                    <ul class="space-y-3 text-sm text-textMuted">
+                        <li><a href="index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">Courses</a></li>
+                        <li><a href="certificate.html" class="hover:text-primary transition-colors">Verified
+                                Certificate</a></li>
+                        <li><a href="contact.html" class="hover:text-primary transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-textMain mb-4">Specializations</h4>
+                    <ul class="space-y-3 text-sm text-textMuted">
+                        <li><a href="course.html" class="hover:text-primary transition-colors">Front-End Development</a>
+                        </li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">Back-End Development</a>
+                        </li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">AI & Automation</a></li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">UI/UX Design</a></li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">Cybersecurity</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-textMain mb-4">Join our Newsletter</h4>
+                    <p class="text-sm text-textMuted mb-5">Get weekly engineering digests, code sandboxes, and
+                        curriculum drops delivered to your inbox.</p>
+
+                    <form class="relative group" onsubmit="event.preventDefault();">
+                        <input type="email" placeholder="Email address"
+                            class="w-full pl-4 pr-12 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 text-sm text-textMain transition-all shadow-sm placeholder-gray-400"
+                            required>
+                        <button type="submit"
+                            class="absolute right-1.5 top-1.5 bottom-1.5 flex items-center justify-center w-9 bg-primary hover:bg-primaryHover text-white rounded-lg transition-all shadow-sm active:scale-95"
+                            aria-label="Subscribe">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <!-- Modern Social Links -->
+                    <div class="flex items-center gap-4 mt-6">
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors" aria-label="Twitter">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors" aria-label="GitHub">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors" aria-label="LinkedIn">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-textMuted">© 2026 BuildByte Academy Platforms, Inc. All rights reserved.</p>
+                <div class="flex gap-6 text-xs text-textMuted">
+                    <a href="#" class="hover:text-primary transition-colors">Privacy Protocol</a>
+                    <a href="#" class="hover:text-primary transition-colors">Terms of Use</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/app.js"></script>
+    <script>
+        // Mobile Menu Logic
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const line1 = document.getElementById('line-1');
+        const line2 = document.getElementById('line-2');
+        const line3 = document.getElementById('line-3');
+        let isMenuOpen = false;
+
+        mobileBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            mobileBtn.setAttribute('aria-expanded', isMenuOpen);
+
+            if (isMenuOpen) {
+                line1.classList.add('translate-y-[8px]', 'rotate-45', 'text-primary');
+                line2.classList.add('opacity-0', 'scale-0');
+                line3.classList.add('-translate-y-[8px]', '-rotate-45', 'text-primary');
+                mobileMenu.classList.remove('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                mobileMenu.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            } else {
+                line1.classList.remove('translate-y-[8px]', 'rotate-45', 'text-primary');
+                line2.classList.remove('opacity-0', 'scale-0');
+                line3.classList.remove('-translate-y-[8px]', '-rotate-45', 'text-primary');
+                mobileMenu.classList.add('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                mobileMenu.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+        });
+
+        // Certificate Verification Logic
+        const verifyForm = document.getElementById('verifyForm');
+        const certificateSearch = document.getElementById('search');
+        const verifyButton = document.getElementById('verifyButton');
+        const verificationMessage = document.getElementById('verificationMessage');
+
+        const certificateName = document.getElementById('certName');
+        const certificateCourse = document.getElementById('certCourse');
+        const certificateDate = document.getElementById('certDate');
+        const certificateIdElement = document.getElementById('certId');
+        const certificateStudentId = document.getElementById('certStudentId');
+        const signatureName = document.getElementById('sigName');
+        const signatureTitle = document.getElementById('sigTitle');
+        const qrImage = document.getElementById('qrImage');
+        const qrLink = document.getElementById('qrLink');
+        const badge = document.getElementById('certBadge');
+        const certificateActions = document.getElementById('certificateActions');
+
+        function getBuildByteResponse(result) {
+            // BuildByte.request() normally returns { data: ... }.
+            // This also accepts a direct response-shaped object so the
+            // certificate page can work with either integration style.
+            return result && result.data ? result.data : result;
+        }
+
+        function formatCertificateDate(value) {
+            if (!value) return '—';
+
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) {
+                // Preserve the API value if it isn't an ISO date.
+                return String(value).substring(0, 10);
+            }
+
+            return date.toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function applyTemplateConfig(cfg = {}) {
+            // The AI certificate template uses percentage positions for the
+            // student's name. The foundation UI keeps its normal layout unless
+            // the API supplies an override.
+            if (cfg.name_x !== undefined && cfg.name_x !== null) {
+                certificateName.style.position = 'relative';
+                certificateName.style.left = `${Number(cfg.name_x) - 50}%`;
+            }
+
+            if (cfg.name_y !== undefined && cfg.name_y !== null) {
+                certificateName.style.position = 'relative';
+                certificateName.style.top = `${Number(cfg.name_y) - 40}%`;
+            }
+
+            if (cfg.font_size !== undefined && cfg.font_size !== null) {
+                // AI template_config uses cqi. Keep the same unit.
+                certificateName.style.fontSize = `${cfg.font_size}cqi`;
+            }
+
+            if (cfg.font_family) {
+                certificateName.style.fontFamily = `'${String(cfg.font_family).replace(/'/g, '')}', sans-serif`;
+            }
+
+            if (cfg.font_weight) {
+                certificateName.style.fontWeight = String(cfg.font_weight);
+            }
+
+            signatureName.textContent = cfg.signature_name || 'BuildByte Academy';
+            signatureTitle.textContent = cfg.signature_title || 'Course Issuer';
+        }
+
+        function setVerifiedBadge() {
+            badge.className = 'flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-full';
+            badge.innerHTML = `
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
+                <span class="text-xs font-bold text-emerald-700 tracking-wide uppercase">Verified Certificate</span>
+            `;
+        }
+
+        function setInvalidBadge() {
+            badge.className = 'flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-100 rounded-full';
+            badge.innerHTML = `
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                <span class="text-xs font-bold text-red-700 tracking-wide uppercase">Invalid Certificate</span>
+            `;
+        }
+
+        function clearCertificate() {
+            certificateName.textContent = '';
+            certificateCourse.textContent = '';
+            certificateDate.textContent = '—';
+            certificateIdElement.textContent = '';
+            certificateStudentId.textContent = '';
+            signatureName.textContent = '';
+            signatureTitle.textContent = '';
+            qrImage.removeAttribute('src');
+            qrLink.removeAttribute('href');
+            certificateActions.classList.add('hidden');
+            certificateActions.classList.remove('flex');
+        }
+
+        function showResult(rawData) {
+            const data = getBuildByteResponse(rawData);
+
+            // Support BOTH response formats:
+            // AI endpoint: student_name / course_title / cert_id
+            // Existing BuildByte endpoint: student / course / certificate_id
+            const student = data.student_name ?? data.student ?? '';
+            const course = data.course_title ?? data.course ?? '';
+            const certId = data.cert_id ?? data.certificate_id ?? '';
+            const completedAt = data.completed_at ?? data.completedAt ?? null;
+            const studentId = data.student_id ?? data.studentId ?? '';
+
+            certificateName.textContent = student;
+            certificateCourse.textContent = course;
+            certificateDate.textContent = formatCertificateDate(completedAt);
+            certificateIdElement.textContent = certId;
+            certificateStudentId.textContent = studentId || '—';
+
+            applyTemplateConfig(data.template_config || data.templateConfig || {});
+            setVerifiedBadge();
+
+            const domain = window.location.origin || 'https://buildbyte.academy';
+            const verificationUrl = `${domain}/certificate.html?id=${encodeURIComponent(certId)}`;
+
+            qrImage.src =
+                `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(verificationUrl)}`;
+            qrLink.href = verificationUrl;
+            certificateActions.classList.remove('hidden');
+            certificateActions.classList.add('flex');
+        }
+
+        async function requestCertificate(id) {
+            // Preferred integration: the existing BuildByte API wrapper.
+            if (typeof BuildByte !== 'undefined' && typeof BuildByte.request === 'function') {
+                return await BuildByte.request(`/certificate/verify/${encodeURIComponent(id)}`);
+            }
+
+            // Fallback integration matching the supplied dynamic certificate
+            // code. This is useful when assets/app.js isn't available.
+            const response = await fetch(
+                `https://buildbyteacademy.pythonanywhere.com/certificates/api/verify/${encodeURIComponent(id)}`,
+                {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                }
+            );
+
+            let data = {};
+            try {
+                data = await response.json();
+            } catch (_) {
+                throw new Error('Invalid API response.');
+            }
+
+            return { data, ok: response.ok };
+        }
+
+        async function verifyCertificate(event) {
+            if (event) event.preventDefault();
+
+            const id = certificateSearch.value.trim();
+
+            if (!id) {
+                verificationMessage.textContent = 'Enter a certificate ID first.';
+                certificateSearch.focus();
+                return;
+            }
+
+            verifyButton.disabled = true;
+            verifyButton.textContent = 'Checking…';
+            verificationMessage.textContent = 'Checking the BuildByte certificate registry…';
+
+            try {
+                const response = await requestCertificate(id);
+                const data = getBuildByteResponse(response);
+
+                if (!response || response.ok === false || !data.valid) {
+                    clearCertificate();
+                    setInvalidBadge();
+                    verificationMessage.textContent =
+                        data.message || 'No valid certificate was found for that ID.';
+                    return;
+                }
+
+                showResult(data);
+                verificationMessage.textContent = 'Certificate verified successfully.';
+
+                // Keep the certificate ID in the URL so the QR code and direct
+                // certificate links open the same verified certificate.
+                const url = new URL(window.location.href);
+                url.searchParams.set('id', data.cert_id ?? data.certificate_id ?? id);
+                window.history.replaceState({}, '', url);
+            } catch (error) {
+                console.error('Certificate verification error:', error);
+                clearCertificate();
+                setInvalidBadge();
+                verificationMessage.textContent =
+                    'Certificate verification is temporarily unavailable. Please try again.';
+            } finally {
+                verifyButton.disabled = false;
+                verifyButton.textContent = 'Verify';
+            }
+        }
+
+        verifyForm.addEventListener('submit', verifyCertificate);
+
+        // Automatically verify when certificate.html is opened as:
+        // certificate.html?id=YOUR-CERTIFICATE-ID
+        const certificateId = new URLSearchParams(window.location.search).get('id');
+        if (certificateId) {
+            certificateSearch.value = certificateId;
+            verifyCertificate();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+{#
+  Shared layout macros — the single definition of the patterns that repeat on
+  every screen.
+
+  This is the one file added to the original set, and it exists because
+  "a single layout" has to be enforceable rather than copy-pasted. Before it,
+  the same page header was written 18 ways, empty states came in six paddings
+  and card headers in four. Change a pattern here and it changes everywhere.
+
+  Import at the top of a template, outside any block:
+
+    {% from "components/ui.html" import page_header, back_link, empty_state %}
+
+  Accent: pass 'brand' (student and public), 'teacher' or 'admin'. Each branch
+  writes whole class strings, because Tailwind cannot resolve a class built by
+  concatenation.
+#}
+
+{#  Page title block. One per screen, directly under the shell's top bar.  #}
+{% macro page_header(title, description='') -%}
+<header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink-strong tracking-tight">{{ title }}</h1>
+    {% if description %}
+    <p class="mt-2 text-[15px] text-ink-muted">{{ description }}</p>
+    {% endif %}
+</header>
+{%- endmacro %}
+
+
+{#  Page title with actions on the right. Use with {% call %}:
+
+      {% call page_header_row('Courses', 'Create, edit and publish.') %}
+        <a href="…" class="…">New course</a>
+      {% endcall %}
+#}
+{% macro page_header_row(title, description='') -%}
+<header class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+        <h1 class="text-3xl font-bold text-ink-strong tracking-tight">{{ title }}</h1>
+        {% if description %}
+        <p class="mt-2 text-[15px] text-ink-muted">{{ description }}</p>
+        {% endif %}
+    </div>
+    <div class="flex flex-wrap items-center gap-3 shrink-0">{{ caller() }}</div>
+</header>
+{%- endmacro %}
+
+
+{#  Back link. Sits above the page header on any screen a level down.  #}
+{% macro back_link(href, label, accent='brand') -%}
+<div class="mb-6">
+    <a href="{{ href }}"
+       class="inline-flex items-center gap-1.5 text-sm font-semibold w-max {% if accent == 'teacher' %}text-teacher-700 hover:text-teacher-800{% elif accent == 'admin' %}text-admin-600 hover:text-admin-700{% else %}text-brand-600 hover:text-brand-700{% endif %}">
+        <i class="ph ph-arrow-left text-base"></i> {{ label }}
+    </a>
+</div>
+{%- endmacro %}
+
+
+{#  Header strip inside a card.  #}
+{% macro card_header(title, description='') -%}
+<div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page">
+    <h2 class="text-lg font-bold text-ink-strong">{{ title }}</h2>
+    {% if description %}
+    <p class="mt-1 text-[13px] text-ink-muted">{{ description }}</p>
+    {% endif %}
+</div>
+{%- endmacro %}
+
+
+{#  Standalone empty state. `dashed` for "nothing here yet, add something";
+    solid for "no results".  #}
+{% macro empty_state(icon, title, description='', dashed=false) -%}
+<div class="rounded-lg bg-surface-raised px-6 py-14 text-center {% if dashed %}border border-dashed border-line-strong{% else %}border border-line-subtle{% endif %}">
+    {{ empty_inner(icon, title, description) }}
+</div>
+{%- endmacro %}
+
+
+{#  The same content without the box, for use inside a <td colspan> or <li>.  #}
+{% macro empty_inner(icon, title, description='') -%}
+<i class="ph {{ icon }} text-5xl text-ink-disabled"></i>
+<p class="mt-4 text-lg font-bold text-ink-strong">{{ title }}</p>
+{% if description %}
+<p class="mt-1.5 text-sm text-ink-muted">{{ description }}</p>
+{% endif %}
+{%- endmacro %}
+
+
+{#  Column heading for a data table.  #}
+{% macro th(label, align='left') -%}
+<th scope="col" class="px-6 py-3 text-{{ align }} text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">{{ label }}</th>
+{%- endmacro %}
