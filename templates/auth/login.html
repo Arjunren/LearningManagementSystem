@@ -1,94 +1,124 @@
 {% extends "base.html" %}
+{% block page_title %}BuildByte Academy — Sign In{% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center flex-grow py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-    <div class="max-w-md w-full bg-white p-10 rounded-2xl shadow-2xl border border-gray-100">
+<div class="flex-grow grid lg:grid-cols-2">
 
-        <!-- Header & Logo Section -->
-        <div class="text-center mb-8">
-            <!-- Brand Identity -->
-            <div class="flex items-center justify-center gap-3 mb-6">
-                <img src="https://buildbyteacademy.vercel.app/Icon.png" alt="BuildByte Academy Logo"
-                    class="w-10 h-10 object-contain drop-shadow-sm">
-                <span class="font-bold text-2xl text-gray-900 tracking-tight">BuildByte Academy</span>
-            </div>
+    <!-- Brand panel: desktop only, sets the tone before the form is read -->
+    <aside class="hidden lg:flex flex-col justify-between bg-brand-600 text-white p-12 relative overflow-hidden">
+        <svg class="absolute -right-20 top-1/2 -translate-y-1/2 w-[400px] h-[400px] opacity-[0.11] pointer-events-none" viewBox="0 0 400 400" fill="none" aria-hidden="true">
+            <rect x="0"   y="0"   width="104" height="48" rx="12" fill="white"/>
+            <rect x="120" y="0"   width="48"  height="48" rx="12" fill="white"/>
+            <rect x="0"   y="64"  width="48"  height="48" rx="12" fill="white"/>
+            <rect x="64"  y="64"  width="104" height="48" rx="12" fill="white"/>
+            <rect x="0"   y="128" width="104" height="48" rx="12" fill="white"/>
+            <rect x="120" y="128" width="48"  height="48" rx="12" fill="white"/>
+            <rect x="0"   y="192" width="48"  height="48" rx="12" fill="white"/>
+            <rect x="64"  y="192" width="104" height="48" rx="12" fill="white"/>
+        </svg>
 
-            <!-- Page Title -->
-            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome Back</h2>
-            <p class="mt-2 text-sm text-gray-500 font-medium">Access your student learning portal</p>
+        <div class="relative flex items-center gap-3">
+            <img src="/static/images/Icon.png" alt="" class="h-10 w-10 rounded-lg object-contain bg-white/10 p-1"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+            <span style="display:none" class="h-10 w-10 rounded-lg bg-white/15 items-center justify-center text-lg font-bold">B</span>
+            <span class="text-lg font-bold tracking-tight">BuildByte Academy</span>
         </div>
 
-        <form class="space-y-6" action="{{ url_for('auth.login') }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="relative max-w-sm">
+            <h1 class="text-4xl font-bold leading-[1.1] tracking-tight">Build skills that compile.</h1>
+            <p class="mt-4 text-base text-white/80 leading-relaxed">
+                Work through lessons, quizzes and hands-on activities, then earn a verifiable certificate for every course you finish.
+            </p>
+            <ul class="mt-8 space-y-3 text-sm text-white/90">
+                <li class="flex items-center gap-3"><i class="ph-fill ph-check-circle text-lg"></i> Track every grade in one gradebook</li>
+                <li class="flex items-center gap-3"><i class="ph-fill ph-check-circle text-lg"></i> Practise in the built-in code playground</li>
+                <li class="flex items-center gap-3"><i class="ph-fill ph-check-circle text-lg"></i> Certificates anyone can verify online</li>
+            </ul>
+        </div>
 
-            <div class="space-y-5">
-                <!-- Email Input -->
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
-                    <div class="relative rounded-md shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="ph ph-envelope text-gray-400 text-lg"></i>
+        <p class="relative text-xs text-white/60">&copy; BuildByte Academy</p>
+    </aside>
+
+    <!-- Form side -->
+    <main class="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-12 bg-surface-page">
+        <div class="w-full max-w-md">
+
+            <div class="bg-surface-raised border border-line-subtle rounded-xl shadow-card p-8 sm:p-10">
+
+                <!-- BRAND LOCKUP — logo placeholder + brand name -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="/static/images/Icon.png" alt="BuildByte Academy" class="h-14 w-14 rounded-xl object-contain"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                    <span style="display:none" class="h-14 w-14 rounded-xl bg-brand-600 text-white items-center justify-center text-2xl font-bold">B</span>
+                    <p class="mt-3 text-lg font-bold text-ink-strong tracking-tight">BuildByte Academy</p>
+                    <p class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.12em]">Student Portal</p>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <h2 class="text-2xl font-bold text-ink-strong tracking-tight">Welcome back</h2>
+                    <p class="mt-1.5 text-sm text-ink-muted">Sign in to continue your courses.</p>
+                </div>
+
+                <form class="mt-8 space-y-5" action="{{ url_for('auth.login') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-ink mb-1.5">Email address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-envelope text-lg text-ink-disabled"></i>
+                            </span>
+                            <input id="email" name="email" type="email" autocomplete="email" required
+                                   placeholder="student@example.com"
+                                   class="block w-full pl-10 pr-3 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 transition">
                         </div>
-                        <input id="email" name="email" type="email" required
-                            class="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-200"
-                            placeholder="student@example.com">
                     </div>
-                </div>
 
-                <!-- Password Input -->
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
-                    <div class="relative rounded-md shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="ph ph-lock text-gray-400 text-lg"></i>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-ink mb-1.5">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-lock text-lg text-ink-disabled"></i>
+                            </span>
+                            <input id="password" name="password" type="password" autocomplete="current-password" required
+                                   placeholder="••••••••"
+                                   class="block w-full pl-10 pr-11 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 transition">
+                            <button type="button" onclick="togglePassword()" aria-label="Show or hide password"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-ink-disabled hover:text-ink transition-colors">
+                                <i class="ph ph-eye text-lg" id="eye-icon"></i>
+                            </button>
                         </div>
-                        <input id="password" name="password" type="password" required
-                            class="appearance-none block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-200"
-                            placeholder="••••••••">
-                        <button type="button" onclick="togglePassword()"
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-600 transition-colors duration-200 focus:outline-none">
-                            <i class="ph ph-eye text-xl" id="eye-icon"></i>
-                        </button>
                     </div>
-                </div>
+
+                    <div class="flex items-center justify-between gap-4">
+                        <label for="remember-me" class="flex items-center gap-2 text-sm text-ink cursor-pointer">
+                            <input id="remember-me" name="remember-me" type="checkbox"
+                                   class="h-4 w-4 rounded border-line-strong text-brand-600 focus:ring-brand-600 cursor-pointer">
+                            Remember me
+                        </label>
+                        <a href="{{ url_for('auth.forgot_password') }}" class="text-sm font-semibold text-brand-600 hover:text-brand-700">
+                            Forgot password?
+                        </a>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 transition-colors">
+                        Sign in
+                    </button>
+                </form>
+
+                <p class="mt-8 pt-6 border-t border-line-subtle text-center text-sm text-ink-muted">
+                    Don't have an account?
+                    <a href="{{ url_for('auth.register') }}" class="font-semibold text-brand-600 hover:text-brand-700">Register now</a>
+                </p>
             </div>
 
-            <!-- Remember Me & Forgot Password -->
-            <div class="flex items-center justify-between mt-6">
-                <div class="flex items-center">
-                    <input id="remember-me" name="remember-me" type="checkbox"
-                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer transition duration-150">
-                    <label for="remember-me" class="ml-2 block text-sm text-gray-700 cursor-pointer"> Remember me
-                    </label>
-                </div>
-                <div class="text-sm">
-                    <a href="{{ url_for('auth.forgot_password') }}"
-                        class="font-semibold text-blue-600 hover:text-blue-500 transition duration-150">
-                        Forgot password?
-                    </a>
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="pt-2">
-                <button type="submit"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5">
-                    Sign In
-                </button>
-            </div>
-        </form>
-
-        <!-- Registration Link -->
-        <div class="mt-8 text-center border-t border-gray-100 pt-6">
-            <p class="text-sm text-gray-600">
-                Don't have an account?
-                <a href="{{ url_for('auth.register') }}"
-                    class="font-semibold text-blue-600 hover:text-blue-500 transition duration-150">
-                    Register Now
-                </a>
+            <p class="mt-6 text-center text-xs text-ink-muted">
+                Teaching here?
+                <a href="{{ url_for('auth.loginteacher') }}" class="font-semibold text-teacher-700 hover:text-teacher-800">Teacher sign in</a>
             </p>
         </div>
-    </div>
+    </main>
 </div>
 {% endblock %}
 

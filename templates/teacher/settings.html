@@ -1,17 +1,64 @@
 {% extends "teacher_base.html" %}
 {% block teacher_title %}Account Settings{% endblock %}
+
 {% block app_content %}
 <div class="max-w-2xl">
-    <h1 class="text-3xl font-bold text-gray-900">Change Password</h1>
-    <p class="mt-2 text-gray-600">Use a new password with at least 8 characters.</p>
-    <div class="mt-7 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <header class="mb-8">
+        <h1 class="text-3xl font-bold text-ink-strong tracking-tight">Change password</h1>
+        <p class="mt-2 text-[15px] text-ink-muted">Use a new password with at least 8 characters.</p>
+    </header>
+
+    <section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
         <form method="POST" class="p-6 space-y-5">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div><label class="block text-sm font-medium text-gray-700">Current password</label><input name="current_password" type="password" required autocomplete="current-password" class="mt-1 w-full border rounded-md px-3 py-2"></div>
-            <div><label class="block text-sm font-medium text-gray-700">New password</label><input name="new_password" type="password" required minlength="8" autocomplete="new-password" class="mt-1 w-full border rounded-md px-3 py-2"></div>
-            <div><label class="block text-sm font-medium text-gray-700">Confirm new password</label><input name="confirm_password" type="password" required minlength="8" autocomplete="new-password" class="mt-1 w-full border rounded-md px-3 py-2"></div>
-            <div class="flex justify-end"><button class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">Update Password</button></div>
+
+            <div>
+                <label for="current_password" class="block text-sm font-medium text-ink mb-1.5">Current password</label>
+                <input name="current_password" id="current_password" type="password" required autocomplete="current-password"
+                       class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-teacher-700 focus:border-teacher-700 transition">
+            </div>
+
+            <div>
+                <label for="new_password" class="block text-sm font-medium text-ink mb-1.5">New password</label>
+                <input name="new_password" id="new_password" type="password" required minlength="8" autocomplete="new-password"
+                       class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-teacher-700 focus:border-teacher-700 transition">
+                <p class="mt-1.5 text-xs text-ink-muted">Minimum 8 characters.</p>
+            </div>
+
+            <div>
+                <label for="confirm_password" class="block text-sm font-medium text-ink mb-1.5">Confirm new password</label>
+                <input name="confirm_password" id="confirm_password" type="password" required minlength="8" autocomplete="new-password"
+                       class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-teacher-700 focus:border-teacher-700 transition">
+                <p id="match-hint" class="mt-1.5 text-xs text-danger-600 hidden">Passwords don't match yet.</p>
+            </div>
+
+            <div class="flex justify-end pt-1">
+                <button type="submit"
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-teacher-700 text-white text-sm font-semibold shadow-sm hover:bg-teacher-800 transition-colors">
+                    Update password
+                </button>
+            </div>
         </form>
-    </div>
+    </section>
 </div>
+{% endblock %}
+
+{% block app_scripts %}
+<script>
+    (function () {
+        const pw = document.getElementById('new_password');
+        const confirm = document.getElementById('confirm_password');
+        const hint = document.getElementById('match-hint');
+        if (!pw || !confirm || !hint) return;
+
+        function check() {
+            const mismatch = confirm.value.length > 0 && pw.value !== confirm.value;
+            hint.classList.toggle('hidden', !mismatch);
+            confirm.classList.toggle('border-danger-600', mismatch);
+            confirm.classList.toggle('border-line-strong', !mismatch);
+        }
+        pw.addEventListener('input', check);
+        confirm.addEventListener('input', check);
+    })();
+</script>
 {% endblock %}

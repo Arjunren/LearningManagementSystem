@@ -2,148 +2,171 @@
 {% block teacher_title %}Grade Submissions{% endblock %}
 
 {% block app_content %}
-<div class="mb-6 flex justify-between items-center">
+<div class="mb-6">
     <a href="{{ url_for('teacher_submissions.index') }}"
-        class="text-emerald-600 hover:text-emerald-800 flex items-center text-sm font-medium">
-        <i class="ph ph-arrow-left mr-1"></i> Back to Course List
+       class="inline-flex items-center gap-1.5 text-sm font-semibold text-teacher-700 hover:text-teacher-800 w-max">
+        <i class="ph ph-arrow-left text-base"></i> Back to course list
     </a>
 </div>
 
-<div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Submissions: {{ course.title }}</h1>
-    <p class="mt-1 text-sm text-gray-500">Enter grades for student submissions.</p>
-</div>
+<header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink-strong tracking-tight">Submissions — {{ course.title }}</h1>
+    <p class="mt-2 text-[15px] text-ink-muted">Enter grades for student submissions.</p>
+</header>
 
-<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Final
-                        Grade</th>
-                    <th scope="col"
-                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                {% for item in students %}
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                            <div>
-                                <div class="text-sm font-medium text-gray-900">{{ item.user.full_name }}</div>
-                                <div class="text-sm text-gray-500">{{ item.user.email }}</div>
-                            </div>
+<div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
+
+    <!-- Table: md and up -->
+    <table class="hidden md:table min-w-full">
+        <thead>
+            <tr class="border-b border-line-subtle bg-surface-page">
+                <th scope="col" class="px-6 py-3 text-left text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Student</th>
+                <th scope="col" class="px-6 py-3 text-left text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Progress</th>
+                <th scope="col" class="px-6 py-3 text-left text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Final grade</th>
+                <th scope="col" class="px-6 py-3 text-right text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-line-subtle">
+            {% for item in students %}
+            <tr class="hover:bg-surface-page transition-colors">
+                <td class="px-6 py-4">
+                    <div class="text-sm font-semibold text-ink-strong">{{ item.user.full_name }}</div>
+                    <div class="text-[13px] text-ink-muted">{{ item.user.email }}</div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-medium text-ink-strong tabular-nums">{{ item.enrollment.progress }}%</span>
+                        <div class="w-24 bg-surface-sunken rounded-full h-1.5 overflow-hidden">
+                            <div class="bg-teacher-600 h-1.5 rounded-full" style="width: {{ item.enrollment.progress }}%"></div>
                         </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                            <span class="text-sm text-gray-900 mr-2">{{ item.enrollment.progress }}%</span>
-                            <div class="w-24 bg-gray-200 rounded-full h-1.5">
-                                <div class="bg-emerald-600 h-1.5 rounded-full"
-                                    style="width: {{ item.enrollment.progress }}%"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        {% if item.grade %}
-                        <span
-                            class="text-sm font-bold {% if item.grade.final_grade >= 90 %}text-green-600{% elif item.grade.final_grade >= 70 %}text-emerald-600{% else %}text-red-600{% endif %}">
-                            {{ "%.1f"|format(item.grade.final_grade) }}%
-                        </span>
-                        {% else %}
-                        <span class="text-sm text-gray-400">Not graded</span>
-                        {% endif %}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button type="button"
-                            class="grade-modal-btn text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-md transition-colors"
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    {% if item.grade %}
+                    <span class="text-sm font-bold {% if item.grade.final_grade >= 90 %}text-success-700{% elif item.grade.final_grade >= 70 %}text-teacher-700{% else %}text-danger-600{% endif %}">
+                        {{ "%.1f"|format(item.grade.final_grade) }}%
+                    </span>
+                    {% else %}
+                    <span class="text-sm text-ink-disabled">Not graded</span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <button type="button"
+                            class="grade-modal-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-surface-teacher text-teacher-800 text-sm font-semibold hover:bg-teacher-700 hover:text-white transition-colors"
                             data-user-id="{{ item.user.id }}" data-user-name="{{ item.user.full_name }}">
-                            Edit Grades
-                        </button>
+                        <i class="ph ph-pencil-simple text-base"></i> Edit grades
+                    </button>
 
-                        <script type="application/json" id="assessments-{{ item.user.id }}">
+                    <script type="application/json" id="assessments-{{ item.user.id }}">
         {{ item.assessments|tojson }}
     </script>
-                    </td>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="px-6 py-12 text-center">
+                    <i class="ph ph-users text-5xl text-ink-disabled"></i>
+                    <p class="mt-3 text-sm text-ink-muted">No students enrolled in this course.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
+    <!-- Stacked cards: below md -->
+    <ul class="md:hidden divide-y divide-line-subtle">
+        {% for item in students %}
+        <li class="p-5">
+            <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <p class="text-sm font-bold text-ink-strong truncate">{{ item.user.full_name }}</p>
+                    <p class="text-[13px] text-ink-muted truncate">{{ item.user.email }}</p>
+                </div>
+                <div class="shrink-0 text-right">
+                    {% if item.grade %}
+                    <span class="text-base font-bold {% if item.grade.final_grade >= 90 %}text-success-700{% elif item.grade.final_grade >= 70 %}text-teacher-700{% else %}text-danger-600{% endif %}">
+                        {{ "%.1f"|format(item.grade.final_grade) }}%
+                    </span>
+                    {% else %}
+                    <span class="text-[13px] text-ink-disabled">Not graded</span>
+                    {% endif %}
+                </div>
+            </div>
 
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
-                        No students enrolled in this course.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            <div class="mt-3 flex items-center gap-3">
+                <span class="text-xs font-medium text-ink-muted tabular-nums">{{ item.enrollment.progress }}%</span>
+                <div class="flex-1 bg-surface-sunken rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-teacher-600 h-1.5 rounded-full" style="width: {{ item.enrollment.progress }}%"></div>
+                </div>
+            </div>
+
+            <button type="button"
+                    class="grade-modal-btn mt-4 w-full inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-surface-teacher text-teacher-800 text-sm font-semibold hover:bg-teacher-700 hover:text-white transition-colors"
+                    data-user-id="{{ item.user.id }}" data-user-name="{{ item.user.full_name }}">
+                <i class="ph ph-pencil-simple text-base"></i> Edit grades
+            </button>
+        </li>
+        {% else %}
+        <li class="px-6 py-12 text-center">
+            <i class="ph ph-users text-5xl text-ink-disabled"></i>
+            <p class="mt-3 text-sm text-ink-muted">No students enrolled in this course.</p>
+        </li>
+        {% endfor %}
+    </ul>
 </div>
 
 <!-- Grade Modal -->
 <div id="grade-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
-            onclick="closeGradeModal()"></div>
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        <div
-            class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-            <form action="{{ url_for('teacher_submissions.detail', course_id=course.id) }}" method="POST">
+    <div class="fixed inset-0 bg-ink-strong/60 backdrop-blur-[2px]" aria-hidden="true" onclick="closeGradeModal()"></div>
+
+    <div class="relative flex min-h-full items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="w-full sm:max-w-2xl bg-surface-raised rounded-t-xl sm:rounded-xl shadow-raised overflow-hidden max-h-[92vh] flex flex-col">
+            <form action="{{ url_for('teacher_submissions.detail', course_id=course.id) }}" method="POST" class="flex flex-col min-h-0">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="user_id" id="modal_user_id">
 
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                            <h3 class="text-xl leading-6 font-bold text-gray-900 mb-2" id="modal-title">
-                                Grade Student: <span id="modal_student_name" class="text-emerald-600"></span>
-                            </h3>
-                            <p class="text-sm text-gray-500 mb-6">Enter scores for the required assessments. The final
-                                grade is calculated automatically.</p>
-
-                            {% if not graded_procedures %}
-                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
-                                <div class="flex">
-                                    <div class="ml-3">
-                                        <p class="text-sm text-yellow-700">
-                                            This course has no procedures configured for grading.
-                                            Add graded procedures (Quizzes, Activities, Projects) in Course Content.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            {% else %}
-                            <div class="space-y-4 max-h-96 overflow-y-auto pr-2" id="assessment_container">
-                                <!-- Dynamic fields inserted here by JS -->
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
+                <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page">
+                    <h3 class="text-lg font-bold text-ink-strong" id="modal-title">
+                        Grade student: <span id="modal_student_name" class="text-teacher-700"></span>
+                    </h3>
+                    <p class="mt-1 text-[13px] text-ink-muted">
+                        Enter scores for the required assessments. The final grade is calculated automatically.
+                    </p>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200">
-                    <button type="submit" {% if not graded_procedures %}disabled{% endif %}
-                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                        Save Grades
-                    </button>
+
+                <div class="px-5 sm:px-6 py-5 overflow-y-auto scrollbar-slim">
+                    {% if not graded_procedures %}
+                    <div class="flex gap-3 p-4 rounded-md bg-surface-warning border border-warning-600/20">
+                        <i class="ph ph-warning text-warning-800 text-xl shrink-0"></i>
+                        <p class="text-[13px] text-warning-800 leading-relaxed">
+                            This course has no procedures configured for grading.
+                            Add graded procedures (quizzes, activities, projects) in Course Content.
+                        </p>
+                    </div>
+                    {% else %}
+                    <div class="space-y-4" id="assessment_container">
+                        <!-- Dynamic fields inserted here by JS -->
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="px-5 sm:px-6 py-4 bg-surface-page border-t border-line-subtle flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                     <button type="button" onclick="closeGradeModal()"
-                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            class="inline-flex justify-center items-center px-4 py-2.5 rounded-md bg-surface-raised border border-line-strong text-ink text-sm font-semibold hover:bg-surface-sunken transition-colors">
                         Cancel
+                    </button>
+                    <button type="submit" {% if not graded_procedures %}disabled{% endif %}
+                            class="inline-flex justify-center items-center px-4 py-2.5 rounded-md bg-teacher-700 text-white text-sm font-semibold shadow-sm hover:bg-teacher-800 disabled:bg-surface-sunken disabled:text-ink-disabled disabled:shadow-none disabled:cursor-not-allowed transition-colors">
+                        Save grades
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block app_scripts %}
 <script>
     function openGradeModal(userId, userName, assessments) {
         document.getElementById('modal_user_id').value = userId;
@@ -157,16 +180,14 @@
         assessments.forEach(item => {
             const attempts = item.attempts || [];
             if (attempts.length === 0) {
-                // If there are no attempts, we can't grade it yet, but show it's pending submission
+                // No attempts yet: show the assessment, but nothing to grade.
                 const html = `
-                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between mb-4">
-                        <div class="mb-3 sm:mb-0">
-                            <div class="flex items-center space-x-2 mb-1">
-                                <span class="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-200 px-2 py-0.5 rounded">${item.type}</span>
-                                <h4 class="text-sm font-bold text-gray-900">${item.title}</h4>
-                            </div>
-                            <div class="text-xs text-gray-500 mt-2">No attempts submitted yet.</div>
+                    <div class="rounded-md border border-line-subtle bg-surface-page p-4">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-sm bg-surface-sunken text-ink text-[10px] font-semibold uppercase tracking-[0.09em]">${item.type}</span>
+                            <h4 class="text-sm font-bold text-ink-strong">${item.title}</h4>
                         </div>
+                        <p class="mt-2 text-xs text-ink-muted">No attempts submitted yet.</p>
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', html);
@@ -177,46 +198,45 @@
             attempts.forEach(attempt => {
                 const scoreVal = attempt.score !== null ? attempt.score : '';
                 const passStatusHtml = attempt.status === 'PASSED'
-                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">PASSED</span>`
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded-sm bg-surface-success text-success-800 text-[11px] font-semibold">PASSED</span>`
                     : attempt.status === 'FAILED'
-                        ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">FAILED</span>`
-                        : `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">REVIEW PENDING</span>`;
-                        
+                        ? `<span class="inline-flex items-center px-2 py-0.5 rounded-sm bg-surface-danger text-danger-800 text-[11px] font-semibold">FAILED</span>`
+                        : `<span class="inline-flex items-center px-2 py-0.5 rounded-sm bg-surface-warning text-warning-800 text-[11px] font-semibold">REVIEW PENDING</span>`;
+
                 attemptsHtml += `
-                    <div class="mt-3 p-3 bg-white border border-gray-200 rounded flex justify-between items-center">
+                    <div class="mt-3 p-3 bg-surface-raised border border-line-subtle rounded-md flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                         <div class="text-sm">
-                            <span class="font-bold text-gray-700">Attempt ${attempt.attempt_number}</span>
-                            <span class="text-xs text-gray-500 ml-2">(${attempt.submitted_at ? attempt.submitted_at.slice(0,10) : 'Unknown'})</span>
-                            <div class="mt-1">${passStatusHtml}</div>
+                            <span class="font-semibold text-ink-strong">Attempt ${attempt.attempt_number}</span>
+                            <span class="text-xs text-ink-muted ml-2">(${attempt.submitted_at ? attempt.submitted_at.slice(0,10) : 'Unknown'})</span>
+                            <div class="mt-1.5">${passStatusHtml}</div>
                         </div>
-                        <div class="flex items-center">
-                            <div class="relative rounded-md shadow-sm w-32">
-                                <input type="number" name="score_${item.id}_${attempt.attempt_id}" value="${scoreVal}"
-                                    min="0"
-                                    max="${attempt.max_score}"
-                                    step="0.1"
-                                    class="focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-3 pr-10 sm:text-sm border-gray-300 rounded-md py-2 border"
-                                    placeholder="Score">
-                            </div>
+                        <div class="w-full sm:w-32">
+                            <label class="sr-only" for="score_${item.id}_${attempt.attempt_id}">Score for attempt ${attempt.attempt_number}</label>
+                            <input type="number" id="score_${item.id}_${attempt.attempt_id}" name="score_${item.id}_${attempt.attempt_id}" value="${scoreVal}"
+                                min="0"
+                                max="${attempt.max_score}"
+                                step="0.1"
+                                class="block w-full px-3 py-2 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-teacher-700 focus:border-teacher-700 transition"
+                                placeholder="Score">
                         </div>
                     </div>
                 `;
             });
 
             const html = `
-                <div class="bg-gray-50 border border-gray-300 rounded-lg p-4 mb-4">
-                    <div class="flex items-center space-x-2 mb-1">
-                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-200 px-2 py-0.5 rounded">${item.type}</span>
-                        <h4 class="text-sm font-bold text-gray-900">${item.title}</h4>
+                <div class="rounded-md border border-line-subtle bg-surface-page p-4">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-sm bg-surface-sunken text-ink text-[10px] font-semibold uppercase tracking-[0.09em]">${item.type}</span>
+                        <h4 class="text-sm font-bold text-ink-strong">${item.title}</h4>
                     </div>
-                    <div class="text-xs text-gray-500 flex items-center space-x-3 mt-2 border-b border-gray-200 pb-3">
-                        <span>Max Score: <strong>${item.max_score}</strong></span>
-                        <span>Passing Score: <strong>${item.passing_score}</strong></span>
-                        <span>Current Status: <strong>${item.current_status}</strong></span>
+                    <div class="mt-2 pb-3 border-b border-line-subtle flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-muted">
+                        <span>Max score: <strong class="text-ink">${item.max_score}</strong></span>
+                        <span>Passing score: <strong class="text-ink">${item.passing_score}</strong></span>
+                        <span>Current status: <strong class="text-ink">${item.current_status}</strong></span>
                     </div>
-                    
-                    <div class="mt-2">
-                        <h5 class="text-xs font-medium text-gray-700 uppercase tracking-wider">Attempt History</h5>
+
+                    <div class="mt-3">
+                        <h5 class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Attempt history</h5>
                         ${attemptsHtml}
                     </div>
                 </div>
@@ -225,50 +245,41 @@
         });
 
         document.getElementById('grade-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
     }
 
     function closeGradeModal() {
         document.getElementById('grade-modal').classList.add('hidden');
+        document.body.style.overflow = '';
     }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeGradeModal();
+    });
 </script>
 
 <script>
     document.querySelectorAll('.grade-modal-btn').forEach(function (button) {
         button.addEventListener('click', function () {
-
-            console.log('EDIT GRADES CLICKED');
-
             const userId = this.dataset.userId;
             const userName = this.dataset.userName;
-
-            console.log('User:', userId);
-            console.log('Name:', userName);
 
             const dataElement = document.getElementById(
                 'assessments-' + userId
             );
 
-            console.log('Data element:', dataElement);
-
             if (!dataElement) {
-                console.error('Assessment data NOT FOUND');
+                console.error('Assessment data NOT FOUND for user ' + userId);
                 return;
             }
 
-            console.log('Raw assessment data:', dataElement.textContent);
-
             try {
                 const assessments = JSON.parse(dataElement.textContent);
-
-                console.log('Parsed assessments:', assessments);
-
                 openGradeModal(userId, userName, assessments);
-
             } catch (error) {
                 console.error('JSON PARSE ERROR:', error);
             }
         });
     });
 </script>
-
 {% endblock %}

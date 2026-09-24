@@ -1,18 +1,49 @@
 <!-- shared/certificate_layout.html -->
 <!-- Requires Tailwind CSS to be loaded in the parent document -->
+<!--
+    On-screen and print preview of a certificate. Every geometry value stays in
+    `cqi` against the fixed 1.414:1 wrapper so the sheet scales identically at
+    any width and prints at exact A4 landscape.
+
+    IDs are a contract with admin/certificate_form.html, which drives this
+    preview live: certificate-container, cert-drag-name, cert-preview-name,
+    cert-preview-course, cert-preview-date, cert-preview-id,
+    cert-preview-prof-name, cert-preview-prof-role, cert-preview-sig-img.
+
+    Colour changes in this pass: the sky accent (#0284c7) moved to the system's
+    brand-600 (#2563eb), which also lifts it from 4.2:1 to 5.2:1 on white; the
+    footer labels moved from #94a3b8 (2.5:1 — failing) to ink-muted #64748b.
+    Nothing else about the layout moved.
+-->
 <style>
     .cert-wrapper {
         container-type: inline-size;
         width: 100%;
         max-width: 1123px;
+
+        /* The sheet never reflows — every size inside it is in `cqi`, so the
+           whole thing scales as one piece and the A4 proportions always hold.
+           But scaling down without a floor made it illegible: at a 360px
+           viewport the body line landed at 4px and "SCAN TO VERIFY" at 2.6px.
+           So it stops shrinking here and the parent scrolls sideways instead,
+           the way you'd pan a PDF page on a phone. Shape is still exact.
+
+           An including page can override the floor — the certificate editor
+           sets it to 0 so its preview always fits the panel it drags in. */
+        min-width: var(--cert-sheet-min, 800px);
+
+        /* Centres when the sheet fits its container. When it doesn't, auto
+           margins collapse to 0 so it starts flush left and the whole sheet
+           stays reachable by scrolling. */
+        margin-inline: auto;
+
         aspect-ratio: 1.414 / 1;
         position: relative;
         background-color: white;
         overflow: hidden;
         border: 1px solid #e2e8f0;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
         font-family: 'Inter', sans-serif;
-        box-sizing: border-box;
     }
 
     /* Print specific styling */
@@ -33,7 +64,8 @@
             width: 297mm;
             height: 210mm;
             max-width: none;
-            box-sizing: border-box;
+            /* The on-screen floor must not fight the paper size. */
+            min-width: 0;
         }
     }
 
@@ -46,7 +78,7 @@
         font-size: 50cqi;
         font-weight: 900;
         color: #f8fafc;
-        /* slate-50 */
+        /* surface-page */
         z-index: 0;
         user-select: none;
         line-height: 1;
@@ -82,12 +114,15 @@
     }
 
     .cert-active-badge {
-        background-color: #e0f2fe;
-        color: #0284c7;
+        background-color: #dbeafe;
+        /* surface-brand */
+        color: #1d4ed8;
+        /* brand-700 — 5.6:1 on the tint */
         padding: 0.5cqi 1.2cqi;
         border-radius: 9999px;
         font-size: 1.1cqi;
         font-weight: 700;
+        letter-spacing: 0.06em;
         display: flex;
         align-items: center;
         gap: 0.5cqi;
@@ -96,7 +131,7 @@
     .cert-active-dot {
         width: 0.8cqi;
         height: 0.8cqi;
-        background-color: #3b82f6;
+        background-color: #2563eb;
         border-radius: 50%;
     }
 
@@ -111,7 +146,8 @@
     .cert-header {
         font-size: 1.4cqi;
         font-weight: 700;
-        color: #0284c7;
+        color: #2563eb;
+        /* brand-600 */
         letter-spacing: 0.1em;
         text-transform: uppercase;
         margin-bottom: 2cqi;
@@ -136,7 +172,8 @@
     .cert-footer-label {
         font-size: 0.9cqi;
         font-weight: 700;
-        color: #94a3b8;
+        color: #64748b;
+        /* ink-muted — 4.8:1, was #94a3b8 at 2.5:1 */
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin-bottom: 0.5cqi;
@@ -149,8 +186,10 @@
     }
 
     .cert-id-val {
-        color: #d97706;
-        font-family: monospace;
+        color: #b45309;
+        /* warning, darkened to 4.9:1 on white */
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 0.02em;
     }
 
     .cert-bottom-left {
@@ -199,13 +238,16 @@
         font-weight: 700;
         color: #0f172a;
         text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
 
     .cert-sig-role {
         font-size: 0.9cqi;
         font-weight: 600;
-        color: #0284c7;
+        color: #2563eb;
+        /* brand-600 */
         text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .cert-logo-icon {
@@ -240,12 +282,12 @@
         </div>
 
         <!-- Dynamic Name Position -->
-        <div class="cert-element" id="cert-drag-name" style="left: {{ template_config.name_x if template_config and template_config.name_x else 50 }}%; 
+        <div class="cert-element" id="cert-drag-name" style="left: {{ template_config.name_x if template_config and template_config.name_x else 50 }}%;
                     top: {{ template_config.name_y if template_config and template_config.name_y else 40 }}%;">
-            <div style="font-size: {{ template_config.font_size if template_config and template_config.font_size else 5.7 }}cqi; 
+            <div style="font-size: {{ template_config.font_size if template_config and template_config.font_size else 5.7 }}cqi;
                         font-family: {{ template_config.font_family if template_config and template_config.font_family else 'Inter' }}, sans-serif;
                         font-weight: {{ template_config.font_weight if template_config and template_config.font_weight else 800 }};
-                        color: #0f172a; line-height: 1.1;" id="cert-preview-name">
+                        color: #0f172a; line-height: 1.1; letter-spacing: -0.02em;" id="cert-preview-name">
                 {{ student_name | default('Jarek Melgar') }}
             </div>
         </div>
@@ -260,7 +302,7 @@
 
         <!-- Course Title -->
         <div class="cert-element" style="left: 50%; top: 64%;">
-            <div style="font-size: 2.5cqi; font-weight: 700; color: #0284c7;" id="cert-preview-course">
+            <div style="font-size: 2.5cqi; font-weight: 700; color: #2563eb;" id="cert-preview-course">
                 {{ course_name | default('Advanced AWS Architecture') }}
             </div>
         </div>
@@ -274,7 +316,7 @@
             </div>
             <div>
                 <div class="cert-footer-label">CERTIFICATE ID</div>
-                <div class="cert-footer-val cert-id-val" id="cert-preview-id">{{ cert_id | default('Assigned when issued') }}
+                <div class="cert-footer-val cert-id-val" id="cert-preview-id">{{ cert_id | default('SAMPLE-2026-X9A') }}
                 </div>
             </div>
         </div>
@@ -301,7 +343,7 @@
         </div>
 
         <div class="cert-bottom-right">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ qr_url | default('https://buildbyteacademy.vercel.app/certificate.html') | urlencode }}"
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ qr_url | default('https://buildbyteacademy.vercel.app/certificate.html?id=SAMPLE-2026-X9A') | urlencode }}"
                 class="cert-qr" alt="QR Code">
             <div class="cert-footer-label" style="margin-top: 0.5cqi; font-size: 0.7cqi;">SCAN TO VERIFY</div>
         </div>

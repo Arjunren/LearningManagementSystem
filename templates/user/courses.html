@@ -1,68 +1,81 @@
 {% extends "app_base.html" %}
+{% block page_title %}Courses — BuildByte Academy{% endblock %}
 
 {% block app_content %}
-<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
     <div>
-        <h1 class="text-3xl font-bold text-gray-900">Course Catalog</h1>
-        <p class="mt-2 text-gray-600">Discover new skills and expand your knowledge.</p>
+        <h1 class="text-3xl font-bold text-ink-strong tracking-tight">Course catalog</h1>
+        <p class="mt-2 text-[15px] text-ink-muted">Discover new skills and expand your knowledge.</p>
     </div>
     <div class="w-full md:w-72 relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="ph ph-magnifying-glass text-gray-400"></i>
-        </div>
+        <label for="courseSearch" class="sr-only">Search courses</label>
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ph ph-magnifying-glass text-ink-disabled"></i>
+        </span>
         <input type="text" id="courseSearch" placeholder="Search courses..."
-            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+               class="block w-full pl-10 pr-3 py-2.5 rounded-md border border-line-strong bg-surface-raised text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 transition">
     </div>
-</div>
+</header>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="courseGrid">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="courseGrid">
     {% for course in courses %}
-    <div class="course-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-md"
-        data-title="{{ course.title | lower }}" data-desc="{{ course.description | lower }}">
-        <div class="h-48 bg-gray-200 flex items-center justify-center relative">
+    <article class="course-card bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden flex flex-col transition-shadow hover:shadow-raised"
+             data-title="{{ course.title | lower }}" data-desc="{{ course.description | lower }}">
+        <div class="h-44 bg-surface-sunken flex items-center justify-center relative overflow-hidden">
             {% if course.id in enrolled_course_ids %}
-            <div class="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">ENROLLED
-            </div>
+            <span class="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2 py-1 rounded-sm bg-surface-brand text-brand-700 text-[11px] font-semibold uppercase tracking-[0.09em] ring-1 ring-brand-600/20">
+                <i class="ph-fill ph-check-circle text-xs"></i> Enrolled
+            </span>
             {% endif %}
             {% if course.thumbnail %}
-            <img src="{{ course.thumbnail }}" class="w-full h-full object-cover">
+            <img src="{{ course.thumbnail }}" alt="" class="w-full h-full object-cover">
             {% else %}
-            <i class="ph ph-image text-5xl text-gray-400"></i>
+            <i class="ph ph-image text-5xl text-ink-disabled"></i>
             {% endif %}
         </div>
-        <div class="p-5 flex-1 flex flex-col">
-            <div class="flex justify-between items-start mb-2">
-                <h3 class="text-xl font-bold text-gray-900">{{ course.title }}</h3>
-            </div>
-            <div class="flex items-center text-sm text-gray-500 mb-3 space-x-4">
-                <span class="flex items-center"><i class="ph ph-user mr-1"></i> {{ course.instructor }}</span>
-                <span class="flex items-center"><i class="ph ph-chart-bar mr-1"></i> {{ course.difficulty }}</span>
-            </div>
-            <p class="text-sm text-gray-600 mb-6 flex-1 line-clamp-3">{{ course.description }}</p>
 
-            <div class="mt-auto">
-                <a href="{{ url_for('courses.detail', course_id=course.id) }}"
-                    class="w-full block py-2 px-4 border border-blue-600 rounded-md shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-blue-50 text-center transition">
-                    View Details
-                </a>
+        <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-bold text-ink-strong leading-snug">{{ course.title }}</h3>
+
+            <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-ink-muted">
+                <span class="inline-flex items-center gap-1.5"><i class="ph ph-user text-base"></i> {{ course.instructor }}</span>
+                <span class="inline-flex items-center gap-1.5"><i class="ph ph-chart-bar text-base"></i> {{ course.difficulty }}</span>
             </div>
+
+            <p class="mt-3 text-[13px] text-ink-muted leading-relaxed flex-1 line-clamp-3">{{ course.description }}</p>
+
+            <a href="{{ url_for('courses.detail', course_id=course.id) }}"
+               class="mt-6 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-surface-raised border border-brand-600 text-brand-600 text-sm font-semibold hover:bg-surface-brand transition-colors">
+                View details
+            </a>
         </div>
-    </div>
+    </article>
     {% else %}
-    <div class="col-span-full bg-white rounded-xl border border-gray-200 p-12 text-center">
-        <h3 class="text-lg font-medium text-gray-900">No courses available</h3>
-        <p class="mt-1 text-sm text-gray-500">Check back later for new content.</p>
+    <div class="col-span-full bg-surface-raised rounded-lg border border-line-subtle px-6 py-14 text-center">
+        <i class="ph ph-books text-5xl text-ink-disabled"></i>
+        <h3 class="mt-4 text-lg font-bold text-ink-strong">No courses available</h3>
+        <p class="mt-1.5 text-sm text-ink-muted">Check back later for new content.</p>
     </div>
     {% endfor %}
+</div>
+
+<!-- Shown when the search filters everything out -->
+<div id="noSearchResults" class="hidden bg-surface-raised rounded-lg border border-line-subtle px-6 py-14 text-center">
+    <i class="ph ph-magnifying-glass text-5xl text-ink-disabled"></i>
+    <h3 class="mt-4 text-lg font-bold text-ink-strong">No matching courses</h3>
+    <p class="mt-1.5 text-sm text-ink-muted">Try a different search term.</p>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById('courseSearch');
         const cards = document.querySelectorAll('.course-card');
+        const empty = document.getElementById('noSearchResults');
+        if (!searchInput) return;
 
         searchInput.addEventListener('input', function (e) {
             const term = e.target.value.toLowerCase().trim();
+            let visible = 0;
 
             cards.forEach(card => {
                 const title = card.getAttribute('data-title') || '';
@@ -70,10 +83,13 @@
 
                 if (title.includes(term) || desc.includes(term)) {
                     card.style.display = 'flex';
+                    visible++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+
+            if (empty) empty.classList.toggle('hidden', visible > 0 || cards.length === 0);
         });
     });
 </script>

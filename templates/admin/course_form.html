@@ -1,76 +1,86 @@
 {% extends "admin_base.html" %}
+{% block admin_title %}{% if course %}Edit Course{% else %}New Course{% endif %}{% endblock %}
 
 {% block app_content %}
-<div class="mb-6 flex justify-between items-center">
-    <a href="{{ url_for('admin_courses.index') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm font-medium">
-        <i class="ph ph-arrow-left mr-1"></i> Back to Courses
+<div class="mb-6">
+    <a href="{{ url_for('admin_courses.index') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-admin-600 hover:text-admin-700 w-max">
+        <i class="ph ph-arrow-left text-base"></i> Back to courses
     </a>
 </div>
 
-<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-    <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
-        <h3 class="text-lg leading-6 font-medium text-gray-900">{% if course %}Edit Course{% else %}Create New Course{% endif %}</h3>
-    </div>
-    <div class="p-6">
-        <form action="" method="POST">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
-                <div class="sm:col-span-2">
-                    <label for="title" class="block text-sm font-medium text-gray-700">Course Title</label>
-                    <div class="mt-1">
-                        <input type="text" name="title" id="title" value="{{ course.title if course else '' }}" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
-                    </div>
-                </div>
-                
-                <div class="sm:col-span-2">
-                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                    <div class="mt-1">
-                        <textarea id="description" name="description" rows="4" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md py-2 px-3">{{ course.description if course else '' }}</textarea>
-                    </div>
-                </div>
+<div class="max-w-3xl">
+    <section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
+        <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page">
+            <h1 class="text-lg font-bold text-ink-strong">{% if course %}Edit course{% else %}Create new course{% endif %}</h1>
+            <p class="mt-1 text-[13px] text-ink-muted">
+                {% if course %}Changes take effect as soon as you save.{% else %}A course starts as a draft — publish it when the content is ready.{% endif %}
+            </p>
+        </div>
 
-                <div>
-                    <label for="instructor" class="block text-sm font-medium text-gray-700">Instructor Name</label>
-                    <div class="mt-1">
-                        <input type="text" name="instructor" id="instructor" value="{{ course.instructor if course else session.get('admin_name') }}" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
-                    </div>
-                </div>
+        <div class="p-6">
+            <form action="" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                <div>
-                    <label for="difficulty" class="block text-sm font-medium text-gray-700">Difficulty</label>
-                    <div class="mt-1">
-                        <select id="difficulty" name="difficulty" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="sm:col-span-2">
+                        <label for="title" class="block text-sm font-medium text-ink mb-1.5">Course title</label>
+                        <input type="text" name="title" id="title" value="{{ course.title if course else '' }}" required
+                               class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-admin-600 focus:border-admin-600 transition">
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label for="description" class="block text-sm font-medium text-ink mb-1.5">Description</label>
+                        <textarea id="description" name="description" rows="4" required
+                                  class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-admin-600 focus:border-admin-600 transition">{{ course.description if course else '' }}</textarea>
+                        <p class="mt-1.5 text-xs text-ink-muted">Shown on the catalogue card and the course page.</p>
+                    </div>
+
+                    <div>
+                        <label for="instructor" class="block text-sm font-medium text-ink mb-1.5">Instructor name</label>
+                        <input type="text" name="instructor" id="instructor" value="{{ course.instructor if course else session.get('admin_name') }}" required
+                               class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-admin-600 focus:border-admin-600 transition">
+                    </div>
+
+                    <div>
+                        <label for="difficulty" class="block text-sm font-medium text-ink mb-1.5">Difficulty</label>
+                        <select id="difficulty" name="difficulty"
+                                class="block w-full px-3 py-2.5 rounded-md border border-line-strong bg-surface-raised text-ink text-sm focus:outline-none focus:ring-2 focus:ring-admin-600 focus:border-admin-600 transition">
                             <option value="Beginner" {% if course and course.difficulty == 'Beginner' %}selected{% endif %}>Beginner</option>
                             <option value="Intermediate" {% if course and course.difficulty == 'Intermediate' %}selected{% endif %}>Intermediate</option>
                             <option value="Advanced" {% if course and course.difficulty == 'Advanced' %}selected{% endif %}>Advanced</option>
                         </select>
                     </div>
-                </div>
-                
-                <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                    <div class="mt-1">
-                        <select id="status" name="status" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-ink mb-1.5">Status</label>
+                        <select id="status" name="status"
+                                class="block w-full px-3 py-2.5 rounded-md border border-line-strong bg-surface-raised text-ink text-sm focus:outline-none focus:ring-2 focus:ring-admin-600 focus:border-admin-600 transition">
                             <option value="draft" {% if course and course.status == 'draft' %}selected{% endif %}>Draft</option>
                             <option value="published" {% if course and course.status == 'published' %}selected{% endif %}>Published</option>
                         </select>
+                        <p class="mt-1.5 text-xs text-ink-muted">Only published courses appear in the catalogue.</p>
+                    </div>
+
+                    <div>
+                        <label for="thumbnail" class="block text-sm font-medium text-ink mb-1.5">Thumbnail URL</label>
+                        <input type="url" name="thumbnail" id="thumbnail" value="{{ course.thumbnail if course else '' }}"
+                               placeholder="https://example.com/image.jpg"
+                               class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 focus:ring-admin-600 focus:border-admin-600 transition">
                     </div>
                 </div>
-                
-                <div>
-                    <label for="thumbnail" class="block text-sm font-medium text-gray-700">Thumbnail URL</label>
-                    <div class="mt-1">
-                        <input type="url" name="thumbnail" id="thumbnail" value="{{ course.thumbnail if course else '' }}" placeholder="https://example.com/image.jpg" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
-                    </div>
+
+                <div class="mt-8 pt-6 border-t border-line-subtle flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+                    <a href="{{ url_for('admin_courses.index') }}"
+                       class="inline-flex items-center justify-center px-4 py-2.5 rounded-md bg-surface-raised border border-line-strong text-ink text-sm font-semibold hover:bg-surface-sunken transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-admin-600 text-white text-sm font-semibold shadow-sm hover:bg-admin-700 transition-colors">
+                        {% if course %}Update course{% else %}Create course{% endif %}
+                    </button>
                 </div>
-            </div>
-            
-            <div class="mt-8 flex justify-end">
-                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    {% if course %}Update Course{% else %}Create Course{% endif %}
-                </button>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
+    </section>
 </div>
 {% endblock %}

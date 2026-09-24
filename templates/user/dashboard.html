@@ -1,18 +1,131 @@
 {% extends "app_base.html" %}
+{% block page_title %}Dashboard — BuildByte Academy{% endblock %}
 
 {% block app_content %}
-<div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ user.full_name }}!</h1>
-    <p class="mt-2 text-gray-600">Here's your learning progress overview.</p>
-</div>
+<header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink-strong tracking-tight">Welcome back, {{ user.full_name }}</h1>
+    <p class="mt-2 text-[15px] text-ink-muted">Here's your learning progress overview.</p>
+</header>
+
+{#
+  WHAT'S NEW — a carousel of clickable poster tiles.
+
+  Each slide is a banner image wrapped in a single <a>: the whole tile is the
+  button, and clicking it goes to that item's `url`.
+
+  Needs `announcements` in the dashboard view's context — a list of dicts:
+    image  the poster (any URL your app can serve). No image falls back to a
+           tinted tile with the type icon, so a missing file never looks broken.
+    url    where the tile goes. Without it the tile renders un-clickable
+           rather than linking nowhere.
+    title  required; shown under the image and used as the link's name.
+    type   'event' | 'announcement' | 'deadline' — sets chip and icon.
+    date, course_title  optional.
+  See DASHBOARD_DATA_NOTES.md. Without the variable the section renders its
+  empty state — it never invents items.
+#}
+{% set ann_styles = {
+    'event':        {'icon': 'ph-calendar-dots', 'chip': 'bg-surface-brand text-brand-700',     'label': 'Event'},
+    'deadline':     {'icon': 'ph-clock-countdown', 'chip': 'bg-surface-warning text-warning-800', 'label': 'Deadline'},
+    'announcement': {'icon': 'ph-megaphone',     'chip': 'bg-surface-sunken text-ink',          'label': 'Announcement'}
+} %}
+
+<section aria-labelledby="whats-new-heading" class="mb-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
+        <div>
+            <h2 id="whats-new-heading" class="text-lg font-bold text-ink-strong">What's new</h2>
+            <p class="mt-1 text-[13px] text-ink-muted">Events, announcements and deadlines from your instructors.</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <div class="relative flex-1 md:w-64">
+                <label for="annSearch" class="sr-only">Search announcements</label>
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="ph ph-magnifying-glass text-ink-disabled"></i>
+                </span>
+                <input type="search" id="annSearch" placeholder="Search..."
+                       class="block w-full pl-10 pr-3 py-2 rounded-md border border-line-strong bg-surface-raised text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 transition">
+            </div>
+            <button type="button" id="annPrev" aria-label="Previous announcements" aria-controls="annTrack"
+                    class="shrink-0 h-9 w-9 inline-flex items-center justify-center rounded-md border border-line-strong bg-surface-raised text-ink hover:bg-surface-sunken disabled:text-ink-disabled disabled:hover:bg-surface-raised disabled:cursor-not-allowed transition-colors">
+                <i class="ph ph-caret-left text-base"></i>
+            </button>
+            <button type="button" id="annNext" aria-label="Next announcements" aria-controls="annTrack"
+                    class="shrink-0 h-9 w-9 inline-flex items-center justify-center rounded-md border border-line-strong bg-surface-raised text-ink hover:bg-surface-sunken disabled:text-ink-disabled disabled:hover:bg-surface-raised disabled:cursor-not-allowed transition-colors">
+                <i class="ph ph-caret-right text-base"></i>
+            </button>
+        </div>
+    </div>
+
+    {% if announcements is defined and announcements %}
+    <div id="annTrack" tabindex="0" role="group" aria-label="Announcements carousel"
+         class="flex gap-4 overflow-x-auto scrollbar-slim snap-x snap-mandatory pb-2 -mx-1 px-1">
+        {% for a in announcements %}
+        {% set style = ann_styles.get(a.type, ann_styles['announcement']) %}
+        {% set blob = (a.title | default('', true) ~ ' ' ~ a.body | default('', true) ~ ' ' ~ a.course_title | default('', true)) %}
+
+        {#  The whole tile is one <a> so the image itself is the button.
+            No url => a plain <div>, so nothing links nowhere.  #}
+        <{% if a.url %}a href="{{ a.url }}"{% else %}div{% endif %}
+            class="ann-card group snap-start shrink-0 w-[20rem] sm:w-[23rem] bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden flex flex-col no-underline {% if a.url %}transition-all hover:shadow-raised hover:border-brand-600 focus-visible:border-brand-600{% endif %}"
+            data-search="{{ blob | lower }}">
+
+            <div class="relative aspect-[16/9] bg-surface-brand overflow-hidden">
+                {% if a.image %}
+                <img src="{{ a.image }}" alt=""
+                     class="absolute inset-0 h-full w-full object-cover {% if a.url %}transition-transform duration-300 group-hover:scale-[1.03]{% endif %}">
+                {% else %}
+                <span class="absolute inset-0 flex items-center justify-center">
+                    <i class="ph {{ style.icon }} text-5xl text-brand-600/35"></i>
+                </span>
+                {% endif %}
+
+                <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-1 rounded-sm {{ style.chip }} text-[11px] font-semibold uppercase tracking-[0.09em] shadow-card">
+                    <i class="ph {{ style.icon }} text-xs"></i> {{ style.label }}
+                </span>
+
+                {% if a.date %}
+                <time class="absolute top-3 right-3 px-2 py-1 rounded-sm bg-surface-raised/95 text-ink text-[11px] font-semibold tabular-nums shadow-card">{{ a.date[:10] }}</time>
+                {% endif %}
+            </div>
+
+            <div class="p-4 flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <h3 class="text-[15px] font-bold text-ink-strong leading-snug line-clamp-2">{{ a.title }}</h3>
+                    <p class="mt-1 text-xs text-ink-muted truncate">{{ a.course_title | default('BuildByte Academy', true) }}</p>
+                </div>
+                {% if a.url %}
+                <span aria-hidden="true"
+                      class="shrink-0 mt-0.5 h-8 w-8 rounded-md bg-surface-sunken text-ink-muted flex items-center justify-center transition-colors group-hover:bg-brand-600 group-hover:text-white">
+                    <i class="ph ph-arrow-right text-base"></i>
+                </span>
+                {% endif %}
+            </div>
+        </{% if a.url %}a{% else %}div{% endif %}>
+        {% endfor %}
+    </div>
+
+    <p id="annNoResults" class="hidden mt-2 rounded-lg border border-dashed border-line-strong bg-surface-raised px-5 py-8 text-center text-sm text-ink-muted">
+        No announcements match that search.
+    </p>
+    {% else %}
+    <div class="rounded-lg border border-dashed border-line-strong bg-surface-raised px-6 py-14 text-center">
+        <i class="ph ph-megaphone text-4xl text-ink-disabled"></i>
+        <p class="mt-3 text-sm font-semibold text-ink-strong">Nothing new right now</p>
+        <p class="mt-1 text-[13px] text-ink-muted">Events and announcements from your instructors will appear here.</p>
+    </div>
+    {% endif %}
+</section>
 
 <!-- Tabs -->
-<div class="border-b border-gray-200 mb-6">
-    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-        <button id="tab-progress" onclick="switchTab('progress')" class="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none">
+<div class="border-b border-line-subtle mb-6">
+    <nav class="-mb-px flex gap-8" aria-label="Tabs">
+        <button id="tab-progress" onclick="switchTab('progress')"
+                class="border-brand-600 text-brand-600 whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm focus:outline-none transition-colors">
             In Progress
         </button>
-        <button id="tab-completed" onclick="switchTab('completed')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none">
+        <button id="tab-completed" onclick="switchTab('completed')"
+                class="border-transparent text-ink-muted hover:text-ink hover:border-line-strong whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm focus:outline-none transition-colors">
             Completed
         </button>
     </nav>
@@ -21,49 +134,48 @@
 <!-- In Progress Tab -->
 <div id="content-progress">
     {% if in_progress %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for item in in_progress %}
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-md">
-                <div class="h-40 bg-blue-100 flex items-center justify-center">
+            <article class="group bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden flex flex-col transition-shadow hover:shadow-raised">
+                <div class="h-40 bg-surface-brand flex items-center justify-center overflow-hidden">
                     {% if item.course.thumbnail %}
-                        <img src="{{ item.course.thumbnail }}" class="w-full h-full object-cover">
+                        <img src="{{ item.course.thumbnail }}" alt="" class="w-full h-full object-cover">
                     {% else %}
-                        <i class="ph ph-image text-4xl text-blue-300"></i>
+                        <i class="ph ph-image text-4xl text-brand-600/40"></i>
                     {% endif %}
                 </div>
                 <div class="p-5 flex-1 flex flex-col">
-                    <h3 class="text-lg font-bold text-gray-900 mb-1">{{ item.course.title }}</h3>
-                    <p class="text-sm text-gray-500 mb-4 flex-1 line-clamp-2">{{ item.course.description }}</p>
-                    
-                    <div class="mb-4">
-                        <div class="flex justify-between text-xs text-gray-500 mb-1">
-                            <span>Progress</span>
-                            <span>{{ item.enrollment.progress }}%</span>
+                    <h3 class="text-base font-bold text-ink-strong leading-snug">{{ item.course.title }}</h3>
+                    <p class="mt-1.5 text-[13px] text-ink-muted leading-relaxed flex-1 line-clamp-2">{{ item.course.description }}</p>
+
+                    <div class="mt-5">
+                        <div class="flex justify-between items-baseline mb-1.5">
+                            <span class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Progress</span>
+                            <span class="text-sm font-bold text-ink-strong">{{ item.enrollment.progress }}%</span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-blue-600 h-2 rounded-full" style="width: {{ item.enrollment.progress }}%"></div>
+                        <div class="w-full bg-surface-sunken rounded-full h-2 overflow-hidden"
+                             role="progressbar" aria-valuenow="{{ item.enrollment.progress }}" aria-valuemin="0" aria-valuemax="100">
+                            <div class="bg-brand-600 h-2 rounded-full transition-all duration-500" style="width: {{ item.enrollment.progress }}%"></div>
                         </div>
                     </div>
-                    
-                    <a href="{{ url_for('courses.learn', enrollment_id=item.enrollment.id) }}" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 text-center">
-                        Resume Course
+
+                    <a href="{{ url_for('courses.learn', enrollment_id=item.enrollment.id) }}"
+                       class="mt-5 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 transition-colors">
+                        Resume course
                     </a>
                 </div>
-            </div>
+            </article>
             {% endfor %}
         </div>
     {% else %}
-        <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
-                <i class="ph ph-books text-5xl"></i>
-            </div>
-            <h3 class="text-lg font-medium text-gray-900">No courses in progress</h3>
-            <p class="mt-1 text-sm text-gray-500">Get started by enrolling in a new course.</p>
-            <div class="mt-6">
-                <a href="{{ url_for('courses.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                    Browse Courses
-                </a>
-            </div>
+        <div class="bg-surface-raised rounded-lg border border-line-subtle px-6 py-14 text-center">
+            <i class="ph ph-books text-5xl text-ink-disabled"></i>
+            <h3 class="mt-4 text-lg font-bold text-ink-strong">No courses in progress</h3>
+            <p class="mt-1.5 text-sm text-ink-muted">Get started by enrolling in a new course.</p>
+            <a href="{{ url_for('courses.index') }}"
+               class="mt-6 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 transition-colors">
+                Browse courses
+            </a>
         </div>
     {% endif %}
 </div>
@@ -71,62 +183,148 @@
 <!-- Completed Tab -->
 <div id="content-completed" class="hidden">
     {% if completed %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for item in completed %}
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-md">
-                <div class="h-40 bg-green-100 flex items-center justify-center relative">
-                    <div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">COMPLETED</div>
+            <article class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden flex flex-col transition-shadow hover:shadow-raised">
+                <div class="h-40 bg-surface-success flex items-center justify-center relative overflow-hidden">
+                    <span class="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2 py-1 rounded-sm bg-surface-success text-success-800 text-[11px] font-semibold uppercase tracking-[0.09em] ring-1 ring-success-600/20">
+                        <i class="ph-fill ph-check-circle text-xs"></i> Completed
+                    </span>
                     {% if item.course.thumbnail %}
-                        <img src="{{ item.course.thumbnail }}" class="w-full h-full object-cover">
+                        <img src="{{ item.course.thumbnail }}" alt="" class="w-full h-full object-cover">
                     {% else %}
-                        <i class="ph ph-check-circle text-4xl text-green-400"></i>
+                        <i class="ph ph-check-circle text-4xl text-success-600/50"></i>
                     {% endif %}
                 </div>
                 <div class="p-5 flex-1 flex flex-col">
-                    <h3 class="text-lg font-bold text-gray-900 mb-1">{{ item.course.title }}</h3>
-                    <p class="text-sm text-gray-500 mb-4 flex-1">Completed on: {{ item.enrollment.completed_at[:10] if item.enrollment.completed_at else 'Unknown' }}</p>
-                    
-                    <div class="mt-auto flex space-x-3">
-                        <a href="{{ url_for('courses.learn', enrollment_id=item.enrollment.id) }}" class="flex-1 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 text-center">
+                    <h3 class="text-base font-bold text-ink-strong leading-snug">{{ item.course.title }}</h3>
+                    <p class="mt-1.5 text-[13px] text-ink-muted flex-1">
+                        Completed {{ item.enrollment.completed_at[:10] if item.enrollment.completed_at else 'Unknown' }}
+                    </p>
+
+                    <div class="mt-5 flex gap-3">
+                        <a href="{{ url_for('courses.learn', enrollment_id=item.enrollment.id) }}"
+                           class="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-md bg-surface-raised border border-line-strong text-ink text-sm font-semibold hover:bg-surface-sunken transition-colors">
                             Review
                         </a>
                         <form action="{{ url_for('certificates.generate', enrollment_id=item.enrollment.id) }}" method="POST" class="flex-1">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 text-center">
-                                Certificate
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit"
+                                    class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-md bg-success-700 text-white text-sm font-semibold shadow-sm hover:bg-success-800 transition-colors">
+                                <i class="ph ph-certificate text-base"></i> Certificate
                             </button>
                         </form>
                     </div>
                 </div>
-            </div>
+            </article>
             {% endfor %}
         </div>
     {% else %}
-        <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
-                <i class="ph ph-certificate text-5xl"></i>
-            </div>
-            <h3 class="text-lg font-medium text-gray-900">No completed courses</h3>
-            <p class="mt-1 text-sm text-gray-500">Keep learning to earn your first certificate!</p>
+        <div class="bg-surface-raised rounded-lg border border-line-subtle px-6 py-14 text-center">
+            <i class="ph ph-certificate text-5xl text-ink-disabled"></i>
+            <h3 class="mt-4 text-lg font-bold text-ink-strong">No completed courses</h3>
+            <p class="mt-1.5 text-sm text-ink-muted">Keep learning to earn your first certificate.</p>
         </div>
     {% endif %}
 </div>
+
 {% endblock %}
 
 {% block app_scripts %}
 <script>
+    const TAB_ACTIVE = "border-brand-600 text-brand-600 whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm focus:outline-none transition-colors";
+    const TAB_IDLE = "border-transparent text-ink-muted hover:text-ink hover:border-line-strong whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm focus:outline-none transition-colors";
+
     function switchTab(tab) {
-        if (tab === 'progress') {
-            document.getElementById('tab-progress').className = "border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none";
-            document.getElementById('tab-completed').className = "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none";
-            document.getElementById('content-progress').classList.remove('hidden');
-            document.getElementById('content-completed').classList.add('hidden');
-        } else {
-            document.getElementById('tab-completed').className = "border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none";
-            document.getElementById('tab-progress').className = "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none";
-            document.getElementById('content-completed').classList.remove('hidden');
-            document.getElementById('content-progress').classList.add('hidden');
-        }
+        const isProgress = tab === 'progress';
+        document.getElementById('tab-progress').className = isProgress ? TAB_ACTIVE : TAB_IDLE;
+        document.getElementById('tab-completed').className = isProgress ? TAB_IDLE : TAB_ACTIVE;
+        document.getElementById('content-progress').classList.toggle('hidden', !isProgress);
+        document.getElementById('content-completed').classList.toggle('hidden', isProgress);
     }
+
+    /* ---------------------------------------------- What's new carousel ---
+       Plain DOM + native scroll-snap: no carousel library, no CDN. The track
+       is a real horizontally scrollable region, so trackpad swipe, shift-wheel
+       and touch drag all work before any of this JS runs.
+    ----------------------------------------------------------------------- */
+    (function () {
+        const track = document.getElementById('annTrack');
+        const prev = document.getElementById('annPrev');
+        const next = document.getElementById('annNext');
+        const search = document.getElementById('annSearch');
+        const noResults = document.getElementById('annNoResults');
+
+        // Empty state: the track isn't rendered, so park the controls.
+        if (!track) {
+            if (prev) prev.disabled = true;
+            if (next) next.disabled = true;
+            if (search) search.disabled = true;
+            return;
+        }
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const behavior = reduceMotion ? 'auto' : 'smooth';
+
+        function visibleCards() {
+            return Array.prototype.filter.call(
+                track.querySelectorAll('.ann-card'),
+                function (c) { return c.style.display !== 'none'; }
+            );
+        }
+
+        function step() {
+            const card = visibleCards()[0];
+            if (!card) return track.clientWidth;
+            const gap = parseFloat(getComputedStyle(track).columnGap || '16') || 16;
+            return card.offsetWidth + gap;
+        }
+
+        function syncButtons() {
+            // The track carries 4px of scroll padding so card shadows aren't
+            // clipped, and scroll-snap lands on 4 rather than 0 at rest. An
+            // exact `<= 1` test therefore left Previous enabled on load, so the
+            // threshold allows for that padding plus sub-pixel rounding.
+            const EDGE = 12;
+            const maxScroll = track.scrollWidth - track.clientWidth;
+            const atStart = track.scrollLeft <= EDGE;
+            const atEnd = track.scrollLeft >= maxScroll - EDGE;
+            const nothingToScroll = maxScroll <= EDGE;
+            prev.disabled = atStart || nothingToScroll;
+            next.disabled = atEnd || nothingToScroll;
+        }
+
+        prev.addEventListener('click', function () {
+            track.scrollBy({ left: -step(), behavior: behavior });
+        });
+        next.addEventListener('click', function () {
+            track.scrollBy({ left: step(), behavior: behavior });
+        });
+
+        track.addEventListener('scroll', syncButtons, { passive: true });
+        window.addEventListener('resize', syncButtons);
+
+        if (search) {
+            search.addEventListener('input', function (e) {
+                const term = e.target.value.toLowerCase().trim();
+                let shown = 0;
+
+                track.querySelectorAll('.ann-card').forEach(function (card) {
+                    const hay = card.getAttribute('data-search') || '';
+                    const match = hay.includes(term);
+                    card.style.display = match ? 'flex' : 'none';
+                    if (match) shown++;
+                });
+
+                track.classList.toggle('hidden', shown === 0);
+                if (noResults) noResults.classList.toggle('hidden', shown > 0);
+
+                track.scrollTo({ left: 0, behavior: 'auto' });
+                syncButtons();
+            });
+        }
+
+        syncButtons();
+    })();
 </script>
 {% endblock %}

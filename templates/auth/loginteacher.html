@@ -2,45 +2,102 @@
 {% block page_title %}BuildByte Academy — Teacher Login{% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center flex-grow py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-    <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-xl border-t-4 border-emerald-500">
-        <div class="text-center">
-            <img src="/static/images/Icon.png" alt="BuildByte Academy" class="h-16 w-16 mx-auto mb-4" onerror="this.style.display='none'">
-            <h2 class="mt-2 text-3xl font-extrabold text-gray-900">Teacher Portal</h2>
-            <p class="mt-2 text-sm text-gray-600">Sign in to manage your courses and grades</p>
-        </div>
-        <form class="mt-8 space-y-6" action="{{ url_for('auth.loginteacher') }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="rounded-md shadow-sm space-y-4">
-                <div>
-                    <label for="email" class="sr-only">Email address</label>
-                    <input id="email" name="email" type="email" required class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm" placeholder="Email address">
-                </div>
-                <div class="relative">
-                    <label for="password" class="sr-only">Password</label>
-                    <input id="password" name="password" type="password" required class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm" placeholder="Password">
-                    <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500">
-                        <i class="ph ph-eye text-xl" id="eye-icon"></i>
-                    </button>
-                </div>
-            </div>
+<div class="flex-grow grid lg:grid-cols-2">
 
-            <div>
-                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-150 shadow-sm">
-                    Sign In as Teacher
-                </button>
-            </div>
-            <div class="text-right -mt-3">
-                <a href="{{ url_for('auth.teacher_forgot_password') }}" class="text-sm font-medium text-emerald-700 hover:text-emerald-600">Forgot Password?</a>
-            </div>
-            
-            <div class="text-center mt-4 pt-4 border-t border-gray-100">
-                <p class="text-sm text-gray-600">
-                    Are you a student? <a href="{{ url_for('auth.login') }}" class="font-medium text-blue-600 hover:text-blue-500 transition duration-150">Student Login</a>
+    <aside class="hidden lg:flex flex-col justify-between bg-teacher-700 text-white p-12 relative overflow-hidden">
+        <svg class="absolute -right-20 top-1/2 -translate-y-1/2 w-[400px] h-[400px] opacity-[0.11] pointer-events-none" viewBox="0 0 400 400" fill="none" aria-hidden="true">
+            <rect x="0"   y="0"   width="104" height="48" rx="12" fill="white"/>
+            <rect x="120" y="0"   width="48"  height="48" rx="12" fill="white"/>
+            <rect x="0"   y="64"  width="48"  height="48" rx="12" fill="white"/>
+            <rect x="64"  y="64"  width="104" height="48" rx="12" fill="white"/>
+            <rect x="0"   y="128" width="104" height="48" rx="12" fill="white"/>
+            <rect x="120" y="128" width="48"  height="48" rx="12" fill="white"/>
+        </svg>
+
+        <div class="relative flex items-center gap-3">
+            <img src="/static/images/Icon.png" alt="" class="h-10 w-10 rounded-lg object-contain bg-white/10 p-1"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+            <span style="display:none" class="h-10 w-10 rounded-lg bg-white/15 items-center justify-center text-lg font-bold">B</span>
+            <span class="text-lg font-bold tracking-tight">BuildByte Academy</span>
+        </div>
+
+        <div class="relative max-w-sm">
+            <h1 class="text-4xl font-bold leading-[1.1] tracking-tight">Your courses, your grading queue.</h1>
+            <p class="mt-4 text-base text-white/80 leading-relaxed">
+                Review submissions, publish grades and keep your course content current — all from one portal.
+            </p>
+        </div>
+
+        <p class="relative text-xs text-white/60">&copy; BuildByte Academy</p>
+    </aside>
+
+    <main class="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-12 bg-surface-page">
+        <div class="w-full max-w-md">
+            <div class="bg-surface-raised border border-line-subtle rounded-xl shadow-card p-8 sm:p-10">
+
+                <!-- BRAND LOCKUP — logo placeholder + brand name -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="/static/images/Icon.png" alt="BuildByte Academy" class="h-14 w-14 rounded-xl object-contain"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                    <span style="display:none" class="h-14 w-14 rounded-xl bg-teacher-700 text-white items-center justify-center text-2xl font-bold">B</span>
+                    <p class="mt-3 text-lg font-bold text-ink-strong tracking-tight">BuildByte Academy</p>
+                    <p class="text-[11px] font-semibold text-teacher-700 uppercase tracking-[0.12em]">Teacher Portal</p>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <h2 class="text-2xl font-bold text-ink-strong tracking-tight">Teacher sign in</h2>
+                    <p class="mt-1.5 text-sm text-ink-muted">Manage your courses and grades.</p>
+                </div>
+
+                <form class="mt-8 space-y-5" action="{{ url_for('auth.loginteacher') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-ink mb-1.5">Email address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-envelope text-lg text-ink-disabled"></i>
+                            </span>
+                            <input id="email" name="email" type="email" autocomplete="email" required
+                                   placeholder="teacher@example.com"
+                                   class="block w-full pl-10 pr-3 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 focus:ring-teacher-700 focus:border-teacher-700 transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="password" class="block text-sm font-medium text-ink">Password</label>
+                            <a href="{{ url_for('auth.teacher_forgot_password') }}" class="text-sm font-semibold text-teacher-700 hover:text-teacher-800">
+                                Forgot password?
+                            </a>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-lock text-lg text-ink-disabled"></i>
+                            </span>
+                            <input id="password" name="password" type="password" autocomplete="current-password" required
+                                   placeholder="••••••••"
+                                   class="block w-full pl-10 pr-11 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 focus:ring-teacher-700 focus:border-teacher-700 transition">
+                            <button type="button" onclick="togglePassword()" aria-label="Show or hide password"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-ink-disabled hover:text-ink transition-colors">
+                                <i class="ph ph-eye text-lg" id="eye-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-teacher-700 text-white text-sm font-semibold shadow-sm hover:bg-teacher-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-teacher-700 focus-visible:ring-offset-2 transition-colors">
+                        Sign in as teacher
+                    </button>
+                </form>
+
+                <p class="mt-8 pt-6 border-t border-line-subtle text-center text-sm text-ink-muted">
+                    Are you a student?
+                    <a href="{{ url_for('auth.login') }}" class="font-semibold text-brand-600 hover:text-brand-700">Student login</a>
                 </p>
             </div>
-        </form>
-    </div>
+        </div>
+    </main>
 </div>
 {% endblock %}
 

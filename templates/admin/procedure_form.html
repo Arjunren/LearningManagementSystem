@@ -1,33 +1,181 @@
 {% extends "teacher_base.html" if session.get('role') == 'teacher' else "admin_base.html" %}
+
+{#
+  This form is shared by the admin console and the teacher portal, so the
+  accent follows whoever is signed in. Both branches are written out as whole
+  class strings — Tailwind cannot resolve a class assembled from a variable.
+#}
+{% set is_teacher = session.get('role') == 'teacher' %}
+{% set field_focus = 'focus:ring-teacher-700 focus:border-teacher-700' if is_teacher else 'focus:ring-admin-600 focus:border-admin-600' %}
+{% set link_color = 'text-teacher-700 hover:text-teacher-800' if is_teacher else 'text-admin-600 hover:text-admin-700' %}
+{% set submit_color = 'bg-teacher-700 hover:bg-teacher-800' if is_teacher else 'bg-admin-600 hover:bg-admin-700' %}
+
+{% block admin_title %}Edit Procedure{% endblock %}
+{% block teacher_title %}Edit Procedure{% endblock %}
+
 {% block app_content %}
 <div class="max-w-3xl mx-auto">
-  <a href="{{ url_for('admin_courses.content', course_id=course.id) }}" class="text-indigo-600 text-sm font-medium"><i class="ph ph-arrow-left mr-1"></i>Back to course content</a>
-  <div class="mt-6 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-    <div class="px-6 py-5 border-b bg-gray-50"><h1 class="text-xl font-semibold">Edit: {{ procedure.title }}</h1></div>
-    <form method="POST" enctype="multipart/form-data" class="p-6 space-y-5" onsubmit="syncEditor()">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <div><label class="block text-sm font-medium">Title</label><input name="title" required value="{{ procedure.title }}" class="mt-1 w-full border rounded-md px-3 py-2"></div>
-      <div><label class="block text-sm font-medium">Type</label><select id="type" name="type" onchange="toggleFields()" class="mt-1 w-full border rounded-md px-3 py-2">{% for kind in ['video', 'quiz', 'activity', 'project', 'handout'] %}<option value="{{ kind }}" {% if procedure.type == kind %}selected{% endif %}>{{ kind|capitalize }}</option>{% endfor %}</select></div>
-      <div id="video-field" class="hidden"><label class="block text-sm font-medium">YouTube URL</label><input name="youtube_url" type="url" value="{{ procedure.get('youtube_url', '') }}" class="mt-1 w-full border rounded-md px-3 py-2"></div>
-      <div id="quiz-field" class="hidden"><label class="block text-sm font-medium">Google Form URL</label><input name="google_form_url" type="url" value="{{ procedure.get('google_form_url', '') }}" class="mt-1 w-full border rounded-md px-3 py-2"></div>
-      <div id="instructions-field" class="hidden"><label class="block text-sm font-medium">Instructions</label><textarea name="instructions" rows="6" class="mt-1 w-full border rounded-md px-3 py-2">{{ procedure.get('instructions', '') }}</textarea></div>
-      <div id="handout-field" class="hidden space-y-3">
-        <label class="block text-sm font-medium">Handout source</label>
-        <select id="handout_mode" name="handout_mode" onchange="toggleHandoutMode()" class="w-full border rounded-md px-3 py-2"><option value="text" {% if procedure.get('handout_mode') != 'upload' and not procedure.get('file_url') %}selected{% endif %}>Text content</option><option value="upload" {% if procedure.get('handout_mode') == 'upload' or procedure.get('file_url') %}selected{% endif %}>Upload document</option></select>
-        <div id="upload-field" class="hidden"><label class="block text-sm font-medium">Replacement document</label><input type="file" name="handout_file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.zip" class="mt-1 block w-full text-sm">{% if procedure.get('original_filename') %}<p class="mt-1 text-xs text-gray-500">Current: {{ procedure.original_filename }}</p>{% endif %}</div>
-        <div id="text-field"><div class="flex gap-1 border border-b-0 rounded-t-md bg-gray-50 p-2"><button type="button" onclick="cmd('formatBlock','h2')" class="px-2 py-1 text-xs border rounded bg-white">Heading</button><button type="button" onclick="cmd('bold')" class="px-2 py-1 text-xs border rounded bg-white"><b>Bold</b></button><button type="button" onclick="cmd('italic')" class="px-2 py-1 text-xs border rounded bg-white"><i>Italic</i></button><button type="button" onclick="cmd('insertUnorderedList')" class="px-2 py-1 text-xs border rounded bg-white">List</button></div><div id="editor" contenteditable="true" class="min-h-40 border rounded-b-md p-3 leading-6">{{ (procedure.get('content_html') or procedure.get('instructions', '')) | safe_handout_html | safe }}</div><input id="handout_content" name="handout_content" type="hidden"></div>
-      </div>
-      <div id="scores-field" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">Maximum score</label><input name="max_score" type="number" min="1" value="{{ procedure.get('max_score', 100) or 100 }}" class="mt-1 w-full border rounded-md px-3 py-2"></div><div><label class="block text-sm font-medium">Passing score</label><input name="passing_score" type="number" min="0" value="{{ procedure.get('passing_score', 0) or 0 }}" class="mt-1 w-full border rounded-md px-3 py-2"></div></div>
-      <label class="flex items-center gap-2 text-sm font-medium"><input name="required" type="checkbox" {% if procedure.get('required') %}checked{% endif %}> Required for course completion</label>
-      <div class="flex justify-end"><button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md">Save procedure</button></div>
-    </form>
-  </div>
+    <a href="{{ url_for('admin_courses.content', course_id=course.id) }}"
+       class="inline-flex items-center gap-1.5 text-sm font-semibold {{ link_color }} mb-6 w-max">
+        <i class="ph ph-arrow-left text-base"></i> Back to course content
+    </a>
+
+    <section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
+        <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page">
+            <h1 class="text-lg font-bold text-ink-strong">Edit: {{ procedure.title }}</h1>
+            <p class="mt-1 text-[13px] text-ink-muted">Fields change with the procedure type.</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="p-6 space-y-6" onsubmit="syncEditor()">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div>
+                <label for="title" class="block text-sm font-medium text-ink mb-1.5">Title</label>
+                <input name="title" id="title" required value="{{ procedure.title }}"
+                       class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
+            </div>
+
+            <div>
+                <label for="type" class="block text-sm font-medium text-ink mb-1.5">Type</label>
+                <select id="type" name="type" onchange="toggleFields()"
+                        class="block w-full px-3 py-2.5 rounded-md border border-line-strong bg-surface-raised text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
+                    {% for kind in ['video', 'quiz', 'activity', 'project', 'handout'] %}
+                    <option value="{{ kind }}" {% if procedure.type == kind %}selected{% endif %}>{{ kind|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="video-field" class="hidden">
+                <label for="youtube_url" class="block text-sm font-medium text-ink mb-1.5">YouTube URL</label>
+                <input name="youtube_url" id="youtube_url" type="url" value="{{ procedure.get('youtube_url', '') }}"
+                       placeholder="https://www.youtube.com/watch?v=..."
+                       class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
+            </div>
+
+            <div id="quiz-field" class="hidden">
+                <label for="google_form_url" class="block text-sm font-medium text-ink mb-1.5">Google Form URL</label>
+                <input name="google_form_url" id="google_form_url" type="url" value="{{ procedure.get('google_form_url', '') }}"
+                       placeholder="https://forms.gle/..."
+                       class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
+            </div>
+
+            <div id="instructions-field" class="hidden">
+                <label for="instructions" class="block text-sm font-medium text-ink mb-1.5">Instructions</label>
+                <textarea name="instructions" id="instructions" rows="6"
+                          class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm leading-relaxed focus:outline-none focus:ring-2 {{ field_focus }} transition">{{ procedure.get('instructions', '') }}</textarea>
+            </div>
+
+            <div id="handout-field" class="hidden space-y-4">
+                <div>
+                    <label for="handout_mode" class="block text-sm font-medium text-ink mb-1.5">Handout source</label>
+                    <select id="handout_mode" name="handout_mode" onchange="toggleHandoutMode()"
+                            class="block w-full px-3 py-2.5 rounded-md border border-line-strong bg-surface-raised text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
+                        <option value="text" {% if procedure.get('handout_mode') != 'upload' and not procedure.get('file_url') %}selected{% endif %}>Text content</option>
+                        <option value="upload" {% if procedure.get('handout_mode') == 'upload' or procedure.get('file_url') %}selected{% endif %}>Upload document</option>
+                    </select>
+                </div>
+
+                <div id="upload-field" class="hidden">
+                    <label for="handout_file" class="block text-sm font-medium text-ink mb-1.5">Replacement document</label>
+                    <input type="file" name="handout_file" id="handout_file"
+                           accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.zip"
+                           class="block w-full text-sm text-ink file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-surface-sunken file:text-ink hover:file:bg-line-subtle cursor-pointer">
+                    {% if procedure.get('original_filename') %}
+                    <p class="mt-2 inline-flex items-center gap-1.5 text-xs text-ink-muted">
+                        <i class="ph ph-paperclip"></i> Current: {{ procedure.original_filename }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <div id="text-field">
+                    <label class="block text-sm font-medium text-ink mb-1.5">Content</label>
+                    <div class="rounded-md border border-line-strong overflow-hidden">
+                        <div class="flex flex-wrap gap-1 border-b border-line-subtle bg-surface-page p-2">
+                            <button type="button" onclick="cmd('formatBlock','h2')"
+                                    class="px-2.5 py-1.5 text-xs font-semibold rounded-sm bg-surface-raised border border-line-subtle text-ink hover:bg-surface-sunken transition-colors">Heading</button>
+                            <button type="button" onclick="cmd('bold')"
+                                    class="px-2.5 py-1.5 text-xs rounded-sm bg-surface-raised border border-line-subtle text-ink hover:bg-surface-sunken transition-colors"><b>Bold</b></button>
+                            <button type="button" onclick="cmd('italic')"
+                                    class="px-2.5 py-1.5 text-xs rounded-sm bg-surface-raised border border-line-subtle text-ink hover:bg-surface-sunken transition-colors"><i>Italic</i></button>
+                            <button type="button" onclick="cmd('insertUnorderedList')"
+                                    class="px-2.5 py-1.5 text-xs font-semibold rounded-sm bg-surface-raised border border-line-subtle text-ink hover:bg-surface-sunken transition-colors">List</button>
+                        </div>
+                        <div id="editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Handout content"
+                             class="min-h-40 p-4 leading-7 text-ink text-[15px] bg-surface-raised focus:outline-none">{{ procedure.get('content_html', procedure.get('instructions', '')) | safe_handout_html | safe }}</div>
+                    </div>
+                    <input id="handout_content" name="handout_content" type="hidden">
+                </div>
+            </div>
+
+            <div id="scores-field" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="max_score" class="block text-sm font-medium text-ink mb-1.5">Maximum score</label>
+                    <input name="max_score" id="max_score" type="number" min="1" value="{{ procedure.get('max_score', 100) or 100 }}"
+                           class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
+                </div>
+                <div>
+                    <label for="passing_score" class="block text-sm font-medium text-ink mb-1.5">Passing score</label>
+                    <input name="passing_score" id="passing_score" type="number" min="0" value="{{ procedure.get('passing_score', 0) or 0 }}"
+                           class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
+                </div>
+            </div>
+
+            <label for="required" class="flex items-center gap-2.5 text-sm font-medium text-ink cursor-pointer">
+                <input name="required" id="required" type="checkbox" {% if procedure.get('required') %}checked{% endif %}
+                       class="h-4 w-4 rounded border-line-strong {% if is_teacher %}text-teacher-700 focus:ring-teacher-700{% else %}text-admin-600 focus:ring-admin-600{% endif %}">
+                Required for course completion
+            </label>
+
+            <div class="pt-6 border-t border-line-subtle flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+                <a href="{{ url_for('admin_courses.content', course_id=course.id) }}"
+                   class="inline-flex items-center justify-center px-4 py-2.5 rounded-md bg-surface-raised border border-line-strong text-ink text-sm font-semibold hover:bg-surface-sunken transition-colors">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md {{ submit_color }} text-white text-sm font-semibold shadow-sm transition-colors">
+                    Save procedure
+                </button>
+            </div>
+        </form>
+    </section>
 </div>
+
 <script>
-function toggleFields(){const t=document.getElementById('type').value;['video','quiz','instructions','handout','scores'].forEach(x=>document.getElementById(x+'-field').classList.add('hidden'));if(t==='video')document.getElementById('video-field').classList.remove('hidden');else if(t==='quiz'){document.getElementById('quiz-field').classList.remove('hidden');document.getElementById('scores-field').classList.remove('hidden')}else if(t==='handout'){document.getElementById('handout-field').classList.remove('hidden');toggleHandoutMode()}else{document.getElementById('instructions-field').classList.remove('hidden');document.getElementById('scores-field').classList.remove('hidden')}}
-function toggleHandoutMode(){const upload=document.getElementById('handout_mode').value==='upload';document.getElementById('upload-field').classList.toggle('hidden',!upload);document.getElementById('text-field').classList.toggle('hidden',upload)}
-function cmd(c,v=null){document.getElementById('editor').focus();document.execCommand(c,false,v)}
-function syncEditor(){document.getElementById('handout_content').value=document.getElementById('editor').innerHTML}
+function toggleFields() {
+    const t = document.getElementById('type').value;
+    ['video', 'quiz', 'instructions', 'handout', 'scores'].forEach(x =>
+        document.getElementById(x + '-field').classList.add('hidden')
+    );
+
+    if (t === 'video') {
+        document.getElementById('video-field').classList.remove('hidden');
+    } else if (t === 'quiz') {
+        document.getElementById('quiz-field').classList.remove('hidden');
+        document.getElementById('scores-field').classList.remove('hidden');
+    } else if (t === 'handout') {
+        document.getElementById('handout-field').classList.remove('hidden');
+        toggleHandoutMode();
+    } else {
+        document.getElementById('instructions-field').classList.remove('hidden');
+        document.getElementById('scores-field').classList.remove('hidden');
+    }
+}
+
+function toggleHandoutMode() {
+    const upload = document.getElementById('handout_mode').value === 'upload';
+    document.getElementById('upload-field').classList.toggle('hidden', !upload);
+    document.getElementById('text-field').classList.toggle('hidden', upload);
+}
+
+function cmd(c, v = null) {
+    document.getElementById('editor').focus();
+    document.execCommand(c, false, v);
+}
+
+function syncEditor() {
+    document.getElementById('handout_content').value = document.getElementById('editor').innerHTML;
+}
+
 toggleFields();
 </script>
 {% endblock %}

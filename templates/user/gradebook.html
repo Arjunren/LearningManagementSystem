@@ -1,103 +1,134 @@
 {% extends "app_base.html" %}
+{% block page_title %}Gradebook — BuildByte Academy{% endblock %}
 
 {% block app_content %}
-<div class="mb-8 flex justify-between items-end">
-    <div>
-        <h1 class="text-3xl font-bold text-gray-900">Gradebook</h1>
-        <p class="mt-2 text-gray-600">Review your scores and academic performance across all courses.</p>
-    </div>
-</div>
+<header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink-strong tracking-tight">Gradebook</h1>
+    <p class="mt-2 text-[15px] text-ink-muted">Review your scores and academic performance across all courses.</p>
+</header>
 
-<div class="space-y-6" x-data="{ openCourse: null }">
+<div class="space-y-6">
     {% for item in gradebook %}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <!-- Accordion Header -->
-        <button 
-            @click="openCourse === '{{ item.course.id }}' ? openCourse = null : openCourse = '{{ item.course.id }}'"
-            class="w-full px-6 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center focus:outline-none hover:bg-gray-100 transition-colors">
-            <div class="flex items-center text-left">
-                <div class="mr-4 text-gray-400">
-                    <i class="ph" :class="openCourse === '{{ item.course.id }}' ? 'ph-caret-down' : 'ph-caret-right'"></i>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900">{{ item.course.title }}</h2>
-                    <p class="text-sm text-gray-500">Instructor: {{ item.course.instructor }}</p>
+    {#  <details> replaces the Alpine accordion: no CDN dependency and keyboard
+        accessible for free. It also means this page no longer overrides the
+        layout's "scripts" block, which had been wiping out the mobile-sidebar
+        toggle here.  #}
+    <details class="group bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden" {% if loop.first %}open{% endif %}>
+        <summary class="list-none cursor-pointer px-5 sm:px-6 py-5 bg-surface-page hover:bg-surface-sunken transition-colors flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 min-w-0">
+                <i class="ph ph-caret-right text-base text-ink-muted transition-transform duration-200 group-open:rotate-90"></i>
+                <div class="min-w-0">
+                    <h2 class="text-base sm:text-lg font-bold text-ink-strong truncate">{{ item.course.title }}</h2>
+                    <p class="text-[13px] text-ink-muted truncate">Instructor: {{ item.course.instructor }}</p>
                 </div>
             </div>
-            <div class="text-right flex items-center">
-                <div class="mr-6">
-                    <div class="text-xs text-gray-500 mb-1 uppercase tracking-wider font-semibold">Final Grade</div>
-                    {% if item.grade %}
-                        <div class="text-2xl font-bold {% if item.grade.final_grade >= 90 %}text-green-600{% elif item.grade.final_grade >= 70 %}text-blue-600{% elif item.grade.final_grade >= 50 %}text-yellow-600{% else %}text-red-600{% endif %}">
-                            {{ "%.1f"|format(item.grade.final_grade) }}%
+
+            <div class="shrink-0 text-right">
+                <div class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Final grade</div>
+                {% if item.grade %}
+                    <div class="text-2xl font-bold {% if item.grade.final_grade >= 90 %}text-success-700{% elif item.grade.final_grade >= 70 %}text-brand-600{% elif item.grade.final_grade >= 50 %}text-warning-600{% else %}text-danger-600{% endif %}">
+                        {{ "%.1f"|format(item.grade.final_grade) }}%
+                    </div>
+                {% else %}
+                    <div class="text-sm font-semibold text-ink-disabled mt-0.5">Not graded</div>
+                {% endif %}
+            </div>
+        </summary>
+
+        <!-- Table: md and up -->
+        <table class="hidden md:table min-w-full border-t border-line-subtle">
+            <thead>
+                <tr class="border-b border-line-subtle">
+                    <th scope="col" class="px-6 py-3 text-left text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Assessment</th>
+                    <th scope="col" class="px-6 py-3 text-center text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Status</th>
+                    <th scope="col" class="px-6 py-3 text-right text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Score</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-line-subtle">
+                {% for asm in item.assessments %}
+                <tr class="hover:bg-surface-page transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-sm bg-surface-sunken text-ink text-[11px] font-semibold uppercase tracking-[0.09em]">{{ asm.type }}</span>
+                            <span class="text-sm font-medium text-ink-strong">{{ asm.title }}</span>
                         </div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        {% if asm.status == 'PASSED' %}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm bg-surface-success text-success-800 text-xs font-semibold"><i class="ph-fill ph-check-circle text-sm"></i> Passed</span>
+                        {% elif asm.status == 'FAILED' %}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm bg-surface-danger text-danger-800 text-xs font-semibold"><i class="ph-fill ph-x-circle text-sm"></i> Failed</span>
+                        {% else %}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm bg-surface-warning text-warning-800 text-xs font-semibold"><i class="ph ph-clock text-sm"></i> Pending</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        {% if asm.score is not none %}
+                            <div class="text-sm font-bold text-ink-strong">{{ asm.score }} <span class="text-ink-muted text-xs font-normal">/ {{ asm.max_score }}</span></div>
+                            <div class="text-xs text-ink-muted">{{ asm.percentage }}%</div>
+                        {% else %}
+                            <span class="text-sm text-ink-disabled">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" class="px-6 py-12 text-center text-sm text-ink-muted">
+                        No graded assessments configured for this course.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Stacked cards: below md, so nothing scrolls sideways on a phone -->
+        <ul class="md:hidden border-t border-line-subtle divide-y divide-line-subtle">
+            {% for asm in item.assessments %}
+            <li class="px-5 py-4">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-sm bg-surface-sunken text-ink text-[10px] font-semibold uppercase tracking-[0.09em]">{{ asm.type }}</span>
+                        <p class="mt-1.5 text-sm font-medium text-ink-strong">{{ asm.title }}</p>
+                    </div>
+                    <div class="shrink-0 text-right">
+                        {% if asm.score is not none %}
+                            <div class="text-sm font-bold text-ink-strong">{{ asm.score }}<span class="text-ink-muted text-xs font-normal">/{{ asm.max_score }}</span></div>
+                            <div class="text-xs text-ink-muted">{{ asm.percentage }}%</div>
+                        {% else %}
+                            <span class="text-sm text-ink-disabled">—</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mt-2.5">
+                    {% if asm.status == 'PASSED' %}
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm bg-surface-success text-success-800 text-xs font-semibold"><i class="ph-fill ph-check-circle text-sm"></i> Passed</span>
+                    {% elif asm.status == 'FAILED' %}
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm bg-surface-danger text-danger-800 text-xs font-semibold"><i class="ph-fill ph-x-circle text-sm"></i> Failed</span>
                     {% else %}
-                        <div class="text-sm font-medium text-gray-400">Not graded</div>
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm bg-surface-warning text-warning-800 text-xs font-semibold"><i class="ph ph-clock text-sm"></i> Pending</span>
                     {% endif %}
                 </div>
-            </div>
-        </button>
-        
-        <!-- Accordion Content -->
-        <div x-show="openCourse === '{{ item.course.id }}'" x-transition class="p-0">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-white">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assessment</th>
-                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                    {% for asm in item.assessments %}
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 mr-3 uppercase">{{ asm.type }}</span>
-                                <div class="text-sm font-medium text-gray-900">{{ asm.title }}</div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            {% if asm.status == 'PASSED' %}
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Passed</span>
-                            {% elif asm.status == 'FAILED' %}
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Failed</span>
-                            {% else %}
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Pending</span>
-                            {% endif %}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right">
-                            {% if asm.score is not none %}
-                                <div class="text-sm font-bold text-gray-900">{{ asm.score }} <span class="text-gray-500 text-xs font-normal">/ {{ asm.max_score }}</span></div>
-                                <div class="text-xs text-gray-500">{{ asm.percentage }}%</div>
-                            {% else %}
-                                <span class="text-sm text-gray-400">-</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="3" class="px-6 py-8 text-center text-sm text-gray-500">
-                            No graded assessments configured for this course.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+            </li>
+            {% else %}
+            <li class="px-6 py-12 text-center text-sm text-ink-muted">
+                No graded assessments configured for this course.
+            </li>
+            {% endfor %}
+        </ul>
+    </details>
     {% else %}
-    <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
-        <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
-            <i class="ph ph-exam text-5xl"></i>
-        </div>
-        <h3 class="text-lg font-medium text-gray-900">No grades available</h3>
-        <p class="mt-1 text-sm text-gray-500">Enroll in a course and complete assessments to see your grades here.</p>
+    <div class="bg-surface-raised rounded-lg border border-line-subtle px-6 py-14 text-center">
+        <i class="ph ph-exam text-5xl text-ink-disabled"></i>
+        <h3 class="mt-4 text-lg font-bold text-ink-strong">No grades available</h3>
+        <p class="mt-1.5 text-sm text-ink-muted">Enroll in a course and complete assessments to see your grades here.</p>
     </div>
     {% endfor %}
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+{% block app_scripts %}
+<style>
+    /* Safari still paints its own disclosure triangle without this. */
+    summary::-webkit-details-marker { display: none; }
+</style>
 {% endblock %}

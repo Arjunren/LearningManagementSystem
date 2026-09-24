@@ -1,86 +1,138 @@
 {% extends "app_base.html" %}
+{% block page_title %}Settings — BuildByte Academy{% endblock %}
 
 {% block app_content %}
-<div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
-    <p class="mt-2 text-gray-600">Manage your profile and account preferences.</p>
-</div>
+<header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink-strong tracking-tight">Settings</h1>
+    <p class="mt-2 text-[15px] text-ink-muted">Manage your profile and account preferences.</p>
+</header>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Profile Section -->
     <div class="lg:col-span-2 space-y-8">
-        <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Profile Information</h3>
-                <p class="mt-1 text-sm text-gray-500">Update your personal details.</p>
-            </div>
-            <div class="p-6">
-                <div>
-                    <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
-                        <div class="sm:col-span-2">
-                            <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                            <div class="mt-1">
-                                <input type="text" id="full_name" value="{{ user.full_name }}" readonly class="bg-gray-50 shadow-sm block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border text-gray-600 cursor-not-allowed">
-                            </div>
-                        </div>
-                        
-                        <div class="sm:col-span-2">
-                            <label for="email" class="block text-sm font-medium text-gray-700">Email Address (Read-only)</label>
-                            <div class="mt-1">
-                            <input type="email" id="email" value="{{ user.email }}" readonly class="bg-gray-50 shadow-sm block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border text-gray-500 cursor-not-allowed">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 flex justify-end">
-                        <a href="{{ url_for('user.profile') }}" class="bg-blue-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-blue-700">Manage username in Profile</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Password Section -->
-        <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Change Password</h3>
-                <p class="mt-1 text-sm text-gray-500">Ensure your account is using a long, random password to stay secure.</p>
+
+        <!-- Profile -->
+        <section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
+            <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page">
+                <h2 class="text-lg font-bold text-ink-strong">Profile information</h2>
+                <p class="mt-1 text-[13px] text-ink-muted">Update your personal details.</p>
             </div>
             <div class="p-6">
                 <form action="{{ url_for('user.settings') }}" method="POST">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <input type="hidden" name="action" value="change_password">
-                    
-                    <div class="space-y-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="action" value="update_profile">
+
+                    <div class="space-y-5">
                         <div>
-                            <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password</label>
-                            <div class="mt-1">
-                                <input type="password" name="current_password" id="current_password" required class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
-                            </div>
+                            <label for="full_name" class="block text-sm font-medium text-ink mb-1.5">Full name</label>
+                            <input type="text" name="full_name" id="full_name" value="{{ user.full_name }}" required
+                                   class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 transition">
+                            <p class="mt-1.5 text-xs text-ink-muted">This name is printed on your certificates.</p>
                         </div>
-                        
+
                         <div>
-                            <label for="new_password" class="block text-sm font-medium text-gray-700">New Password</label>
-                            <div class="mt-1">
-                                <input type="password" name="new_password" id="new_password" required minlength="8" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
-                            <div class="mt-1">
-                                <input type="password" name="confirm_password" id="confirm_password" required minlength="8" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
-                            </div>
+                            <label for="email" class="block text-sm font-medium text-ink mb-1.5">
+                                Email address
+                                <span class="ml-1 text-xs font-normal text-ink-muted">(read-only)</span>
+                            </label>
+                            <input type="email" name="email" id="email" value="{{ user.email }}" disabled
+                                   class="block w-full px-3 py-2.5 rounded-md border border-line-subtle bg-surface-sunken text-ink-disabled text-sm cursor-not-allowed">
                         </div>
                     </div>
-                    
+
                     <div class="mt-6 flex justify-end">
-                        <button type="submit" class="bg-gray-800 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
-                            Update Password
+                        <button type="submit"
+                                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 transition-colors">
+                            Save changes
                         </button>
                     </div>
                 </form>
             </div>
-        </div>
+        </section>
+
+        <!-- Password -->
+        <section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
+            <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page">
+                <h2 class="text-lg font-bold text-ink-strong">Change password</h2>
+                <p class="mt-1 text-[13px] text-ink-muted">Use a long, unique password to keep your account secure.</p>
+            </div>
+            <div class="p-6">
+                <form action="{{ url_for('user.settings') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="action" value="change_password">
+
+                    <div class="space-y-5">
+                        <div>
+                            <label for="current_password" class="block text-sm font-medium text-ink mb-1.5">Current password</label>
+                            <input type="password" name="current_password" id="current_password" autocomplete="current-password" required
+                                   class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 transition">
+                        </div>
+
+                        <div>
+                            <label for="new_password" class="block text-sm font-medium text-ink mb-1.5">New password</label>
+                            <input type="password" name="new_password" id="new_password" autocomplete="new-password" required minlength="8"
+                                   class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 transition">
+                            <p class="mt-1.5 text-xs text-ink-muted">Minimum 8 characters.</p>
+                        </div>
+
+                        <div>
+                            <label for="confirm_password" class="block text-sm font-medium text-ink mb-1.5">Confirm new password</label>
+                            <input type="password" name="confirm_password" id="confirm_password" autocomplete="new-password" required minlength="8"
+                                   class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 transition">
+                            <p id="match-hint" class="mt-1.5 text-xs text-danger-600 hidden">Passwords don't match yet.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit"
+                                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-ink-strong text-white text-sm font-semibold shadow-sm hover:bg-ink transition-colors">
+                            Update password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
     </div>
+
+    <!-- Sidebar column -->
+    <aside class="space-y-6">
+        <div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card p-6">
+            <div class="flex items-center gap-3">
+                <div class="h-12 w-12 rounded-full bg-surface-brand flex items-center justify-center text-brand-700 text-lg font-bold uppercase">
+                    {{ user.full_name[0] if user.full_name else 'U' }}
+                </div>
+                <div class="min-w-0">
+                    <p class="text-sm font-bold text-ink-strong truncate">{{ user.full_name }}</p>
+                    <p class="text-[13px] text-ink-muted truncate">{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card p-6">
+            <h3 class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Certificate name</h3>
+            <p class="mt-2 text-[13px] text-ink-muted leading-relaxed">
+                Your full name appears exactly as written above on every certificate you earn. Correct it before you complete a course.
+            </p>
+        </div>
+    </aside>
 </div>
+{% endblock %}
+
+{% block app_scripts %}
+<script>
+    (function () {
+        const pw = document.getElementById('new_password');
+        const confirm = document.getElementById('confirm_password');
+        const hint = document.getElementById('match-hint');
+        if (!pw || !confirm || !hint) return;
+
+        function check() {
+            const mismatch = confirm.value.length > 0 && pw.value !== confirm.value;
+            hint.classList.toggle('hidden', !mismatch);
+            confirm.classList.toggle('border-danger-600', mismatch);
+            confirm.classList.toggle('border-line-strong', !mismatch);
+        }
+        pw.addEventListener('input', check);
+        confirm.addEventListener('input', check);
+    })();
+</script>
 {% endblock %}

@@ -2,66 +2,74 @@
 {% block teacher_title %}Teacher Dashboard{% endblock %}
 
 {% block app_content %}
-<div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">Welcome, {{ user.full_name }}!</h1>
-    <p class="mt-2 text-gray-600">Here's an overview of the courses you are managing.</p>
-</div>
+<header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink-strong tracking-tight">Welcome, {{ user.full_name }}</h1>
+    <p class="mt-2 text-[15px] text-ink-muted">Here's an overview of the courses you are managing.</p>
+</header>
 
-<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 mb-8">
-    <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-emerald-100 flex items-center p-6">
-        <div class="p-3 rounded-full bg-emerald-100 text-emerald-600 mr-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+    <div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card p-6 flex items-center gap-4">
+        <span class="shrink-0 h-12 w-12 rounded-md bg-surface-teacher text-teacher-700 flex items-center justify-center">
             <i class="ph ph-books text-2xl"></i>
-        </div>
-        <div>
-            <p class="text-sm font-medium text-gray-500 truncate">Assigned Courses</p>
-            <p class="mt-1 text-3xl font-semibold text-gray-900">{{ courses|length }}</p>
+        </span>
+        <div class="min-w-0">
+            <p class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Assigned courses</p>
+            <p class="mt-0.5 text-3xl font-bold text-ink-strong">{{ courses|length }}</p>
         </div>
     </div>
 
-    <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-blue-100 flex items-center p-6">
-        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+    <div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card p-6 flex items-center gap-4">
+        <span class="shrink-0 h-12 w-12 rounded-md bg-surface-brand text-brand-700 flex items-center justify-center">
             <i class="ph ph-users text-2xl"></i>
-        </div>
-        <div>
-            <p class="text-sm font-medium text-gray-500 truncate">Total Students Enrolled</p>
-            <p class="mt-1 text-3xl font-semibold text-gray-900">{{ total_students }}</p>
+        </span>
+        <div class="min-w-0">
+            <p class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Students enrolled</p>
+            <p class="mt-0.5 text-3xl font-bold text-ink-strong">{{ total_students }}</p>
         </div>
     </div>
 </div>
 
-<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden mb-8">
-    <div class="px-6 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-        <h3 class="text-lg leading-6 font-medium text-gray-900">Your Courses</h3>
-        <a href="{{ url_for('teacher.my_courses') }}" class="text-sm font-medium text-emerald-600 hover:text-emerald-500">View all &rarr;</a>
+<section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden mb-8">
+    <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page flex flex-wrap items-center justify-between gap-3">
+        <h2 class="text-lg font-bold text-ink-strong">Your courses</h2>
+        <a href="{{ url_for('teacher.my_courses') }}" class="text-sm font-semibold text-teacher-700 hover:text-teacher-800 whitespace-nowrap">View all &rarr;</a>
     </div>
-    <div class="divide-y divide-gray-200">
+
+    <div class="divide-y divide-line-subtle">
         {% for course in courses[:5] %}
-        <div class="p-6 hover:bg-gray-50 transition-colors flex items-center justify-between">
-            <div class="flex items-center">
-                <div class="flex-shrink-0 h-12 w-12 rounded-lg bg-gray-200 overflow-hidden">
-                    <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="h-full w-full object-cover">
+        <div class="p-5 sm:p-6 hover:bg-surface-page transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4 min-w-0">
+                <div class="shrink-0 h-12 w-12 rounded-md bg-surface-sunken overflow-hidden flex items-center justify-center">
+                    {% if course.thumbnail %}
+                    <img src="{{ course.thumbnail }}" alt="" class="h-full w-full object-cover">
+                    {% else %}
+                    <i class="ph ph-image text-xl text-ink-disabled"></i>
+                    {% endif %}
                 </div>
-                <div class="ml-4">
-                    <h4 class="text-lg font-bold text-gray-900">{{ course.title }}</h4>
-                    <p class="text-sm text-gray-500">{{ course.procedures|length }} procedures</p>
+                <div class="min-w-0">
+                    <h3 class="text-base font-bold text-ink-strong truncate">{{ course.title }}</h3>
+                    <p class="text-[13px] text-ink-muted">{{ course.procedures|length }} procedures</p>
                 </div>
             </div>
-            <div>
-                <a href="{{ url_for('admin_courses.content', course_id=course.id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 mr-2">
-                    <i class="ph ph-pencil-simple mr-2"></i> Manage Content
+
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <a href="{{ url_for('admin_courses.content', course_id=course.id) }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-surface-raised border border-line-strong text-ink text-sm font-semibold hover:bg-surface-sunken transition-colors">
+                    <i class="ph ph-pencil-simple text-base"></i> Manage content
                 </a>
-                <a href="{{ url_for('teacher_submissions.detail', course_id=course.id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
-                    <i class="ph ph-check-square mr-2"></i> Grade Submissions
+                <a href="{{ url_for('teacher_submissions.detail', course_id=course.id) }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-teacher-700 text-white text-sm font-semibold shadow-sm hover:bg-teacher-800 transition-colors">
+                    <i class="ph ph-check-square text-base"></i> Grade submissions
                 </a>
             </div>
         </div>
         {% else %}
-        <div class="p-12 text-center">
-            <i class="ph ph-books text-4xl text-gray-300 mb-3"></i>
-            <h3 class="text-lg font-medium text-gray-900">No Courses Assigned</h3>
-            <p class="mt-1 text-gray-500">You haven't been assigned to any courses yet.</p>
+        <div class="px-6 py-12 text-center">
+            <i class="ph ph-books text-5xl text-ink-disabled"></i>
+            <h3 class="mt-4 text-lg font-bold text-ink-strong">No courses assigned</h3>
+            <p class="mt-1.5 text-sm text-ink-muted">You haven't been assigned to any courses yet.</p>
         </div>
         {% endfor %}
     </div>
-</div>
+</section>
 {% endblock %}

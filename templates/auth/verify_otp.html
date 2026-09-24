@@ -1,36 +1,63 @@
 {% extends "base.html" %}
+{% block page_title %}BuildByte Academy — Verify Email{% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center flex-grow py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-xl text-center">
-        <div>
-            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
-                <i class="ph ph-envelope-simple-open text-blue-600 text-2xl"></i>
-            </div>
-            <h2 class="text-2xl font-extrabold text-gray-900">Verify Your Email</h2>
-            <p class="mt-2 text-sm text-gray-600">We've sent a 6-digit verification code to <span class="font-semibold text-gray-900">{{ email }}</span></p>
-        </div>
-        <form class="mt-8 space-y-6" action="{{ url_for('auth.verify_otp_route') }}" method="POST">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="flex justify-center gap-2 sm:gap-3">
-                {% for i in range(1, 7) %}
-                <input type="text" name="digit{{ i }}" id="digit{{ i }}" maxlength="1" required class="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl font-bold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onkeyup="moveToNext(this, 'digit{{ i+1 if i < 6 else '' }}', event)">
-                {% endfor %}
+<div class="flex-grow flex items-center justify-center px-4 py-12 sm:px-6 bg-surface-page">
+    <div class="w-full max-w-md">
+        <div class="bg-surface-raised border border-line-subtle rounded-xl shadow-card p-8 sm:p-10">
+
+            <!-- BRAND LOCKUP — logo placeholder + brand name -->
+            <div class="flex flex-col items-center text-center">
+                <img src="/static/images/Icon.png" alt="BuildByte Academy" class="h-14 w-14 rounded-xl object-contain"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                <span style="display:none" class="h-14 w-14 rounded-xl bg-brand-600 text-white items-center justify-center text-2xl font-bold">B</span>
+                <p class="mt-3 text-lg font-bold text-ink-strong tracking-tight">BuildByte Academy</p>
+                <p class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.12em]">Student Portal</p>
             </div>
 
-            <div>
-                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150">
+            <div class="mt-8 flex flex-col items-center text-center">
+                <span class="h-12 w-12 rounded-full bg-surface-brand flex items-center justify-center">
+                    <i class="ph ph-envelope-simple-open text-2xl text-brand-700"></i>
+                </span>
+                <h2 class="mt-4 text-2xl font-bold text-ink-strong tracking-tight">Verify your email</h2>
+                <p class="mt-1.5 text-sm text-ink-muted leading-relaxed">
+                    We sent a 6-digit code to<br>
+                    <span class="font-semibold text-ink-strong">{{ email }}</span>
+                </p>
+                <p class="mt-1 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.12em]">Step 2 of 2</p>
+            </div>
+
+            <form class="mt-8 space-y-6" action="{{ url_for('auth.verify_otp_route') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <fieldset>
+                    <legend class="sr-only">6-digit verification code</legend>
+                    <div class="flex justify-center gap-2 sm:gap-3">
+                        {% for i in range(1, 7) %}
+                        <input type="text" name="digit{{ i }}" id="digit{{ i }}" maxlength="1" required
+                               inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code"
+                               aria-label="Digit {{ i }}"
+                               class="w-11 h-14 sm:w-12 sm:h-16 text-center text-2xl font-bold text-ink-strong bg-surface-raised border border-line-strong rounded-md focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 transition"
+                               onkeyup="moveToNext(this, 'digit{{ i+1 if i < 6 else '' }}', event)">
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+                <button type="submit"
+                        class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 transition-colors">
                     Confirm
                 </button>
-            </div>
-            
-            <div class="text-center mt-4">
-                <p class="text-sm text-gray-600">
-                    Didn't receive the code? 
-                    <a href="{{ url_for('auth.register') }}" class="font-medium text-blue-600 hover:text-blue-500">Resend OTP</a>
-                </p>
-            </div>
-        </form>
+            </form>
+
+            <p class="mt-8 pt-6 border-t border-line-subtle text-center text-sm text-ink-muted">
+                Didn't receive the code?
+                <a href="{{ url_for('auth.register') }}" class="font-semibold text-brand-600 hover:text-brand-700">Resend OTP</a>
+            </p>
+        </div>
+
+        <p class="mt-6 text-center text-xs text-ink-muted">
+            Check your spam folder if it hasn't arrived after a minute.
+        </p>
     </div>
 </div>
 {% endblock %}
@@ -50,5 +77,23 @@
             }
         }
     }
+
+    // Pasting the whole code fills every box at once.
+    (function () {
+        const first = document.getElementById('digit1');
+        if (!first) return;
+        first.focus();
+        first.addEventListener('paste', function (event) {
+            const text = (event.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+            if (text.length < 2) return;
+            event.preventDefault();
+            for (let i = 0; i < 6 && i < text.length; i++) {
+                const box = document.getElementById('digit' + (i + 1));
+                if (box) box.value = text[i];
+            }
+            const last = document.getElementById('digit' + Math.min(text.length, 6));
+            if (last) last.focus();
+        });
+    })();
 </script>
 {% endblock %}

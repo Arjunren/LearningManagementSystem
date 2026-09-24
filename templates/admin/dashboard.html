@@ -1,78 +1,73 @@
 {% extends "admin_base.html" %}
+{% block admin_title %}Dashboard{% endblock %}
 
 {% block app_content %}
-<div class="mb-8 flex justify-between items-end">
-    <div>
-        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p class="mt-1 text-sm text-gray-500">System overview and statistics.</p>
-    </div>
-</div>
+<header class="mb-8">
+    <h1 class="text-3xl font-bold text-ink-strong tracking-tight">Dashboard</h1>
+    <p class="mt-2 text-[15px] text-ink-muted">System overview and statistics.</p>
+</header>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <div class="flex items-center">
-            <div class="p-3 rounded-full bg-indigo-100 text-indigo-600 mr-4">
-                <i class="ph-fill ph-users text-2xl"></i>
-            </div>
-            <div>
-                <p class="text-sm font-medium text-gray-500">Total Students</p>
-                <p class="text-2xl font-bold text-gray-900">{{ stats.total_students }}</p>
-            </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card p-5 flex items-center gap-4">
+        <span class="shrink-0 h-11 w-11 rounded-md bg-surface-admin text-admin-700 flex items-center justify-center">
+            <i class="ph-fill ph-users text-xl"></i>
+        </span>
+        <div class="min-w-0">
+            <p class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Total students</p>
+            <p class="mt-0.5 text-2xl font-bold text-ink-strong tabular-nums">{{ stats.total_students }}</p>
         </div>
     </div>
-    
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <div class="flex items-center">
-            <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
-                <i class="ph-fill ph-books text-2xl"></i>
-            </div>
-            <div>
-                <p class="text-sm font-medium text-gray-500">Total Courses</p>
-                <p class="text-2xl font-bold text-gray-900">{{ stats.total_courses }}</p>
-            </div>
+
+    <div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card p-5 flex items-center gap-4">
+        <span class="shrink-0 h-11 w-11 rounded-md bg-surface-brand text-brand-700 flex items-center justify-center">
+            <i class="ph-fill ph-books text-xl"></i>
+        </span>
+        <div class="min-w-0">
+            <p class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Total courses</p>
+            <p class="mt-0.5 text-2xl font-bold text-ink-strong tabular-nums">{{ stats.total_courses }}</p>
         </div>
     </div>
-    
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <div class="flex items-center">
-            <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
-                <i class="ph-fill ph-student text-2xl"></i>
-            </div>
-            <div>
-                <p class="text-sm font-medium text-gray-500">Total Enrollments</p>
-                <p class="text-2xl font-bold text-gray-900">{{ stats.total_enrollments }}</p>
-            </div>
+
+    <div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card p-5 flex items-center gap-4">
+        <span class="shrink-0 h-11 w-11 rounded-md bg-surface-success text-success-800 flex items-center justify-center">
+            <i class="ph-fill ph-student text-xl"></i>
+        </span>
+        <div class="min-w-0">
+            <p class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Total enrollments</p>
+            <p class="mt-0.5 text-2xl font-bold text-ink-strong tabular-nums">{{ stats.total_enrollments }}</p>
         </div>
     </div>
-    
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <div class="flex items-center">
-            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
-                <i class="ph-fill ph-certificate text-2xl"></i>
-            </div>
-            <div>
-                <p class="text-sm font-medium text-gray-500">Certificates Issued</p>
-                <p class="text-2xl font-bold text-gray-900">{{ stats.completed_courses }}</p>
-            </div>
+
+    <div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card p-5 flex items-center gap-4">
+        <span class="shrink-0 h-11 w-11 rounded-md bg-surface-award text-warning-800 flex items-center justify-center">
+            <i class="ph-fill ph-certificate text-xl"></i>
+        </span>
+        <div class="min-w-0">
+            <p class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Certificates issued</p>
+            <p class="mt-0.5 text-2xl font-bold text-ink-strong tabular-nums">{{ stats.completed_courses }}</p>
         </div>
     </div>
 </div>
 
-<div class="bg-white shadow-sm rounded-xl border border-gray-200 p-6">
-    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Quick Actions</h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <a href="{{ url_for('admin_courses.create') }}" class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">
-            <i class="ph ph-plus-circle mr-2 text-indigo-500 text-lg"></i> Create Course
+<section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card p-6">
+    <h2 class="text-lg font-bold text-ink-strong">Quick actions</h2>
+    <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <a href="{{ url_for('admin_courses.create') }}"
+           class="flex items-center gap-3 p-4 rounded-md border border-line-subtle text-sm font-semibold text-ink hover:border-admin-600 hover:bg-surface-page transition-colors">
+            <i class="ph ph-plus-circle text-xl text-admin-600"></i> Create course
         </a>
-        <a href="{{ url_for('admin_students.index') }}" class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">
-            <i class="ph ph-exam mr-2 text-indigo-500 text-lg"></i> Grade Submissions
+        <a href="{{ url_for('admin_students.index') }}"
+           class="flex items-center gap-3 p-4 rounded-md border border-line-subtle text-sm font-semibold text-ink hover:border-admin-600 hover:bg-surface-page transition-colors">
+            <i class="ph ph-exam text-xl text-admin-600"></i> Grade submissions
         </a>
-        <a href="{{ url_for('admin_users.index') }}" class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">
-            <i class="ph ph-users mr-2 text-indigo-500 text-lg"></i> Manage Users
+        <a href="{{ url_for('admin_users.index') }}"
+           class="flex items-center gap-3 p-4 rounded-md border border-line-subtle text-sm font-semibold text-ink hover:border-admin-600 hover:bg-surface-page transition-colors">
+            <i class="ph ph-users text-xl text-admin-600"></i> Manage users
         </a>
-        <a href="{{ url_for('admin.settings') }}" class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">
-            <i class="ph ph-envelope-simple mr-2 text-indigo-500 text-lg"></i> SMTP Settings
+        <a href="{{ url_for('admin.settings') }}"
+           class="flex items-center gap-3 p-4 rounded-md border border-line-subtle text-sm font-semibold text-ink hover:border-admin-600 hover:bg-surface-page transition-colors">
+            <i class="ph ph-envelope-simple text-xl text-admin-600"></i> SMTP settings
         </a>
     </div>
-</div>
+</section>
 {% endblock %}

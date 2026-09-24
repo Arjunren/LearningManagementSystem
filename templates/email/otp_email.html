@@ -1,30 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <style>
-        body { font-family: 'Inter', Helvetica, Arial, sans-serif; color: #333; background-color: #f9fafb; padding: 20px; }
-        .container { max-width: 500px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        h2 { color: #111827; font-size: 24px; margin-top: 0; }
-        .otp-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0; }
-        .otp-code { font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1d4ed8; }
-        .footer { margin-top: 40px; font-size: 12px; color: #6b7280; text-align: center; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <title>Your BuildByte Academy verification code</title>
+    <!--
+        Email clients strip <style> unpredictably (Gmail keeps it, Outlook
+        desktop mangles it), so this template uses table layout and inline
+        styles only. No Tailwind, no web fonts, no external CSS — the system's
+        token VALUES are written literally here instead.
+    -->
 </head>
-<body>
-    <div class="container">
-        <h2>Welcome to BuildByte Academy</h2>
-        <p>Your verification code is:</p>
+<body style="margin:0; padding:0; background-color:#f8fafc;">
 
-        <div class="otp-box">
-            <div class="otp-code">{{ otp }}</div>
-        </div>
-
-        <p>This code will expire in 5 minutes.</p>
-        <p>If you didn't request this verification code, you can safely ignore this email.</p>
-
-        <div class="footer">
-            &copy; 2026 BuildByte Academy. All rights reserved.
-        </div>
+    <!-- Preheader: shown in the inbox preview, hidden in the body -->
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+        Your BuildByte Academy verification code is inside. It expires in 5 minutes.
     </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+           style="background-color:#f8fafc; padding:24px 12px;">
+        <tr>
+            <td align="center">
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                       style="max-width:520px; background-color:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
+
+                    <!-- Brand bar -->
+                    <tr>
+                        <td style="padding:24px 32px; border-bottom:1px solid #e2e8f0;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td style="padding-right:10px; vertical-align:middle;">
+                                        <div style="width:36px; height:36px; background-color:#2563eb; border-radius:8px; color:#ffffff; font-family:'Segoe UI',Helvetica,Arial,sans-serif; font-size:18px; font-weight:bold; line-height:36px; text-align:center;">B</div>
+                                    </td>
+                                    <td style="vertical-align:middle;">
+                                        <div style="font-family:'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; font-weight:bold; color:#2563eb; line-height:18px;">BuildByte</div>
+                                        <div style="font-family:'Segoe UI',Helvetica,Arial,sans-serif; font-size:10px; font-weight:bold; color:#64748b; letter-spacing:1.4px; text-transform:uppercase; line-height:14px;">Academy</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding:32px;">
+                            <h1 style="margin:0 0 12px; font-family:'Segoe UI',Helvetica,Arial,sans-serif; font-size:22px; font-weight:bold; color:#0f172a;">
+                                Verify your email
+                            </h1>
+                            <p style="margin:0; font-family:'Segoe UI',Helvetica,Arial,sans-serif; font-size:15px; line-height:24px; color:#1e293b;">
+                                Enter this code on the verification screen to finish creating your account.
+                            </p>
+
+                            <!-- Code -->
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0;">
+                                <tr>
+                                    <td align="center" style="background-color:#dbeafe; border-radius:8px; padding:24px;">
+                                        <div style="font-family:'Courier New',Courier,monospace; font-size:34px; font-weight:bold; letter-spacing:8px; color:#1d4ed8; line-height:40px;">
+                                            {{ otp }}
+                                        </div>
+                                        <div style="margin-top:8px; font-family:'Segoe UI',Helvetica,Arial,sans-serif; font-size:11px; font-weight:bold; color:#1d4ed8; letter-spacing:1.4px; text-transform:uppercase;">
+                                            Verification code
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin:0 0 10px; font-family:'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:22px; color:#64748b;">
+                                This code expires in 5 minutes.
+                            </p>
+                            <p style="margin:0; font-family:'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:22px; color:#64748b;">
+                                If you didn't request it, you can safely ignore this email — nobody can use the code without access to your inbox.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding:20px 32px; background-color:#f8fafc; border-top:1px solid #e2e8f0;">
+                            <p style="margin:0; font-family:'Segoe UI',Helvetica,Arial,sans-serif; font-size:12px; line-height:18px; color:#64748b; text-align:center;">
+                                &copy; 2026 BuildByte Academy. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

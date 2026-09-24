@@ -1,76 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
     <title>Certificate Verification — BuildByte Academy</title>
     <link rel="icon" type="image/png" href="/static/images/Icon_Badge.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        /* This page is public and does not extend base.html, so it carries its
+           own copy of the token config. Keep it in step with base.html. */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        brand:   { 100: '#dbeafe', 600: '#2563eb', 700: '#1d4ed8' },
+                        success: { 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534' },
+                        danger:  { 500: '#ef4444', 600: '#dc2626', 800: '#991b1b' },
+                        ink: {
+                            DEFAULT: '#1e293b',
+                            strong: '#0f172a',
+                            muted: '#64748b',
+                            inverse: '#ffffff',
+                            disabled: '#94a3b8',
+                        },
+                        surface: {
+                            page: '#f8fafc',
+                            raised: '#ffffff',
+                            sunken: '#f1f5f9',
+                            brand: '#dbeafe',
+                            success: '#dcfce7',
+                            danger: '#fee2e2',
+                        },
+                        line: { subtle: '#e2e8f0', strong: '#cbd5e1' },
+                    },
+                    borderRadius: { sm: '6px', md: '8px', lg: '12px', xl: '16px' },
+                    boxShadow: {
+                        card: '0 1px 2px 0 rgba(15, 23, 42, 0.06)',
+                        raised: '0 4px 12px -2px rgba(15, 23, 42, 0.10)',
+                    },
+                },
+            },
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        :focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; border-radius: 6px; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
-    <div class="h-16 flex items-center px-6 border-b border-gray-200 bg-white shadow-sm">
-        <img src="/static/images/Icon.png" alt="BuildByte" class="h-8 w-8 mr-2" onerror="this.style.display='none'">
-        <h1 class="text-xl font-bold text-blue-700">BuildByte Academy</h1>
-    </div>
-    
-    <div class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-xl w-full">
+<body class="h-full bg-surface-page text-ink antialiased min-h-screen flex flex-col">
+
+    <header class="h-16 flex items-center px-4 sm:px-6 border-b border-line-subtle bg-surface-raised">
+        <div class="flex items-center gap-3">
+            <img src="/static/images/Icon.png" alt="" class="h-9 w-9 rounded-md object-contain"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+            <span style="display:none" class="h-9 w-9 rounded-md bg-brand-600 text-white items-center justify-center text-base font-bold">B</span>
+            <span class="leading-tight">
+                <span class="block text-base font-bold text-brand-600 tracking-tight">BuildByte</span>
+                <span class="block text-[11px] font-semibold text-ink-muted tracking-[0.09em] uppercase">Academy</span>
+            </span>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6">
+        <div class="w-full max-w-xl">
             {% if valid %}
-            <div class="bg-white p-8 rounded-2xl shadow-xl text-center border-t-8 border-green-500">
-                <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-100 mb-6">
-                    <i class="ph-fill ph-check-circle text-5xl text-green-600"></i>
-                </div>
-                <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Verified Certificate</h2>
-                <p class="text-lg text-gray-600 mb-8">This certificate is valid and was issued by BuildByte Academy.</p>
-                
-                <div class="bg-gray-50 rounded-xl p-6 text-left space-y-4 border border-gray-200">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Student</p>
-                        <p class="text-xl font-bold text-gray-900">{{ student.full_name }}</p>
+            <div class="bg-surface-raised rounded-xl border border-line-subtle shadow-raised overflow-hidden">
+                <div class="h-1.5 bg-success-600"></div>
+
+                <div class="p-8 sm:p-10">
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-surface-success">
+                            <i class="ph-fill ph-check-circle text-4xl text-success-700"></i>
+                        </div>
+                        <h1 class="mt-5 text-2xl sm:text-3xl font-bold text-ink-strong tracking-tight">Verified certificate</h1>
+                        <p class="mt-2 text-[15px] text-ink-muted leading-relaxed">
+                            This certificate is valid and was issued by BuildByte Academy.
+                        </p>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Student ID</p>
-                        <p class="font-mono font-medium text-gray-900">{{ student.student_id or 'Not available' }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Course</p>
-                        <p class="text-lg font-bold text-blue-700">{{ course.title }}</p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+
+                    <dl class="mt-8 rounded-lg border border-line-subtle bg-surface-page p-6 space-y-5">
                         <div>
-                            <p class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Issue Date</p>
-                            <p class="font-medium text-gray-900">{{ enrollment.completed_at[:10] }}</p>
+                            <dt class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Student</dt>
+                            <dd class="mt-1 text-xl font-bold text-ink-strong">{{ student.full_name }}</dd>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Certificate ID</p>
-                            <p class="font-medium text-gray-900 font-mono">{{ cert_id }}</p>
+                            <dt class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Course</dt>
+                            <dd class="mt-1 text-lg font-bold text-brand-600">{{ course.title }}</dd>
                         </div>
-                    </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-5 border-t border-line-subtle">
+                            <div>
+                                <dt class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Issue date</dt>
+                                <dd class="mt-1 text-sm font-medium text-ink-strong tabular-nums">{{ enrollment.completed_at[:10] }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Certificate ID</dt>
+                                <dd class="mt-1 text-sm font-medium text-ink-strong font-mono break-all">{{ cert_id }}</dd>
+                            </div>
+                        </div>
+                    </dl>
                 </div>
             </div>
             {% else %}
-            <div class="bg-white p-8 rounded-2xl shadow-xl text-center border-t-8 border-red-500">
-                <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-red-100 mb-6">
-                    <i class="ph-fill ph-x-circle text-5xl text-red-600"></i>
-                </div>
-                <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Invalid Certificate</h2>
-                <p class="text-lg text-gray-600 mb-8">We could not find a valid certificate matching this ID.</p>
-                
-                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Searched ID</p>
-                    <p class="font-medium text-gray-900 font-mono">{{ cert_id }}</p>
+            <div class="bg-surface-raised rounded-xl border border-line-subtle shadow-raised overflow-hidden">
+                <div class="h-1.5 bg-danger-600"></div>
+
+                <div class="p-8 sm:p-10">
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-surface-danger">
+                            <i class="ph-fill ph-x-circle text-4xl text-danger-600"></i>
+                        </div>
+                        <h1 class="mt-5 text-2xl sm:text-3xl font-bold text-ink-strong tracking-tight">Invalid certificate</h1>
+                        <p class="mt-2 text-[15px] text-ink-muted leading-relaxed">
+                            We could not find a valid certificate matching this ID.
+                        </p>
+                    </div>
+
+                    <div class="mt-8 rounded-lg border border-line-subtle bg-surface-page p-6">
+                        <p class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em]">Searched ID</p>
+                        <p class="mt-1 text-sm font-medium text-ink-strong font-mono break-all">{{ cert_id }}</p>
+                    </div>
+
+                    <p class="mt-6 text-center text-[13px] text-ink-muted">
+                        Check the ID for typos, or ask the holder to resend the link from their dashboard.
+                    </p>
                 </div>
             </div>
             {% endif %}
         </div>
-    </div>
-    
-    <footer class="bg-white border-t border-gray-200 py-6 text-center text-sm text-gray-500">
+    </main>
+
+    <footer class="bg-surface-raised border-t border-line-subtle py-6 text-center text-[13px] text-ink-muted">
         &copy; 2026 BuildByte Academy. All rights reserved.
     </footer>
 </body>

@@ -1,77 +1,129 @@
-<aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col h-full">
-    <div class="h-16 flex items-center px-6 border-b border-gray-200">
-        <img src="/static/images/Icon.png" alt="BuildByte" class="h-8 w-8 mr-2" onerror="this.style.display='none'">
-        <h1 class="text-lg font-bold text-blue-700 leading-tight">BuildByte<br><span class="text-xs font-semibold text-gray-500 tracking-widest uppercase">Academy</span></h1>
+{#
+  Student sidebar. One nav definition, rendered twice: the fixed rail at md+
+  and the drawer below md. Add a destination to `nav_items` and both update.
+#}
+{#
+  THIS WEEK — the activity streak, pinned above Logout in the rail.
+
+  Needs `streak` in the template context: {'days_active': 5,
+  'current_streak': 3, 'days': [{'label': 'M', 'active': True}, … seven]}.
+  Because this partial renders on EVERY student page, supply it from a Flask
+  context processor rather than view by view — see DASHBOARD_DATA_NOTES.md.
+  Renders nothing at all when the data is absent; it never shows a made-up 0.
+#}
+{% macro streak_card() -%}
+{% if streak is defined and streak and streak.days %}
+<div class="mx-1 mb-3 rounded-md bg-surface-page border border-line-subtle p-3">
+    <p class="text-[10px] font-semibold text-ink-muted uppercase tracking-[0.09em]">This week</p>
+
+    <p class="mt-1 flex items-baseline gap-1.5">
+        <span class="text-xl font-bold text-ink-strong tabular-nums leading-none">{{ streak.days_active | default(0, true) }}</span>
+        <span class="text-[11px] text-ink-muted">of 7 days</span>
+    </p>
+
+    <ul class="mt-2.5 flex justify-between" aria-label="Activity for each day this week">
+        {% for d in streak.days %}
+        <li class="flex flex-col items-center gap-1">
+            <span class="flex h-5 w-5 items-center justify-center rounded-sm {% if d.active %}bg-brand-600 text-white{% else %}bg-surface-sunken text-ink-disabled{% endif %}"
+                  title="{{ d.label }} — {% if d.active %}active{% else %}no activity{% endif %}">
+                {% if d.active %}
+                <i class="ph-bold ph-check text-[10px]"></i>
+                <span class="sr-only">Active</span>
+                {% else %}
+                <span class="sr-only">No activity</span>
+                {% endif %}
+            </span>
+            <span class="text-[9px] font-semibold text-ink-muted leading-none">{{ d.label }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% if streak.current_streak %}
+    <p class="mt-2.5 inline-flex items-center gap-1 text-[11px] font-semibold text-success-700">
+        <i class="ph-fill ph-fire text-xs"></i> {{ streak.current_streak }}-day streak
+    </p>
+    {% endif %}
+</div>
+{% endif %}
+{%- endmacro %}
+
+{% set nav_items = [
+    {'endpoint': 'user.dashboard',   'match': 'user.dashboard',   'icon': 'ph-squares-four', 'label': 'Dashboard'},
+    {'endpoint': 'courses.index',    'match': 'courses',          'icon': 'ph-books',        'label': 'Courses'},
+    {'endpoint': 'gradebook.index',  'match': 'gradebook',        'icon': 'ph-exam',         'label': 'Gradebook'},
+    {'endpoint': 'playground.index', 'match': 'playground.index', 'icon': 'ph-code',         'label': 'Play Ground'},
+    {'endpoint': 'user.settings',    'match': 'user.settings',    'icon': 'ph-gear',         'label': 'Settings'}
+] %}
+
+<!-- Desktop sidebar -->
+<aside class="w-64 shrink-0 bg-surface-raised border-r border-line-subtle hidden md:flex flex-col h-full">
+    <div class="h-16 flex items-center gap-3 px-5 border-b border-line-subtle">
+        <img src="/static/images/Icon.png" alt="" class="h-9 w-9 rounded-md object-contain" onerror="this.style.display='none'">
+        <span class="leading-tight">
+            <span class="block text-base font-bold text-brand-600 tracking-tight">BuildByte</span>
+            <span class="block text-[11px] font-semibold text-ink-muted tracking-[0.09em] uppercase">Academy</span>
+        </span>
     </div>
-    <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-        <a href="{{ url_for('user.dashboard') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint == 'user.dashboard' %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
-            <i class="ph ph-squares-four text-xl mr-3"></i> Dashboard
+
+    <nav class="flex-1 px-3 py-5 space-y-1 overflow-y-auto scrollbar-slim">
+        {% for item in nav_items %}
+        {% set is_active = request.endpoint and item.match in request.endpoint %}
+        <a href="{{ url_for(item.endpoint) }}"
+           {% if is_active %}aria-current="page"{% endif %}
+           class="relative flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-medium transition-colors
+                  {% if is_active %}bg-surface-brand text-brand-700 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-full before:bg-brand-600{% else %}text-ink hover:bg-surface-sunken{% endif %}">
+            <i class="ph {{ item.icon }} text-xl {% if is_active %}text-brand-600{% else %}text-ink-muted{% endif %}"></i>
+            {{ item.label }}
         </a>
-        <a href="{{ url_for('courses.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint and 'courses' in request.endpoint %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
-            <i class="ph ph-books text-xl mr-3"></i> Courses
-        </a>
-        <a href="{{ url_for('gradebook.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint and 'gradebook' in request.endpoint %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
-            <i class="ph ph-exam text-xl mr-3"></i> Gradebook
-        </a>
-        <a href="{{ url_for('user.profile') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint == 'user.profile' %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
-            <i class="ph ph-user-circle text-xl mr-3"></i> Profile
-        </a>
-        <a href="{{ url_for('user.ranking') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint == 'user.ranking' %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
-            <i class="ph ph-ranking text-xl mr-3"></i> Ranking
-        </a>
-        <a href="{{ url_for('user.settings') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint == 'user.settings' %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
-            <i class="ph ph-gear text-xl mr-3"></i> Settings
-        </a>
-        <a href="{{ url_for('playground.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors {% if request.endpoint == 'playground.index' %}bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-500{% endif %}">
-            <i class="ph ph-code text-xl mr-3"></i> Play Ground
-        </a>
+        {% endfor %}
     </nav>
-    <div class="p-4 border-t border-gray-200">
-        <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-            <i class="ph ph-sign-out text-xl mr-3"></i> Logout
+
+    <div class="p-3 border-t border-line-subtle">
+        {{ streak_card() }}
+        <a href="{{ url_for('auth.logout') }}"
+           class="flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-medium text-danger-600 hover:bg-surface-danger transition-colors">
+            <i class="ph ph-sign-out text-xl"></i> Logout
         </a>
     </div>
 </aside>
 
-<!-- Mobile sidebar overlay -->
-<div id="mobile-sidebar" class="fixed inset-0 z-40 hidden md:hidden">
-    <div class="fixed inset-0 bg-gray-600 bg-opacity-75" onclick="toggleSidebar()"></div>
-    <aside class="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white h-full">
-        <div class="absolute top-0 right-0 -mr-12 pt-2">
-            <button onclick="toggleSidebar()" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none">
-                <i class="ph ph-x text-white text-2xl"></i>
+<!-- Mobile drawer -->
+<div id="mobile-sidebar" class="fixed inset-0 z-40 hidden md:hidden" role="dialog" aria-modal="true" aria-label="Main navigation">
+    <div class="fixed inset-0 bg-ink-strong/60 backdrop-blur-[2px]" onclick="toggleSidebar()"></div>
+
+    <aside class="relative flex flex-col w-72 max-w-[82%] h-full bg-surface-raised shadow-raised">
+        <div class="h-16 flex items-center justify-between gap-3 px-5 border-b border-line-subtle">
+            <div class="flex items-center gap-3">
+                <img src="/static/images/Icon.png" alt="" class="h-9 w-9 rounded-md object-contain" onerror="this.style.display='none'">
+                <span class="leading-tight">
+                    <span class="block text-base font-bold text-brand-600 tracking-tight">BuildByte</span>
+                    <span class="block text-[11px] font-semibold text-ink-muted tracking-[0.09em] uppercase">Academy</span>
+                </span>
+            </div>
+            <button type="button" onclick="toggleSidebar()" aria-label="Close navigation"
+                    class="p-2 -mr-2 rounded-md text-ink-muted hover:text-ink hover:bg-surface-sunken transition-colors">
+                <i class="ph ph-x text-xl"></i>
             </button>
         </div>
-        <div class="px-6 mb-5 flex items-center">
-            <img src="/static/images/Icon.png" alt="BuildByte" class="h-8 w-8 mr-2" onerror="this.style.display='none'">
-            <h1 class="text-lg font-bold text-blue-700">BuildByte Academy</h1>
-        </div>
-        <nav class="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
-            <a href="{{ url_for('user.dashboard') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
-                <i class="ph ph-squares-four text-xl mr-3"></i> Dashboard
+
+        <nav class="flex-1 px-3 py-5 space-y-1 overflow-y-auto scrollbar-slim">
+            {% for item in nav_items %}
+            {% set is_active = request.endpoint and item.match in request.endpoint %}
+            <a href="{{ url_for(item.endpoint) }}"
+               {% if is_active %}aria-current="page"{% endif %}
+               class="relative flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors
+                      {% if is_active %}bg-surface-brand text-brand-700 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-full before:bg-brand-600{% else %}text-ink hover:bg-surface-sunken{% endif %}">
+                <i class="ph {{ item.icon }} text-xl {% if is_active %}text-brand-600{% else %}text-ink-muted{% endif %}"></i>
+                {{ item.label }}
             </a>
-            <a href="{{ url_for('courses.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
-                <i class="ph ph-books text-xl mr-3"></i> Courses
-            </a>
-            <a href="{{ url_for('gradebook.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
-                <i class="ph ph-exam text-xl mr-3"></i> Gradebook
-            </a>
-            <a href="{{ url_for('user.profile') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
-                <i class="ph ph-user-circle text-xl mr-3"></i> Profile
-            </a>
-            <a href="{{ url_for('user.ranking') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
-                <i class="ph ph-ranking text-xl mr-3"></i> Ranking
-            </a>
-            <a href="{{ url_for('user.settings') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
-                <i class="ph ph-gear text-xl mr-3"></i> Settings
-            </a>
-            <a href="{{ url_for('playground.index') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
-                <i class="ph ph-code text-xl mr-3"></i> Play Ground
-            </a>
+            {% endfor %}
         </nav>
-        <div class="p-4 border-t border-gray-200">
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                <i class="ph ph-sign-out text-xl mr-3"></i> Logout
+
+        <div class="p-3 border-t border-line-subtle">
+            {{ streak_card() }}
+            <a href="{{ url_for('auth.logout') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-danger-600 hover:bg-surface-danger transition-colors">
+                <i class="ph ph-sign-out text-xl"></i> Logout
             </a>
         </div>
     </aside>

@@ -1,49 +1,73 @@
 {% extends "app_base.html" %}
+{% block page_title %}Certificate — BuildByte Academy{% endblock %}
 
 {% block app_content %}
-<div class="mb-6 flex justify-between items-center">
-    <a href="{{ url_for('user.dashboard') }}" class="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium">
-        <i class="ph ph-arrow-left mr-1"></i> Back to Dashboard
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print">
+    <a href="{{ url_for('user.dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700 w-max">
+        <i class="ph ph-arrow-left text-base"></i> Back to dashboard
     </a>
-    <div class="flex space-x-3">
+
+    <div class="flex flex-wrap items-center gap-3">
         {% if enrollment.certificate_filename %}
         <form action="{{ url_for('certificates.send', enrollment_id=enrollment.id) }}" method="POST" class="inline">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" {% if not can_resend %}disabled{% endif %} class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                <i class="ph ph-envelope mr-2"></i> {% if not can_resend %}Email Sent Recently{% else %}Email Certificate{% endif %}
+            <button type="submit" {% if not can_resend %}disabled{% endif %}
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-surface-raised border border-line-strong text-ink text-sm font-semibold hover:bg-surface-sunken disabled:text-ink-disabled disabled:border-line-subtle disabled:hover:bg-surface-raised disabled:cursor-not-allowed transition-colors">
+                <i class="ph ph-envelope text-base"></i> {% if not can_resend %}Email sent recently{% else %}Email certificate{% endif %}
             </button>
         </form>
         {% endif %}
-        <button onclick="printCertificate()" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            <i class="ph ph-printer mr-2"></i> Print
+
+        <button onclick="printCertificate()"
+                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-surface-raised border border-line-strong text-ink text-sm font-semibold hover:bg-surface-sunken transition-colors">
+            <i class="ph ph-printer text-base"></i> Print
         </button>
+
         {% if enrollment.certificate_filename %}
-        <a href="{{ url_for('certificates.download', filename=enrollment.certificate_filename) }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-            <i class="ph ph-download-simple mr-2"></i> Download PDF
+        <a href="{{ url_for('certificates.download', filename=enrollment.certificate_filename) }}"
+           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 transition-colors">
+            <i class="ph ph-download-simple text-base"></i> Download PDF
         </a>
         {% endif %}
     </div>
 </div>
 
-<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden text-center py-12 px-4">
-    <div class="mx-auto h-20 w-20 text-yellow-400 mb-6 bg-yellow-50 rounded-full flex items-center justify-center border border-yellow-200">
-        <i class="ph-fill ph-medal text-5xl"></i>
+<div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden text-center py-10 sm:py-12 px-4">
+    <div class="no-print">
+        <div class="mx-auto h-20 w-20 rounded-full bg-surface-award flex items-center justify-center">
+            <i class="ph-fill ph-medal text-4xl text-award-500"></i>
+        </div>
+
+        <h1 class="mt-6 text-2xl sm:text-3xl font-bold text-ink-strong tracking-tight">Certificate of completion</h1>
+        <p class="mt-2 text-[15px] text-ink-muted max-w-lg mx-auto leading-relaxed">
+            Congratulations! This is to verify that you have successfully completed the course.
+        </p>
+
+        {% if enrollment.certificate_id %}
+        <p class="mt-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-surface-brand text-brand-700 text-[11px] font-semibold uppercase tracking-[0.09em]">
+            <span class="h-1.5 w-1.5 rounded-full bg-brand-600"></span> Active certificate
+        </p>
+        {% endif %}
     </div>
-    
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">Certificate of Completion</h1>
-    <p class="text-gray-600 max-w-lg mx-auto mb-10">Congratulations! This is to verify that you have successfully completed the course.</p>
-    
+
     <!-- Certificate Preview Box -->
-    <!-- Certificate Preview Box -->
-    <div class="max-w-4xl mx-auto flex justify-center">
+    {#  A plain block wrapper, NOT a centred flex row: a flex container with
+        justify-center clips the left edge of an overflowing child and puts it
+        out of reach of the scrollbar. The sheet centres itself with auto
+        margins instead, which collapse to 0 once it overflows.  #}
+    <div class="mt-10 overflow-x-auto scrollbar-slim">
+        <div class="px-1 pb-1">
         {% set student_name = user.full_name %}
         {% set course_name = course.title %}
         {% set issue_date = enrollment.completed_at[:10] if enrollment.completed_at else 'N/A' %}
         {% set cert_id = enrollment.certificate_id %}
         {% set qr_url = 'https://buildbyteacademy.vercel.app/certificate.html?id=' ~ enrollment.certificate_id %}
-        
+
         {% include "shared/certificate_layout.html" %}
+        </div>
     </div>
+
+    <p class="mt-4 text-xs text-ink-muted md:hidden no-print">Swipe the certificate sideways to see all of it, or download the PDF.</p>
 </div>
 
 <script>
@@ -54,44 +78,17 @@ function printCertificate() {
 
 <style>
 @media print {
-    @page {
-        size: A4 landscape;
-        margin: 0;
-    }
-    html,
-    body {
-        width: 297mm !important;
-        height: 210mm !important;
-        min-height: 210mm !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-        background: #fff !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
     body * {
-        visibility: hidden !important;
+        visibility: hidden;
     }
     #certificate-container, #certificate-container * {
-        visibility: visible !important;
+        visibility: visible;
     }
     #certificate-container {
-        position: fixed !important;
-        inset: 0 !important;
-        width: 297mm !important;
-        height: 210mm !important;
-        max-width: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: 0 !important;
-        box-shadow: none !important;
-        transform: none !important;
-        overflow: hidden !important;
-        box-sizing: border-box !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-        page-break-after: avoid !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: scale(1); /* Ensure it prints full size */
     }
 }
 </style>

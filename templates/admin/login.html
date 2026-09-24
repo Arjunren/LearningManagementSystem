@@ -1,38 +1,118 @@
 {% extends "base.html" %}
+{% block page_title %}BuildByte Academy — Admin Login{% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center flex-grow py-12 px-4 sm:px-6 lg:px-8 bg-gray-900">
-    <div class="max-w-md w-full space-y-8 bg-gray-800 p-10 rounded-xl shadow-2xl border border-gray-700">
-        <div>
-            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gray-700 mb-4">
-                <i class="ph ph-shield-check text-indigo-400 text-3xl"></i>
-            </div>
-            <h2 class="text-center text-3xl font-extrabold text-white">Admin Login</h2>
-            <p class="mt-2 text-center text-sm text-gray-400">Restricted access area</p>
-        </div>
-        <form class="mt-8 space-y-6" action="{{ url_for('admin.login') }}" method="POST">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="rounded-md shadow-sm space-y-4">
-                <div>
-                    <label for="email" class="sr-only">Email address</label>
-                    <input id="email" name="email" type="email" required class="appearance-none relative block w-full px-3 py-3 bg-gray-700 border border-gray-600 placeholder-gray-400 text-white rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Admin Email">
-                </div>
-                <div>
-                    <label for="password" class="sr-only">Password</label>
-                    <input id="password" name="password" type="password" required class="appearance-none relative block w-full px-3 py-3 bg-gray-700 border border-gray-600 placeholder-gray-400 text-white rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
-                </div>
-            </div>
+<div class="flex-grow grid lg:grid-cols-2">
 
-            <div>
-                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
-                    Sign In
-                </button>
+    <aside class="hidden lg:flex flex-col justify-between bg-admin-600 text-white p-12 relative overflow-hidden">
+        <svg class="absolute -right-20 top-1/2 -translate-y-1/2 w-[400px] h-[400px] opacity-[0.11] pointer-events-none" viewBox="0 0 400 400" fill="none" aria-hidden="true">
+            <rect x="0"   y="0"   width="104" height="48" rx="12" fill="white"/>
+            <rect x="120" y="0"   width="48"  height="48" rx="12" fill="white"/>
+            <rect x="0"   y="64"  width="48"  height="48" rx="12" fill="white"/>
+            <rect x="64"  y="64"  width="104" height="48" rx="12" fill="white"/>
+            <rect x="0"   y="128" width="104" height="48" rx="12" fill="white"/>
+            <rect x="120" y="128" width="48"  height="48" rx="12" fill="white"/>
+        </svg>
+
+        <div class="relative flex items-center gap-3">
+            <img src="/static/images/Icon.png" alt="" class="h-10 w-10 rounded-lg object-contain bg-white/10 p-1"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+            <span style="display:none" class="h-10 w-10 rounded-lg bg-white/15 items-center justify-center text-lg font-bold">B</span>
+            <span class="text-lg font-bold tracking-tight">BuildByte Academy</span>
+        </div>
+
+        <div class="relative max-w-sm">
+            <h1 class="text-4xl font-bold leading-[1.1] tracking-tight">Run the academy.</h1>
+            <p class="mt-4 text-base text-white/80 leading-relaxed">
+                Courses, users, certificates and system settings — everything that keeps the academy running.
+            </p>
+        </div>
+
+        <p class="relative text-xs text-white/60">&copy; BuildByte Academy</p>
+    </aside>
+
+    <main class="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-12 bg-surface-page">
+        <div class="w-full max-w-md">
+            <div class="bg-surface-raised border border-line-subtle rounded-xl shadow-card p-8 sm:p-10">
+
+                <!-- BRAND LOCKUP — logo placeholder + brand name -->
+                <div class="flex flex-col items-center text-center">
+                    <img src="/static/images/Icon.png" alt="BuildByte Academy" class="h-14 w-14 rounded-xl object-contain"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                    <span style="display:none" class="h-14 w-14 rounded-xl bg-admin-600 text-white items-center justify-center text-2xl font-bold">B</span>
+                    <p class="mt-3 text-lg font-bold text-ink-strong tracking-tight">BuildByte Academy</p>
+                    <p class="text-[11px] font-semibold text-admin-600 uppercase tracking-[0.12em]">Admin Console</p>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <h2 class="text-2xl font-bold text-ink-strong tracking-tight">Administrator sign in</h2>
+                    <p class="mt-1.5 text-sm text-ink-muted">Restricted access. All actions are logged.</p>
+                </div>
+
+                <form class="mt-8 space-y-5" action="{{ url_for('admin.login') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-ink mb-1.5">Email address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-envelope text-lg text-ink-disabled"></i>
+                            </span>
+                            <input id="email" name="email" type="email" autocomplete="email" required
+                                   placeholder="admin@example.com"
+                                   class="block w-full pl-10 pr-3 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 focus:ring-admin-600 focus:border-admin-600 transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="mb-1.5">
+                            <label for="password" class="block text-sm font-medium text-ink">Password</label>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-lock text-lg text-ink-disabled"></i>
+                            </span>
+                            <input id="password" name="password" type="password" autocomplete="current-password" required
+                                   placeholder="••••••••"
+                                   class="block w-full pl-10 pr-11 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 focus:ring-admin-600 focus:border-admin-600 transition">
+                            <button type="button" onclick="togglePassword()" aria-label="Show or hide password"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-ink-disabled hover:text-ink transition-colors">
+                                <i class="ph ph-eye text-lg" id="eye-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-admin-600 text-white text-sm font-semibold shadow-sm hover:bg-admin-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-600 focus-visible:ring-offset-2 transition-colors">
+                        Sign in
+                    </button>
+                </form>
+
+                <p class="mt-8 pt-6 border-t border-line-subtle text-center text-sm">
+                    <a href="{{ url_for('auth.login') }}" class="inline-flex items-center gap-1.5 font-semibold text-ink-muted hover:text-ink transition-colors">
+                        <i class="ph ph-arrow-left text-base"></i> Return to student portal
+                    </a>
+                </p>
             </div>
-            
-            <div class="text-center mt-4">
-                <a href="{{ url_for('auth.login') }}" class="text-sm text-gray-400 hover:text-white transition duration-150"><i class="ph ph-arrow-left mr-1"></i> Return to Student Portal</a>
-            </div>
-        </form>
-    </div>
+        </div>
+    </main>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.remove('ph-eye');
+            eyeIcon.classList.add('ph-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('ph-eye-slash');
+            eyeIcon.classList.add('ph-eye');
+        }
+    }
+</script>
 {% endblock %}

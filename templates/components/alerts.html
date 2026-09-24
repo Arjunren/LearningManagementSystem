@@ -1,22 +1,49 @@
-<div class="fixed top-4 right-4 z-50 flex flex-col space-y-2 max-w-sm w-full">
+{#
+  Flash messages. The category -> style map is spelled out in full class
+  strings on purpose: Tailwind cannot resolve a class built by string
+  concatenation (`border-{{ color }}-500`), which is why the old version
+  silently lost its colour.
+#}
+{% set alert_styles = {
+    'success': {'icon': 'ph-check-circle', 'accent': 'bg-success-600',  'icon_color': 'text-success-700'},
+    'danger':  {'icon': 'ph-warning-circle', 'accent': 'bg-danger-600', 'icon_color': 'text-danger-600'},
+    'error':   {'icon': 'ph-warning-circle', 'accent': 'bg-danger-600', 'icon_color': 'text-danger-600'},
+    'warning': {'icon': 'ph-warning',        'accent': 'bg-warning-600','icon_color': 'text-warning-600'},
+    'info':    {'icon': 'ph-info',           'accent': 'bg-brand-600',  'icon_color': 'text-brand-600'}
+} %}
+
+<div class="fixed top-4 right-4 left-4 sm:left-auto z-50 flex flex-col gap-2 sm:max-w-sm sm:w-full no-print" aria-live="polite">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                {% set color = 'blue' %}
-                {% if category == 'success' %} {% set color = 'green' %}
-                {% elif category == 'danger' %} {% set color = 'red' %}
-                {% elif category == 'warning' %} {% set color = 'yellow' %}
-                {% endif %}
-                
-                <div class="bg-white border-l-4 border-{{ color }}-500 p-4 rounded shadow-lg flex justify-between items-start" role="alert" id="alert-{{ loop.index }}">
-                    <div>
-                        <p class="font-medium text-gray-800">{{ message }}</p>
-                    </div>
-                    <button onclick="document.getElementById('alert-{{ loop.index }}').remove()" class="text-gray-400 hover:text-gray-600">
-                        <i class="ph ph-x"></i>
+                {% set style = alert_styles.get(category, alert_styles['info']) %}
+                <div class="relative flex items-start gap-3 bg-surface-raised border border-line-subtle rounded-lg shadow-toast pl-4 pr-3 py-3.5 overflow-hidden animate-slide-in"
+                     role="alert" id="alert-{{ loop.index }}">
+                    <span class="absolute left-0 inset-y-0 w-1 {{ style.accent }}"></span>
+                    <i class="ph {{ style.icon }} text-xl shrink-0 mt-px {{ style.icon_color }}"></i>
+                    <p class="flex-1 text-sm font-medium text-ink leading-relaxed">{{ message }}</p>
+                    <button onclick="document.getElementById('alert-{{ loop.index }}').remove()"
+                            aria-label="Dismiss notification"
+                            class="shrink-0 -mr-1 p-1 rounded-md text-ink-disabled hover:text-ink hover:bg-surface-sunken transition-colors">
+                        <i class="ph ph-x text-base"></i>
                     </button>
                 </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
 </div>
+
+<script>
+    // Flash messages fade out on their own; errors stay until dismissed.
+    (function () {
+        document.querySelectorAll('[id^="alert-"]').forEach(function (el) {
+            if (el.querySelector('.bg-danger-600')) return;
+            setTimeout(function () {
+                el.style.transition = 'opacity 300ms ease, transform 300ms ease';
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(-8px)';
+                setTimeout(function () { el.remove(); }, 300);
+            }, 6000);
+        });
+    })();
+</script>

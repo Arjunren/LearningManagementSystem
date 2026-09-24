@@ -1,19 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
     <title>{% block page_title %}BuildByte Academy{% endblock %}</title>
     <link rel="icon" type="image/png" href="/static/images/Icon_Badge.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        /* ------------------------------------------------------------------
+           BuildByte Academy design tokens -> Tailwind theme.
+           Everything is under `extend`, so the stock Tailwind palette still
+           works while older markup is migrated. Change a value HERE and it
+           changes everywhere; never hard-code a hex in a template.
+        ------------------------------------------------------------------ */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        brand:   { 100: '#dbeafe', 600: '#2563eb', 700: '#1d4ed8' },
+                        teacher: { 600: '#059669', 700: '#047857', 800: '#065f46' },
+                        admin:   { 600: '#4f46e5', 700: '#4338ca' },
+                        success: { 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534' },
+                        warning: { 600: '#d97706', 800: '#92400e' },
+                        danger:  { 500: '#ef4444', 600: '#dc2626', 800: '#991b1b' },
+                        award:   { 500: '#eab308' },
+                        ink: {
+                            DEFAULT: '#1e293b',
+                            strong: '#0f172a',
+                            muted: '#64748b',
+                            inverse: '#ffffff',
+                            disabled: '#94a3b8',
+                            'on-inverse': '#e2e8f0',
+                            'on-inverse-muted': '#94a3b8',
+                        },
+                        surface: {
+                            page: '#f8fafc',
+                            raised: '#ffffff',
+                            sunken: '#f1f5f9',
+                            inverse: '#0f172a',
+                            'inverse-raised': '#1e293b',
+                            brand: '#dbeafe',
+                            teacher: '#d1fae5',
+                            admin: '#e0e7ff',
+                            success: '#dcfce7',
+                            warning: '#fef3c7',
+                            danger: '#fee2e2',
+                            award: '#fef3c7',
+                        },
+                        line: { subtle: '#e2e8f0', strong: '#cbd5e1' },
+                    },
+                    borderRadius: { sm: '6px', md: '8px', lg: '12px', xl: '16px' },
+                    boxShadow: {
+                        card: '0 1px 2px 0 rgba(15, 23, 42, 0.06)',
+                        raised: '0 4px 12px -2px rgba(15, 23, 42, 0.10)',
+                        toast: '0 8px 24px -6px rgba(15, 23, 42, 0.18)',
+                    },
+                    keyframes: {
+                        'slide-in': {
+                            '0%': { opacity: '0', transform: 'translateY(-8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    },
+                    animation: { 'slide-in': 'slide-in 200ms ease-out' },
+                },
+            },
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', system-ui, sans-serif; }
         [x-cloak] { display: none !important; }
+
+        /* One focus treatment for the whole product. Never remove it. */
+        :focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 2px;
+            border-radius: 6px;
+        }
+
+        /* Quieter scrollbars inside panels and sidebars */
+        .scrollbar-slim { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+        .scrollbar-slim::-webkit-scrollbar { width: 8px; height: 8px; }
+        .scrollbar-slim::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .scrollbar-slim::-webkit-scrollbar-track { background: transparent; }
+
+        /* Chrome disappears when a certificate goes to paper */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: #ffffff !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
+    {% block head_extra %}{% endblock %}
 </head>
-<body class="bg-gray-50 text-gray-900 antialiased flex flex-col min-h-screen">
+<body class="h-full bg-surface-page text-ink antialiased flex flex-col min-h-screen">
     {% include 'components/alerts.html' %}
     {% block content %}{% endblock %}
     {% block scripts %}{% endblock %}

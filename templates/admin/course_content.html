@@ -1,32 +1,60 @@
 {% extends "teacher_base.html" if session.get('role') == 'teacher' else "admin_base.html" %}
 
+{#
+  Shared by the admin console and the teacher portal, so the accent follows the
+  signed-in role. Both branches are whole class strings — Tailwind cannot
+  resolve a class assembled from a variable.
+
+  JS contracts kept as-is: `#sortable-procedures`, the `.cursor-move` drag
+  handle SortableJS is configured with, `data-id` on each row, every
+  `#field-*` id, and toggleFields / toggleHandoutMode / formatHandout /
+  insertHandoutLink / syncHandoutEditor.
+#}
+{% set is_teacher = session.get('role') == 'teacher' %}
+{% set field_focus = 'focus:ring-teacher-700 focus:border-teacher-700' if is_teacher else 'focus:ring-admin-600 focus:border-admin-600' %}
+{% set link_color = 'text-teacher-700 hover:text-teacher-800' if is_teacher else 'text-admin-600 hover:text-admin-700' %}
+{% set submit_color = 'bg-teacher-700 hover:bg-teacher-800' if is_teacher else 'bg-admin-600 hover:bg-admin-700' %}
+{% set tint_bg = 'bg-surface-teacher text-teacher-800' if is_teacher else 'bg-surface-admin text-admin-700' %}
+{% set check_color = 'text-teacher-700 focus:ring-teacher-700' if is_teacher else 'text-admin-600 focus:ring-admin-600' %}
+
+{% block admin_title %}Course Content{% endblock %}
+{% block teacher_title %}Course Content{% endblock %}
+
 {% block app_content %}
-<div class="mb-6 flex justify-between items-center">
-    <a href="{{ url_for('teacher.my_courses') if session.get('role') == 'teacher' else url_for('admin_courses.index') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm font-medium">
-        <i class="ph ph-arrow-left mr-1"></i> Back to {{ 'My Courses' if session.get('role') == 'teacher' else 'Courses' }}
+<div class="mb-6">
+    <a href="{{ url_for('teacher.my_courses') if session.get('role') == 'teacher' else url_for('admin_courses.index') }}"
+       class="inline-flex items-center gap-1.5 text-sm font-semibold {{ link_color }} w-max">
+        <i class="ph ph-arrow-left text-base"></i> Back to {{ 'My Courses' if session.get('role') == 'teacher' else 'Courses' }}
     </a>
 </div>
 
-<div class="md:flex gap-8">
-    <div class="md:w-1/3 space-y-6">
-        <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Add Procedure</h3>
+<div class="lg:flex gap-8 items-start">
+
+    <!-- Add procedure -->
+    <div class="lg:w-1/3 lg:sticky lg:top-24">
+        <section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
+            <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page">
+                <h2 class="text-lg font-bold text-ink-strong">Add procedure</h2>
+                <p class="mt-1 text-[13px] text-ink-muted">Fields change with the type you pick.</p>
             </div>
-            <div class="p-6">
-                <form action="{{ url_for('admin_courses.content', course_id=course.id) }}" method="POST" enctype="multipart/form-data" onsubmit="syncHandoutEditor(this)">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="p-5 sm:p-6">
+                <form action="{{ url_for('admin_courses.content', course_id=course.id) }}" method="POST"
+                      enctype="multipart/form-data" onsubmit="syncHandoutEditor(this)">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="action" value="add_procedure">
-                    
-                    <div class="space-y-4">
+
+                    <div class="space-y-5">
                         <div>
-                            <label for="title" class="block text-sm font-medium text-gray-700">Procedure Title</label>
-                            <input type="text" name="title" id="title" required class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                            <label for="title" class="block text-sm font-medium text-ink mb-1.5">Procedure title</label>
+                            <input type="text" name="title" id="title" required
+                                   class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
                         </div>
-                        
+
                         <div>
-                            <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
-                            <select id="type" name="type" onchange="toggleFields()" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                            <label for="type" class="block text-sm font-medium text-ink mb-1.5">Type</label>
+                            <select id="type" name="type" onchange="toggleFields()"
+                                    class="block w-full px-3 py-2.5 rounded-md border border-line-strong bg-surface-raised text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
                                 <option value="video">Video</option>
                                 <option value="quiz">Quiz</option>
                                 <option value="activity">Activity</option>
@@ -34,151 +62,193 @@
                                 <option value="handout">Handout</option>
                             </select>
                         </div>
-                        
+
                         <div id="field-youtube" class="procedure-field">
-                            <label for="youtube_url" class="block text-sm font-medium text-gray-700">YouTube URL</label>
-                            <input type="url" name="youtube_url" id="youtube_url" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border" placeholder="https://youtube.com/watch?v=...">
+                            <label for="youtube_url" class="block text-sm font-medium text-ink mb-1.5">YouTube URL</label>
+                            <input type="url" name="youtube_url" id="youtube_url" placeholder="https://youtube.com/watch?v=..."
+                                   class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
                         </div>
-                        
+
                         <div id="field-quiz" class="procedure-field hidden">
-                            <label for="google_form_url" class="block text-sm font-medium text-gray-700">Google Form URL</label>
-                            <input type="url" name="google_form_url" id="google_form_url" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border" placeholder="https://forms.gle/...">
+                            <label for="google_form_url" class="block text-sm font-medium text-ink mb-1.5">Google Form URL</label>
+                            <input type="url" name="google_form_url" id="google_form_url" placeholder="https://forms.gle/..."
+                                   class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
                         </div>
-                        
+
                         <div id="field-instructions" class="procedure-field hidden">
-                            <label for="instructions" class="block text-sm font-medium text-gray-700">Instructions / URL</label>
-                            <textarea id="instructions" name="instructions" rows="4" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md py-2 px-3"></textarea>
+                            <label for="instructions" class="block text-sm font-medium text-ink mb-1.5">Instructions / URL</label>
+                            <textarea id="instructions" name="instructions" rows="4"
+                                      class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm leading-relaxed focus:outline-none focus:ring-2 {{ field_focus }} transition"></textarea>
                         </div>
 
                         <div id="field-handout" class="procedure-field hidden space-y-4">
                             <div>
-                                <label for="handout_mode" class="block text-sm font-medium text-gray-700">Handout source</label>
-                                <select id="handout_mode" name="handout_mode" onchange="toggleHandoutMode()" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm">
+                                <label for="handout_mode" class="block text-sm font-medium text-ink mb-1.5">Handout source</label>
+                                <select id="handout_mode" name="handout_mode" onchange="toggleHandoutMode()"
+                                        class="block w-full px-3 py-2.5 rounded-md border border-line-strong bg-surface-raised text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
                                     <option value="text">Text content</option>
                                     <option value="upload">Upload document</option>
                                 </select>
-                                <p class="mt-1 text-xs text-gray-500">Text opens in the learning page. Documents remain downloadable.</p>
+                                <p class="mt-1.5 text-xs text-ink-muted">Text opens in the learning page. Documents stay downloadable.</p>
                             </div>
+
                             <div id="handout-upload" class="hidden">
-                                <label for="handout_file" class="block text-sm font-medium text-gray-700">Document</label>
-                                <input id="handout_file" name="handout_file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.zip" class="mt-1 block w-full text-sm text-gray-600">
+                                <label for="handout_file" class="block text-sm font-medium text-ink mb-1.5">Document</label>
+                                <input id="handout_file" name="handout_file" type="file"
+                                       accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.zip"
+                                       class="block w-full text-sm text-ink file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-surface-sunken file:text-ink hover:file:bg-line-subtle cursor-pointer">
                             </div>
+
                             <div id="handout-text">
-                                <label class="block text-sm font-medium text-gray-700">Handout content</label>
-                                <div class="mt-1 flex flex-wrap gap-1 border border-gray-200 border-b-0 rounded-t-md bg-gray-50 p-2">
-                                    <button type="button" onclick="formatHandout('formatBlock', 'h2')" class="px-2 py-1 text-xs border rounded bg-white">Heading</button>
-                                    <button type="button" onclick="formatHandout('bold')" class="px-2 py-1 text-xs border rounded bg-white"><b>Bold</b></button>
-                                    <button type="button" onclick="formatHandout('italic')" class="px-2 py-1 text-xs border rounded bg-white"><i>Italic</i></button>
-                                    <button type="button" onclick="formatHandout('insertUnorderedList')" class="px-2 py-1 text-xs border rounded bg-white">List</button>
-                                    <button type="button" onclick="insertHandoutLink()" class="px-2 py-1 text-xs border rounded bg-white">Link</button>
+                                <label class="block text-sm font-medium text-ink mb-1.5">Handout content</label>
+                                <div class="rounded-md border border-line-strong overflow-hidden">
+                                    <div class="flex flex-wrap gap-1 border-b border-line-subtle bg-surface-page p-2">
+                                        <button type="button" onclick="formatHandout('formatBlock', 'h2')"
+                                                class="px-2.5 py-1.5 text-xs font-semibold rounded-sm bg-surface-raised border border-line-subtle text-ink hover:bg-surface-sunken transition-colors">Heading</button>
+                                        <button type="button" onclick="formatHandout('bold')"
+                                                class="px-2.5 py-1.5 text-xs rounded-sm bg-surface-raised border border-line-subtle text-ink hover:bg-surface-sunken transition-colors"><b>Bold</b></button>
+                                        <button type="button" onclick="formatHandout('italic')"
+                                                class="px-2.5 py-1.5 text-xs rounded-sm bg-surface-raised border border-line-subtle text-ink hover:bg-surface-sunken transition-colors"><i>Italic</i></button>
+                                        <button type="button" onclick="formatHandout('insertUnorderedList')"
+                                                class="px-2.5 py-1.5 text-xs font-semibold rounded-sm bg-surface-raised border border-line-subtle text-ink hover:bg-surface-sunken transition-colors">List</button>
+                                        <button type="button" onclick="insertHandoutLink()"
+                                                class="px-2.5 py-1.5 text-xs font-semibold rounded-sm bg-surface-raised border border-line-subtle text-ink hover:bg-surface-sunken transition-colors">Link</button>
+                                    </div>
+                                    <div id="handout-editor" contenteditable="true" role="textbox" aria-multiline="true"
+                                         aria-label="Handout content"
+                                         class="min-h-40 max-h-72 overflow-y-auto scrollbar-slim p-3 text-sm leading-7 text-ink bg-surface-raised focus:outline-none"
+                                         data-placeholder="Write or paste the handout here."></div>
                                 </div>
-                                <div id="handout-editor" contenteditable="true" class="min-h-40 max-h-72 overflow-y-auto border border-gray-300 rounded-b-md p-3 text-sm leading-6 focus:outline-none focus:ring-2 focus:ring-indigo-500" data-placeholder="Write or paste the handout here."></div>
                                 <input type="hidden" name="handout_content" id="handout_content">
                             </div>
                         </div>
-                        
+
                         <div id="field-scores" class="procedure-field hidden space-y-4">
                             <div>
-                                <label for="max_score" class="block text-sm font-medium text-gray-700">Maximum Score</label>
-                                <input type="number" name="max_score" id="max_score" value="100" min="1" step="1" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                                <label for="max_score" class="block text-sm font-medium text-ink mb-1.5">Maximum score</label>
+                                <input type="number" name="max_score" id="max_score" value="100" min="1" step="1"
+                                       class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
                             </div>
                             <div>
-                                <label for="passing_score" class="block text-sm font-medium text-gray-700">Passing Score</label>
-                                <input type="number" name="passing_score" id="passing_score" value="75" min="0" step="1" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border">
+                                <label for="passing_score" class="block text-sm font-medium text-ink mb-1.5">Passing score</label>
+                                <input type="number" name="passing_score" id="passing_score" value="75" min="0" step="1"
+                                       class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink text-sm focus:outline-none focus:ring-2 {{ field_focus }} transition">
                             </div>
                         </div>
-                        
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input id="required" name="required" type="checkbox" checked class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                            </div>
-                            <div class="ml-3 text-sm">
-                                <label for="required" class="font-medium text-gray-700">Required Procedure</label>
-                                <p class="text-gray-500 text-xs">Students must complete this to finish the course.</p>
-                            </div>
-                        </div>
+
+                        <label for="required" class="flex items-start gap-3 cursor-pointer">
+                            <input id="required" name="required" type="checkbox" checked
+                                   class="mt-0.5 h-4 w-4 rounded border-line-strong {{ check_color }}">
+                            <span>
+                                <span class="block text-sm font-medium text-ink">Required procedure</span>
+                                <span class="block text-xs text-ink-muted">Students must complete this to finish the course.</span>
+                            </span>
+                        </label>
                     </div>
-                    
-                    <div class="mt-6">
-                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Add Procedure
-                        </button>
-                    </div>
+
+                    <button type="submit"
+                            class="mt-6 w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-md {{ submit_color }} text-white text-sm font-semibold shadow-sm transition-colors">
+                        Add procedure
+                    </button>
                 </form>
             </div>
-        </div>
+        </section>
     </div>
-    
-    <div class="md:w-2/3 mt-6 md:mt-0">
-        <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Course Syllabus: {{ course.title }}</h3>
-                <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">{{ course.get('procedures', [])|length }} items</span>
+
+    <!-- Syllabus -->
+    <div class="lg:w-2/3 mt-8 lg:mt-0 space-y-8">
+        <section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
+            <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page flex flex-wrap items-center justify-between gap-3">
+                <h2 class="text-lg font-bold text-ink-strong">Course syllabus — {{ course.title }}</h2>
+                <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-sm {{ tint_bg }} text-[11px] font-semibold uppercase tracking-[0.09em]">
+                    {{ course.get('procedures', [])|length }} items
+                </span>
             </div>
-            
-            <ul class="divide-y divide-gray-200" id="sortable-procedures">
+
+            <ul class="divide-y divide-line-subtle" id="sortable-procedures">
                 {% for procedure in course.get('procedures', []) %}
-                <li class="p-4 hover:bg-gray-50 flex items-center justify-between" data-id="{{ procedure.id }}">
-                    <div class="flex items-center">
-                        <div class="cursor-move text-gray-400 hover:text-gray-600 mr-3">
+                <li class="p-4 hover:bg-surface-page transition-colors flex items-center justify-between gap-3" data-id="{{ procedure.id }}">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="cursor-move shrink-0 p-1 -ml-1 text-ink-disabled hover:text-ink transition-colors" title="Drag to reorder">
                             <i class="ph ph-dots-six-vertical text-2xl"></i>
-                        </div>
-                        <div class="h-10 w-10 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center mr-4">
+                        </span>
+                        <span class="shrink-0 h-10 w-10 rounded-md {{ tint_bg }} flex items-center justify-center">
                             {% if procedure.type == 'video' %}<i class="ph-fill ph-video-camera text-xl"></i>
                             {% elif procedure.type == 'quiz' %}<i class="ph-fill ph-list-checks text-xl"></i>
                             {% elif procedure.type == 'activity' %}<i class="ph-fill ph-code text-xl"></i>
                             {% elif procedure.type == 'project' %}<i class="ph-fill ph-kanban text-xl"></i>
                             {% elif procedure.type == 'handout' %}<i class="ph-fill ph-file-pdf text-xl"></i>
                             {% endif %}
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">{{ procedure.title }}</p>
-                            <p class="text-xs text-gray-500 capitalize">{{ procedure.type }} {% if procedure.required %}&middot; Required{% endif %}</p>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-ink-strong truncate">{{ procedure.title }}</p>
+                            <p class="text-xs text-ink-muted capitalize">{{ procedure.type }}{% if procedure.required %} &middot; Required{% endif %}</p>
                         </div>
                     </div>
-                    <form action="{{ url_for('admin_courses.content', course_id=course.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this procedure?');">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <form action="{{ url_for('admin_courses.content', course_id=course.id) }}" method="POST"
+                          onsubmit="return confirm('Are you sure you want to delete this procedure?');"
+                          class="shrink-0 flex items-center gap-1">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="action" value="delete_procedure">
                         <input type="hidden" name="procedure_id" value="{{ procedure.id }}">
-                        <a href="{{ url_for('admin_courses.edit_procedure', course_id=course.id, procedure_id=procedure.id) }}" class="text-indigo-600 hover:text-indigo-800 p-2" title="Edit procedure"><i class="ph ph-pencil-simple"></i></a>
-                        <button type="submit" class="text-red-500 hover:text-red-700 p-2">
-                            <i class="ph ph-trash"></i>
+                        <a href="{{ url_for('admin_courses.edit_procedure', course_id=course.id, procedure_id=procedure.id) }}"
+                           title="Edit procedure" aria-label="Edit {{ procedure.title }}"
+                           class="p-2 rounded-md text-ink-muted hover:text-ink hover:bg-surface-sunken transition-colors">
+                            <i class="ph ph-pencil-simple text-lg"></i>
+                        </a>
+                        <button type="submit" aria-label="Delete {{ procedure.title }}"
+                                class="p-2 rounded-md text-danger-600 hover:bg-surface-danger transition-colors">
+                            <i class="ph ph-trash text-lg"></i>
                         </button>
                     </form>
                 </li>
                 {% else %}
-                <li class="p-8 text-center text-gray-500 text-sm">
-                    No procedures added yet. Use the form to build the course content.
+                <li class="px-6 py-12 text-center">
+                    <i class="ph ph-list-plus text-5xl text-ink-disabled"></i>
+                    <p class="mt-3 text-sm text-ink-muted">No procedures added yet. Use the form to build the course content.</p>
                 </li>
                 {% endfor %}
             </ul>
-        </div>
-        
-        <div class="mt-8 bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Syllabus Content</h3>
+        </section>
+
+        <section class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
+            <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page">
+                <h2 class="text-lg font-bold text-ink-strong">Syllabus content</h2>
+                <p class="mt-1 text-[13px] text-ink-muted">Free-text outline shown on the course page.</p>
             </div>
-            <div class="p-6">
+            <div class="p-5 sm:p-6">
                 <form action="{{ url_for('admin_courses.content', course_id=course.id) }}" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="action" value="save_syllabus">
-                    <textarea name="syllabus" rows="10" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Week 1: Introduction...">{{ course.get('syllabus', '') }}</textarea>
+                    <label for="syllabus" class="sr-only">Syllabus</label>
+                    <textarea name="syllabus" id="syllabus" rows="10" placeholder="Week 1: Introduction..."
+                              class="block w-full px-3 py-2.5 rounded-md border border-line-strong text-ink placeholder-ink-disabled text-sm leading-relaxed focus:outline-none focus:ring-2 {{ field_focus }} transition">{{ course.get('syllabus', '') }}</textarea>
                     <div class="mt-4 flex justify-end">
-                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                            Save Changes
+                        <button type="submit"
+                                class="inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-md {{ submit_color }} text-white text-sm font-semibold shadow-sm transition-colors">
+                            Save changes
                         </button>
                     </div>
                 </form>
             </div>
-        </div>
+        </section>
     </div>
 </div>
+
+<style>
+    /* Placeholder text for the contenteditable handout editor */
+    #handout-editor:empty::before {
+        content: attr(data-placeholder);
+        color: #94a3b8;
+    }
+</style>
 
 <script>
     function toggleFields() {
         const type = document.getElementById('type').value;
         document.querySelectorAll('.procedure-field').forEach(el => el.classList.add('hidden'));
-        
+
         if (type === 'video') {
             document.getElementById('field-youtube').classList.remove('hidden');
         } else if (type === 'quiz') {
@@ -229,7 +299,7 @@
                     el.querySelectorAll('li[data-id]').forEach(function(li) {
                         newOrder.push(li.getAttribute('data-id'));
                     });
-                    
+
                     fetch("{{ url_for('admin_courses.reorder', course_id=course.id) }}", {
                         method: 'POST',
                         headers: {
@@ -238,9 +308,7 @@
                         },
                         body: JSON.stringify({order: newOrder})
                     }).then(response => {
-                        if (response.ok) {
-                            console.log('Order saved successfully');
-                        } else {
+                        if (!response.ok) {
                             console.error('Failed to save order');
                         }
                     });

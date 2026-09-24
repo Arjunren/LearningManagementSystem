@@ -1,202 +1,214 @@
 {% extends "app_base.html" %}
+{% block page_title %}{{ course.title }} — BuildByte Academy{% endblock %}
 
 {% block app_content %}
 {% if show_celebration %}
-<div id="celebration-overlay" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-    <div class="relative bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform transition-all scale-100 animate-bounce-short pointer-events-auto">
-        <button onclick="document.getElementById('celebration-overlay').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-            <i class="ph ph-x text-xl"></i>
+<div id="celebration-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+    <div class="absolute inset-0 bg-ink-strong/50"></div>
+    <div class="relative bg-surface-raised rounded-xl shadow-raised p-8 max-w-sm w-full text-center animate-pop pointer-events-auto">
+        <button onclick="document.getElementById('celebration-overlay').remove()" aria-label="Close"
+                class="absolute top-3 right-3 p-2 rounded-md text-ink-disabled hover:text-ink hover:bg-surface-sunken transition-colors">
+            <i class="ph ph-x text-lg"></i>
         </button>
-        <div class="mx-auto w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mb-6">
-            <i class="ph-fill ph-confetti text-5xl text-yellow-500"></i>
+        <div class="mx-auto w-20 h-20 bg-surface-award rounded-full flex items-center justify-center mb-6">
+            <i class="ph-fill ph-confetti text-4xl text-award-500"></i>
         </div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">You Did It!</h2>
-        <p class="text-gray-600 mb-6">You've successfully completed <strong>{{ course.title }}</strong>.</p>
-        <a href="{{ url_for('user.dashboard') }}" class="inline-flex w-full justify-center items-center px-4 py-3 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700">
-            Back to Dashboard
+        <h2 class="text-2xl font-bold text-ink-strong tracking-tight">Course complete</h2>
+        <p class="mt-2 text-sm text-ink-muted leading-relaxed">
+            You've finished <strong class="font-semibold text-ink-strong">{{ course.title }}</strong>.
+        </p>
+        <a href="{{ url_for('user.dashboard') }}"
+           class="mt-6 w-full inline-flex justify-center items-center gap-2 px-4 py-3 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 transition-colors">
+            Back to dashboard
         </a>
     </div>
 </div>
 <style>
-    @keyframes bounce-short {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
+    @keyframes pop {
+        0%   { transform: scale(0.96); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
     }
-    .animate-bounce-short {
-        animation: bounce-short 0.5s ease-in-out 2;
-    }
+    .animate-pop { animation: pop 220ms ease-out; }
 </style>
 {% endif %}
 
-<div class="mb-6 flex justify-between items-center">
-    <a href="{{ url_for('user.dashboard') }}" class="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium">
-        <i class="ph ph-arrow-left mr-1"></i> Back to Dashboard
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <a href="{{ url_for('user.dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700 w-max">
+        <i class="ph ph-arrow-left text-base"></i> Back to dashboard
     </a>
-    
-    <div class="flex items-center space-x-4">
+
+    <div class="flex flex-wrap items-center gap-3">
         {% if enrollment.status == 'completed' %}
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                <i class="ph-fill ph-check-circle mr-1.5"></i> Course Completed
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-success text-success-800 text-xs font-semibold">
+                <i class="ph-fill ph-check-circle text-sm"></i> Course completed
             </span>
             {% if enrollment.certificate_id %}
-            <a href="{{ url_for('certificates.view', cert_id=enrollment.certificate_id, enrollment_id=enrollment.id) }}" class="inline-flex items-center px-3 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
-                <i class="ph ph-certificate mr-1.5"></i> View Certificate
+            <a href="{{ url_for('certificates.view', cert_id=enrollment.certificate_id, enrollment_id=enrollment.id) }}"
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 transition-colors">
+                <i class="ph ph-certificate text-base"></i> View certificate
             </a>
             {% else %}
             <form action="{{ url_for('certificates.generate', enrollment_id=enrollment.id) }}" method="POST" class="inline">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="inline-flex items-center px-3 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
-                    <i class="ph ph-medal mr-1.5"></i> Claim Certificate
+                <button type="submit"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 transition-colors">
+                    <i class="ph ph-medal text-base"></i> Claim certificate
                 </button>
             </form>
             {% endif %}
         {% else %}
-            <div class="flex flex-col items-end">
-                <div class="text-sm font-bold text-gray-700 mb-1">
-                    Progress: {{ enrollment.progress }}%
+            <div class="flex flex-col items-start sm:items-end">
+                <div class="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.09em] mb-1.5">
+                    Progress — {{ enrollment.progress }}%
                 </div>
-                <div class="w-32 bg-gray-200 rounded-full h-2">
-                    <div class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: {{ enrollment.progress }}%"></div>
+                <div class="w-40 bg-surface-sunken rounded-full h-2 overflow-hidden"
+                     role="progressbar" aria-valuenow="{{ enrollment.progress }}" aria-valuemin="0" aria-valuemax="100">
+                    <div class="bg-brand-600 h-2 rounded-full transition-all duration-500" style="width: {{ enrollment.progress }}%"></div>
                 </div>
             </div>
         {% endif %}
     </div>
 </div>
 
-<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-    <div class="p-6 border-b border-gray-200 bg-gray-50">
-        <h1 class="text-2xl font-bold text-gray-900">{{ course.title }}</h1>
+<div class="bg-surface-raised rounded-lg border border-line-subtle shadow-card overflow-hidden">
+    <div class="px-5 sm:px-6 py-5 border-b border-line-subtle bg-surface-page">
+        <h1 class="text-xl sm:text-2xl font-bold text-ink-strong tracking-tight">{{ course.title }}</h1>
     </div>
-    
-    <div class="md:flex h-[600px]">
-        <!-- Sidebar with procedures -->
-        <div class="md:w-1/3 border-r border-gray-200 overflow-y-auto bg-gray-50">
-            <ul class="divide-y divide-gray-200">
+
+    <div class="lg:flex lg:h-[640px]">
+        <!-- Lesson list -->
+        <div class="lg:w-1/3 lg:border-r border-b lg:border-b-0 border-line-subtle overflow-y-auto scrollbar-slim bg-surface-page lg:max-h-none max-h-72">
+            <ul class="divide-y divide-line-subtle">
                 {% for procedure in course.get('procedures', []) %}
                     {% set is_completed = procedure.id in enrollment.get('completed_procedures', []) %}
-                    <li class="p-4 hover:bg-gray-100 cursor-pointer transition flex items-start" onclick="showProcedure('{{ procedure.id }}')">
-                        <div class="flex-shrink-0 mr-3 mt-0.5">
-                            {% if is_completed %}
-                                <i class="ph-fill ph-check-circle text-green-500 text-xl"></i>
-                            {% else %}
-                                <i class="ph ph-circle text-gray-300 text-xl"></i>
-                            {% endif %}
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-sm font-medium text-gray-900">{{ procedure.title }}</h4>
-                            <p class="text-xs text-gray-500 flex items-center mt-1">
-                                {% if procedure.type == 'video' %}<i class="ph ph-video-camera mr-1"></i>
-                                {% elif procedure.type == 'quiz' %}<i class="ph ph-list-checks mr-1"></i>
-                                {% elif procedure.type == 'activity' %}<i class="ph ph-code mr-1"></i>
-                                {% elif procedure.type == 'project' %}<i class="ph ph-kanban mr-1"></i>
-                                {% elif procedure.type == 'handout' %}<i class="ph ph-file-pdf mr-1"></i>
+                    <li>
+                        <button type="button" id="navproc-{{ procedure.id }}"
+                                onclick="showProcedure('{{ procedure.id }}')"
+                                class="lesson-nav w-full text-left p-4 flex items-start gap-3 hover:bg-surface-sunken transition-colors">
+                            <span class="shrink-0 mt-0.5">
+                                {% if is_completed %}
+                                    <i class="ph-fill ph-check-circle text-success-600 text-xl"></i>
+                                {% else %}
+                                    <i class="ph ph-circle text-ink-disabled text-xl"></i>
                                 {% endif %}
-                                {{ procedure.type|capitalize }}
-                            </p>
-                        </div>
+                            </span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block text-sm font-medium text-ink-strong">{{ procedure.title }}</span>
+                                <span class="mt-1 flex items-center gap-1.5 text-xs text-ink-muted">
+                                    {% if procedure.type == 'video' %}<i class="ph ph-video-camera"></i>
+                                    {% elif procedure.type == 'quiz' %}<i class="ph ph-list-checks"></i>
+                                    {% elif procedure.type == 'activity' %}<i class="ph ph-code"></i>
+                                    {% elif procedure.type == 'project' %}<i class="ph ph-kanban"></i>
+                                    {% elif procedure.type == 'handout' %}<i class="ph ph-file-pdf"></i>
+                                    {% endif %}
+                                    {{ procedure.type|capitalize }}
+                                </span>
+                            </span>
+                        </button>
                     </li>
                 {% endfor %}
             </ul>
         </div>
-        
-        <!-- Main content area -->
-        <div class="md:w-2/3 p-6 overflow-y-auto bg-white relative">
+
+        <!-- Lesson panel -->
+        <div class="lg:w-2/3 p-5 sm:p-6 overflow-y-auto scrollbar-slim bg-surface-raised relative">
             {% for procedure in course.get('procedures', []) %}
                 {% set is_completed = procedure.id in enrollment.get('completed_procedures', []) %}
                 <div id="proc-{{ procedure.id }}" class="procedure-content hidden">
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">{{ procedure.title }}</h2>
-                    
+                    <h2 class="text-xl font-bold text-ink-strong tracking-tight mb-5">{{ procedure.title }}</h2>
+
                     {% if procedure.type == 'video' %}
-                        <div class="aspect-w-16 aspect-h-9 mb-6 rounded-lg overflow-hidden bg-black flex items-center justify-center">
-                            <!-- In a real app we'd parse the youtube url to embed safely -->
-                            <iframe width="100%" height="400" src="{{ procedure.get('youtube_url', '').replace('watch?v=', 'embed/') }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <div class="mb-6 rounded-lg overflow-hidden bg-black aspect-video">
+                            <iframe class="w-full h-full" src="{{ procedure.get('youtube_url', '').replace('watch?v=', 'embed/') }}" title="Lesson video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                     {% elif procedure.type == 'quiz' %}
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6 text-center">
-                            <i class="ph ph-list-checks text-4xl text-blue-500 mb-3"></i>
-                            <h3 class="text-lg font-medium text-blue-900 mb-2">Quiz Time</h3>
-                            <p class="text-sm text-blue-700 mb-4">Complete this quiz to test your knowledge.</p>
-                            <a href="{{ procedure.get('google_form_url', '#') }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                                Open Quiz <i class="ph ph-arrow-square-out ml-2"></i>
+                        <div class="mb-6 rounded-lg border border-dashed border-line-strong bg-surface-sunken px-6 py-12 text-center">
+                            <i class="ph ph-list-checks text-4xl text-brand-600"></i>
+                            <h3 class="mt-3 text-lg font-bold text-ink-strong">Quiz time</h3>
+                            <p class="mt-1.5 text-[13px] text-ink-muted">Complete this quiz to test your knowledge.</p>
+                            <a href="{{ procedure.get('google_form_url', '#') }}" target="_blank" rel="noopener"
+                               class="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 transition-colors">
+                                Open quiz <i class="ph ph-arrow-square-out text-base"></i>
                             </a>
                         </div>
                     {% elif procedure.type == 'handout' %}
                         {% if procedure.get('handout_mode') == 'upload' or procedure.get('file_url') %}
-                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 flex items-center justify-between gap-4">
-                            <div class="flex items-center">
-                                <i class="ph ph-file-pdf text-3xl text-red-500 mr-4"></i>
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-900">{{ procedure.get('original_filename', 'Course handout') }}</h3>
-                                    <p class="text-xs text-gray-500">Download the supplementary material.</p>
+                        <div class="mb-6 rounded-lg border border-line-subtle bg-surface-page p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <i class="ph ph-file-pdf text-3xl text-danger-600 shrink-0"></i>
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-semibold text-ink-strong truncate">{{ procedure.get('original_filename', 'Course handout') }}</h3>
+                                    <p class="text-xs text-ink-muted">Download the supplementary material.</p>
                                 </div>
                             </div>
-                            <a href="{{ url_for('static', filename='uploads/' + procedure.get('file_url', '')) }}" target="_blank" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                Download
+                            <a href="{{ url_for('static', filename='uploads/' + procedure.get('file_url', '')) }}" target="_blank" rel="noopener"
+                               class="shrink-0 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-surface-raised border border-line-strong text-ink text-sm font-semibold hover:bg-surface-sunken transition-colors">
+                                <i class="ph ph-download-simple text-base"></i> Download
                             </a>
                         </div>
                         {% else %}
-                        <article class="mb-6 rounded-xl border border-slate-200 bg-white shadow-sm">
-                            <div class="flex items-center gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4">
-                                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600"><i class="ph ph-note text-xl"></i></span>
-                                <div><h3 class="font-semibold text-slate-900">Reading handout</h3><p class="text-xs text-slate-500">Course material</p></div>
+                        <article class="mb-6 rounded-lg border border-line-subtle bg-surface-raised shadow-card overflow-hidden">
+                            <div class="flex items-center gap-3 border-b border-line-subtle bg-surface-page px-5 py-4">
+                                <span class="flex h-9 w-9 items-center justify-center rounded-md bg-surface-brand text-brand-700"><i class="ph ph-note text-xl"></i></span>
+                                <div>
+                                    <h3 class="text-sm font-semibold text-ink-strong">Reading handout</h3>
+                                    <p class="text-xs text-ink-muted">Course material</p>
+                                </div>
                             </div>
-                            <div class="handout-content px-5 py-6 text-slate-700 leading-7 sm:px-8 sm:py-8">{{ (procedure.get('content_html') or procedure.get('instructions', '')) | safe_handout_html | safe }}</div>
+                            <div class="handout-content px-5 py-6 text-ink leading-7 sm:px-8 sm:py-8">{{ procedure.get('content_html') or procedure.get('instructions', '') | safe_handout_html | safe }}</div>
                         </article>
                         {% endif %}
                     {% else %}
-                        <div class="prose max-w-none text-gray-600 mb-6">
+                        <div class="mb-6 text-[15px] text-ink leading-relaxed whitespace-pre-line">
                             {{ procedure.get('instructions', 'Follow the instructions provided by your instructor.') }}
                         </div>
                     {% endif %}
-                    
+
                     {% if procedure.type in ['quiz', 'activity', 'project'] and procedure.get('graded', False) %}
                         {% set status_info = assessment_status_map.get(procedure.id, {}) %}
                         {% set current_status = status_info.get('current_status', 'NOT_STARTED') %}
-                        
-                        <div class="mt-8 border-t border-gray-200 pt-6">
+
+                        <div class="mt-8 border-t border-line-subtle pt-6">
                             {% if current_status == 'NOT_STARTED' %}
                                 <form action="{{ url_for('courses.complete_procedure', enrollment_id=enrollment.id, procedure_id=procedure.id) }}" method="POST">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                                        <i class="ph ph-paper-plane-tilt mr-2"></i> Submit for Grading
+                                    <button type="submit"
+                                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-brand-600 text-white text-sm font-semibold shadow-sm hover:bg-brand-700 transition-colors">
+                                        <i class="ph ph-paper-plane-tilt text-base"></i> Submit for grading
                                     </button>
                                 </form>
                             {% elif current_status == 'REVIEW' %}
-                                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-                                    <div class="flex">
-                                        <i class="ph ph-clock text-yellow-500 text-xl mr-3"></i>
-                                        <div>
-                                            <h3 class="text-sm font-medium text-yellow-800">Under Review</h3>
-                                            <p class="text-sm text-yellow-700 mt-1">Your submission is waiting to be graded by an instructor.</p>
-                                        </div>
+                                <div class="flex gap-3 p-4 rounded-md bg-surface-warning border border-warning-600/20">
+                                    <i class="ph ph-clock text-warning-800 text-xl shrink-0"></i>
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-warning-800">Under review</h3>
+                                        <p class="mt-1 text-[13px] text-warning-800/90">Your submission is waiting to be graded by an instructor.</p>
                                     </div>
                                 </div>
                             {% elif current_status == 'PASSED' %}
-                                <div class="p-4 bg-green-50 border border-green-200 rounded-md">
-                                    <div class="flex">
-                                        <i class="ph-fill ph-check-circle text-green-500 text-xl mr-3"></i>
-                                        <div>
-                                            <h3 class="text-sm font-medium text-green-800">Passed</h3>
-                                            <p class="text-sm text-green-700 mt-1">Great job! You have passed this assessment.</p>
-                                        </div>
+                                <div class="flex gap-3 p-4 rounded-md bg-surface-success border border-success-600/20">
+                                    <i class="ph-fill ph-check-circle text-success-700 text-xl shrink-0"></i>
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-success-800">Passed</h3>
+                                        <p class="mt-1 text-[13px] text-success-800/90">You have passed this assessment.</p>
                                     </div>
                                 </div>
                             {% elif current_status == 'FAILED' %}
-                                <div class="p-4 bg-red-50 border border-red-200 rounded-md">
-                                    <div class="flex justify-between items-center">
-                                        <div class="flex">
-                                            <i class="ph-fill ph-x-circle text-red-500 text-xl mr-3"></i>
+                                <div class="p-4 rounded-md bg-surface-danger border border-danger-600/20">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                                        <div class="flex gap-3">
+                                            <i class="ph-fill ph-x-circle text-danger-600 text-xl shrink-0"></i>
                                             <div>
-                                                <h3 class="text-sm font-medium text-red-800">Failed</h3>
-                                                <p class="text-sm text-red-700 mt-1">You did not meet the passing requirements.</p>
+                                                <h3 class="text-sm font-semibold text-danger-800">Failed</h3>
+                                                <p class="mt-1 text-[13px] text-danger-800/90">You did not meet the passing requirements.</p>
                                             </div>
                                         </div>
                                         {% if status_info.get('retake_available', False) %}
-                                        <form action="{{ url_for('courses.retake_procedure', enrollment_id=enrollment.id, procedure_id=procedure.id) }}" method="POST">
+                                        <form action="{{ url_for('courses.retake_procedure', enrollment_id=enrollment.id, procedure_id=procedure.id) }}" method="POST" class="shrink-0">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
-                                                <i class="ph ph-arrow-counter-clockwise mr-2"></i> Retake
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-danger-600 text-white text-sm font-semibold shadow-sm hover:bg-danger-800 transition-colors">
+                                                <i class="ph ph-arrow-counter-clockwise text-base"></i> Retake
                                             </button>
                                         </form>
                                         {% endif %}
@@ -206,31 +218,33 @@
                         </div>
                     {% else %}
                         {% if not is_completed %}
-                        <form action="{{ url_for('courses.complete_procedure', enrollment_id=enrollment.id, procedure_id=procedure.id) }}" method="POST" class="mt-8 border-t border-gray-200 pt-6">
+                        <form action="{{ url_for('courses.complete_procedure', enrollment_id=enrollment.id, procedure_id=procedure.id) }}" method="POST" class="mt-8 border-t border-line-subtle pt-6">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-                                <i class="ph ph-check mr-2"></i> Mark as Complete
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-success-700 text-white text-sm font-semibold shadow-sm hover:bg-success-800 transition-colors">
+                                <i class="ph ph-check text-base"></i> Mark as complete
                             </button>
                         </form>
                         {% else %}
-                        <div class="mt-8 border-t border-gray-200 pt-6">
-                            <span class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-green-800 bg-green-100">
-                                <i class="ph-fill ph-check-circle mr-2 text-green-600"></i> Completed
+                        <div class="mt-8 border-t border-line-subtle pt-6">
+                            <span class="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-surface-success text-success-800 text-sm font-semibold">
+                                <i class="ph-fill ph-check-circle text-base text-success-700"></i> Completed
                             </span>
                         </div>
                         {% endif %}
                     {% endif %}
                 </div>
             {% else %}
-                <div class="text-center py-12">
-                    <p class="text-gray-500">No content available for this course.</p>
+                <div class="text-center py-16">
+                    <i class="ph ph-folder-open text-5xl text-ink-disabled"></i>
+                    <p class="mt-3 text-sm text-ink-muted">No content available for this course.</p>
                 </div>
             {% endfor %}
-            
+
             <div id="welcome-content" class="text-center py-20">
-                <i class="ph ph-book-open-text text-6xl text-blue-300 mb-4"></i>
-                <h3 class="text-xl font-medium text-gray-900 mb-2">Select a lesson to begin</h3>
-                <p class="text-gray-500">Choose a procedure from the sidebar to view its content.</p>
+                <i class="ph ph-book-open-text text-6xl text-brand-600/30"></i>
+                <h3 class="mt-4 text-lg font-bold text-ink-strong">Select a lesson to begin</h3>
+                <p class="mt-1.5 text-sm text-ink-muted">Choose a lesson from the list to view its content.</p>
             </div>
         </div>
     </div>
@@ -246,18 +260,30 @@
     .handout-content ul, .handout-content ol { margin: 0 0 1rem 1.5rem; }
     .handout-content ul { list-style: disc; } .handout-content ol { list-style: decimal; }
     .handout-content a { color: #2563eb; text-decoration: underline; font-weight: 500; }
-    .handout-content blockquote { border-left: 3px solid #c7d2fe; padding-left: 1rem; color: #475569; margin: 1rem 0; }
-    .handout-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .95rem; }
-    .handout-content th, .handout-content td { border: 1px solid #cbd5e1; padding: .65rem; text-align: left; }
-    .handout-content th { background: #f8fafc; font-weight: 700; }
+    .handout-content blockquote { border-left: 3px solid #cbd5e1; padding-left: 1rem; color: #64748b; margin: 1rem 0; }
+    .handout-content img { max-width: 100%; height: auto; border-radius: 8px; }
+    .handout-content pre { background: #f1f5f9; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0 0 1rem; }
+    .handout-content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; }
+
+    /* Selected lesson in the list */
+    .lesson-nav.is-active { background: #dbeafe; }
+    .lesson-nav.is-active::before {
+        content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #2563eb;
+    }
+    .lesson-nav { position: relative; }
 </style>
 <script>
     function showProcedure(id) {
         document.getElementById('welcome-content').classList.add('hidden');
         document.querySelectorAll('.procedure-content').forEach(el => el.classList.add('hidden'));
         document.getElementById('proc-' + id).classList.remove('hidden');
+
+        // Mirror the selection in the lesson list.
+        document.querySelectorAll('.lesson-nav').forEach(el => el.classList.remove('is-active'));
+        const navItem = document.getElementById('navproc-' + id);
+        if (navItem) navItem.classList.add('is-active');
     }
-    
+
     window.onload = function() {
         const procedures = document.querySelectorAll('.procedure-content');
         if (procedures.length > 0) {
