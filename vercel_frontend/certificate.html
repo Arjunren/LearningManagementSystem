@@ -5,7 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Certificate - BuildByte Academy</title>
-    <link rel="icon" type="image/png" href="./Icon.png">
+    <meta name="description" content="Instantly verify the authenticity of any BuildByte Academy certificate using its unique certificate ID.">
+    <meta name="theme-color" content="#0ea5e9">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Verify Certificate - BuildByte Academy">
+    <meta property="og:description" content="Cryptographically validate the authenticity of BuildByte Academy certificates.">
+    <meta property="og:image" content="./Icon.png">
+    <link rel="icon" type="image/png" href="./Icon_Badge.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
@@ -31,9 +40,70 @@
         }
     </script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #ffffff;
+        }
+
+        /* Frosted-glass navbar once the page is scrolled */
+        #site-nav {
+            transition: box-shadow .3s ease;
+        }
+
+        #site-nav.nav-scrolled {
+            box-shadow: 0 10px 30px -12px rgba(2, 132, 199, .18);
+        }
+
+        /* Animated underline for desktop nav links */
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 100%;
+            bottom: -6px;
+            height: 2px;
+            border-radius: 9999px;
+            background: linear-gradient(to right, #0ea5e9, #6366f1);
+            transition: right .25s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            right: 0;
+        }
+
+        /* Scroll-reveal animation */
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1);
+            transition-delay: var(--reveal-delay, 0s);
+            will-change: opacity, transform;
+        }
+
+        [data-reveal].is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            [data-reveal] {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
         }
 
 
@@ -113,24 +183,24 @@
 <body class="text-textMain antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen">
 
     <!-- Navigation -->
-    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div class="relative bg-white z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav id="site-nav" class="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+        <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 cursor-pointer" aria-label="BuildByte Academy home">
                     <img src="./Icon.png" alt="BuildByte Academy Logo" class="w-8 h-8 object-contain">
                     <span class="font-bold text-xl tracking-tight">BuildByte Academy</span>
                 </a>
 
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="index.html" class="text-textMuted hover:text-primary font-medium transition-colors">Home</a>
-                    <a href="course.html" class="text-textMuted hover:text-primary font-medium transition-colors">Course</a>
-                    <a href="certificate.html" class="text-primary font-medium transition-colors">Certificate</a>
-                    <a href="contact.html" class="text-textMuted hover:text-primary font-medium transition-colors">Contact Us</a>
+                    <a href="index.html" class="nav-link text-textMuted hover:text-primary font-medium transition-colors">Home</a>
+                    <a href="course.html" class="nav-link text-textMuted hover:text-primary font-medium transition-colors">Course</a>
+                    <a href="certificate.html" aria-current="page" class="nav-link active text-primary font-medium transition-colors">Certificate</a>
+                    <a href="contact.html" class="nav-link text-textMuted hover:text-primary font-medium transition-colors">Contact Us</a>
                 </div>
 
                 <div class="hidden md:flex items-center">
                     <a href="https://buildbyteacademy.pythonanywhere.com"
-                        class="bg-primary hover:bg-primaryHover text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm shadow-blue-200">
+                        class="bg-gradient-to-r from-primary to-indigo-500 hover:from-primaryHover hover:to-indigo-600 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md shadow-blue-500/25 hover:shadow-lg hover:-translate-y-0.5">
                         Get Started
                     </a>
                 </div>
@@ -157,12 +227,12 @@
                 <a href="course.html"
                     class="block px-3 py-2 rounded-md text-base font-medium text-textMuted hover:text-primary hover:bg-gray-50 transition-colors">Course</a>
                 <a href="certificate.html"
-                    class="block px-3 py-2 rounded-md text-base font-medium text-primary bg-blue-50 transition-colors">Certificate</a>
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-primary bg-blue-50 transition-colors">Certificate</a>
                 <a href="contact.html"
                     class="block px-3 py-2 rounded-md text-base font-medium text-textMuted hover:text-primary hover:bg-gray-50 transition-colors">Contact
                     Us</a>
                 <a href="https://buildbyteacademy.pythonanywhere.com"
-                    class="block px-3 py-3 mt-6 text-center rounded-md text-base font-medium bg-primary text-white hover:bg-primaryHover transition-colors">Get
+                    class="block px-3 py-3 mt-6 text-center rounded-xl text-base font-semibold bg-gradient-to-r from-primary to-indigo-500 text-white hover:from-primaryHover hover:to-indigo-600 transition-all shadow-md shadow-blue-500/25">Get
                     Started</a>
             </div>
         </div>
@@ -175,7 +245,7 @@
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-12">
+            <div class="text-center max-w-3xl mx-auto mb-12" data-reveal>
                 <span
                     class="inline-block text-xs font-bold tracking-wider text-primary uppercase bg-blue-50 px-3 py-1 rounded-full border border-blue-100 mb-6">
                     Verification
@@ -188,7 +258,7 @@
                 </p>
             </div>
 
-            <div class="max-w-2xl mx-auto mb-20 relative">
+            <div class="max-w-2xl mx-auto mb-20 relative" data-reveal style="--reveal-delay: 80ms">
                 <!-- Search Form -->
                 <form id="verifyForm"
                     class="relative flex items-center w-full h-14 rounded-full focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/30 bg-white border border-gray-200 overflow-hidden transition-all duration-300">
@@ -211,7 +281,7 @@
             </div>
 
             <!-- Certificate Display Box -->
-            <div class="max-w-4xl mx-auto">
+            <div class="max-w-4xl mx-auto" data-reveal style="--reveal-delay: 160ms">
                 <div id="certificateActions" class="hidden justify-end mb-4">
                     <button type="button" onclick="window.print()"
                         class="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primaryHover">
@@ -264,7 +334,7 @@
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Certificate ID</p>
                                 <p id="certId" class="text-xs font-mono font-bold text-amber-600 tracking-wider"></p>
                             </div>
-                            <div>
+                            <div class="hidden">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Student ID</p>
                                 <p id="certStudentId" class="text-xs font-mono font-semibold text-textMain tracking-wider"></p>
                             </div>
@@ -284,7 +354,7 @@
                             <div class="flex flex-col items-center gap-2">
                                 <a target="_blank" id="qrLink" 
                                    class="block p-2.5 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-primary/30 transition-all">
-                                    <img alt="Verify QR Code" class="w-16 h-16 opacity-90" id="qrImage">
+                                    <img alt="QR" class="w-16 h-16 opacity-90" id="qrImage">
                                 </a>
                                 <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Scan to Verify</span>
                             </div>
@@ -296,23 +366,45 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-50 border-t border-gray-200 pt-16 pb-8">
+    <footer class="bg-slate-950 border-t border-slate-900 pt-16 pb-8 text-slate-400">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                 <div class="space-y-4">
                     <div class="flex items-center gap-2">
-                        <img src="./Icon.png" alt="BuildByte Academy" class="w-6 h-6 object-contain">
-                        <span class="font-bold text-xl text-textMain tracking-tight">BuildByte Academy</span>
+                        <img src="./Icon.png" alt="BuildByte Academy Logo" class="w-8 h-8 object-contain">
+                        <span class="font-bold text-xl text-white tracking-tight">BuildByte Academy</span>
                     </div>
-                    <p class="text-sm text-textMuted leading-relaxed pr-4">
+                    <p class="text-sm text-slate-400 leading-relaxed pr-4">
                         The modern standard for elite tech specializations. Empowering students with the actual, direct
                         expertise demanded by scaling global software corporations.
                     </p>
+
+                    <!-- Social Links -->
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="Twitter">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="GitHub">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="LinkedIn">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                            </svg>
+                        </a>
+                    </div>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-textMain mb-4">Quick Links</h4>
-                    <ul class="space-y-3 text-sm text-textMuted">
+                    <h4 class="font-bold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-3 text-sm">
                         <li><a href="index.html" class="hover:text-primary transition-colors">Home</a></li>
                         <li><a href="course.html" class="hover:text-primary transition-colors">Courses</a></li>
                         <li><a href="certificate.html" class="hover:text-primary transition-colors">Verified
@@ -322,8 +414,8 @@
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-textMain mb-4">Specializations</h4>
-                    <ul class="space-y-3 text-sm text-textMuted">
+                    <h4 class="font-bold text-white mb-4">Specializations</h4>
+                    <ul class="space-y-3 text-sm">
                         <li><a href="course.html" class="hover:text-primary transition-colors">Front-End Development</a>
                         </li>
                         <li><a href="course.html" class="hover:text-primary transition-colors">Back-End Development</a>
@@ -334,14 +426,15 @@
                     </ul>
                 </div>
 
+                <!-- Newsletter Section -->
                 <div>
-                    <h4 class="font-bold text-textMain mb-4">Join our Newsletter</h4>
-                    <p class="text-sm text-textMuted mb-5">Get weekly engineering digests, code sandboxes, and
+                    <h4 class="font-bold text-white mb-4">Join our Newsletter</h4>
+                    <p class="text-sm text-slate-400 mb-5">Get weekly engineering digests, code sandboxes, and
                         curriculum drops delivered to your inbox.</p>
 
                     <form class="relative group" onsubmit="event.preventDefault();">
                         <input type="email" placeholder="Email address"
-                            class="w-full pl-4 pr-12 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 text-sm text-textMain transition-all shadow-sm placeholder-gray-400"
+                            class="w-full pl-4 pr-12 py-3 bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 text-sm text-white transition-all placeholder-slate-500"
                             required>
                         <button type="submit"
                             class="absolute right-1.5 top-1.5 bottom-1.5 flex items-center justify-center w-9 bg-primary hover:bg-primaryHover text-white rounded-lg transition-all shadow-sm active:scale-95"
@@ -352,34 +445,12 @@
                             </svg>
                         </button>
                     </form>
-
-                    <!-- Modern Social Links -->
-                    <div class="flex items-center gap-4 mt-6">
-                        <a href="#" class="text-gray-400 hover:text-primary transition-colors" aria-label="Twitter">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-primary transition-colors" aria-label="GitHub">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-primary transition-colors" aria-label="LinkedIn">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                            </svg>
-                        </a>
-                    </div>
                 </div>
             </div>
 
-            <div class="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-xs text-textMuted">© 2026 BuildByte Academy Platforms, Inc. All rights reserved.</p>
-                <div class="flex gap-6 text-xs text-textMuted">
+            <div class="border-t border-slate-800/70 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-slate-500">© 2026 BuildByte Academy Platforms, Inc. All rights reserved.</p>
+                <div class="flex gap-6 text-xs text-slate-500">
                     <a href="#" class="hover:text-primary transition-colors">Privacy Protocol</a>
                     <a href="#" class="hover:text-primary transition-colors">Terms of Use</a>
                 </div>
@@ -387,7 +458,14 @@
         </div>
     </footer>
 
-    <script src="assets/app.js"></script>
+    <!-- Back to top -->
+    <button id="back-to-top" aria-label="Back to top"
+        class="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-slate-900 text-white shadow-lg shadow-slate-900/20 flex items-center justify-center opacity-0 translate-y-3 pointer-events-none transition-all duration-300 hover:bg-primary hover:-translate-y-1">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+        </svg>
+    </button>
+
     <script>
         // Mobile Menu Logic
         const mobileBtn = document.getElementById('mobile-menu-btn');
@@ -415,6 +493,46 @@
                 mobileMenu.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
             }
         });
+
+        // Frosted navbar on scroll
+        const siteNav = document.getElementById('site-nav');
+        const backToTop = document.getElementById('back-to-top');
+
+        function handleScroll() {
+            const scrolled = window.scrollY > 8;
+            siteNav.classList.toggle('nav-scrolled', scrolled);
+
+            const showTop = window.scrollY > 600;
+            backToTop.classList.toggle('opacity-0', !showTop);
+            backToTop.classList.toggle('translate-y-3', !showTop);
+            backToTop.classList.toggle('pointer-events-none', !showTop);
+        }
+
+        handleScroll();
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Scroll-reveal animations (staggers children of [data-reveal] groups)
+        document.querySelectorAll('[data-reveal-group]').forEach(group => {
+            Array.from(group.children).forEach((child, i) => {
+                child.setAttribute('data-reveal', '');
+                child.style.setProperty('--reveal-delay', `${Math.min(i * 80, 400)}ms`);
+            });
+        });
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
 
         // Certificate Verification Logic
         const verifyForm = document.getElementById('verifyForm');
@@ -545,8 +663,8 @@
             qrImage.src =
                 `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(verificationUrl)}`;
             qrLink.href = verificationUrl;
-            certificateActions.classList.remove('hidden');
-            certificateActions.classList.add('flex');
+            // certificateActions.classList.remove('hidden');
+            // certificateActions.classList.add('flex');
         }
 
         async function requestCertificate(id) {

@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses & Bundles - BuildByte Academy</title>
+    <meta name="description" content="Explore BuildByte Academy's full course catalog: career bundles and individual tracks for front-end, back-end, cloud, AI automation, UI/UX design, and cybersecurity.">
+    <meta name="theme-color" content="#0ea5e9">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Courses & Bundles - BuildByte Academy">
+    <meta property="og:description" content="Enroll in comprehensive career bundles or pick specific language tracks to build your custom tech stack.">
+    <meta property="og:image" content="./Icon.png">
+    <link rel="icon" href="./Icon_Badge.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0ea5e9',
+                        primaryHover: '#0284c7',
+                        bgWhite: '#ffffff',
+                        textMain: '#111827',
+                        textMuted: '#4b5563',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+        }
+
+        /* Smooth transition for hiding/showing cards */
+        .course-card {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Frosted-glass navbar once the page is scrolled */
+        #site-nav {
+            transition: box-shadow .3s ease;
+        }
+
+        #site-nav.nav-scrolled {
+            box-shadow: 0 10px 30px -12px rgba(2, 132, 199, .18);
+        }
+
+        /* Animated underline for desktop nav links */
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 100%;
+            bottom: -6px;
+            height: 2px;
+            border-radius: 9999px;
+            background: linear-gradient(to right, #0ea5e9, #6366f1);
+            transition: right .25s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            right: 0;
+        }
+
+        /* Scroll-reveal animation */
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1);
+            transition-delay: var(--reveal-delay, 0s);
+            will-change: opacity, transform;
+        }
+
+        [data-reveal].is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            [data-reveal] {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-textMain antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen">
+
+    <nav id="site-nav" class="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+        <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 cursor-pointer" aria-label="BuildByte Academy home">
+                    <img src="./Icon.png" alt="BuildByte Academy Logo" class="w-8 h-8 object-contain">
+                    <span class="font-bold text-xl tracking-tight">BuildByte Academy</span>
+                </a>
+
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html"
+                        class="nav-link text-textMuted hover:text-primary font-medium transition-colors">Home</a>
+                    <a href="course.html" aria-current="page" class="nav-link active text-primary font-medium transition-colors">Course</a>
+                    <a href="certificate.html"
+                        class="nav-link text-textMuted hover:text-primary font-medium transition-colors">Certificate</a>
+                    <a href="contact.html"
+                        class="nav-link text-textMuted hover:text-primary font-medium transition-colors">Contact Us</a>
+                </div>
+
+                <div class="hidden md:flex items-center">
+                    <a href="https://buildbyteacademy.pythonanywhere.com"
+                        class="bg-gradient-to-r from-primary to-indigo-500 hover:from-primaryHover hover:to-indigo-600 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md shadow-blue-500/25 hover:shadow-lg hover:-translate-y-0.5">
+                        Get Started
+                    </a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" aria-label="Toggle menu"
+                        class="relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 text-textMain focus:outline-none group">
+                        <span id="line-1"
+                            class="w-6 h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out origin-center"></span>
+                        <span id="line-2"
+                            class="w-6 h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out"></span>
+                        <span id="line-3"
+                            class="w-6 h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out origin-center"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu"
+            class="absolute top-20 left-0 w-full bg-white border-b border-gray-100 shadow-lg transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300 ease-in-out z-10">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="index.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-textMuted hover:text-primary hover:bg-gray-50 transition-colors">Home</a>
+                <a href="course.html"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-primary bg-blue-50 transition-colors">Course</a>
+                <a href="certificate.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-textMuted hover:text-primary hover:bg-gray-50 transition-colors">Certificate</a>
+                <a href="contact.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-textMuted hover:text-primary hover:bg-gray-50 transition-colors">Contact
+                    Us</a>
+                <a href="https://buildbyteacademy.pythonanywhere.com"
+                    class="block px-3 py-3 mt-6 text-center rounded-xl text-base font-semibold bg-gradient-to-r from-primary to-indigo-500 text-white hover:from-primaryHover hover:to-indigo-600 transition-all shadow-md shadow-blue-500/25">Get
+                    Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow bg-gray-50/30 py-16 lg:py-24 relative overflow-hidden">
+
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-blue-50/80 to-transparent rounded-full blur-3xl -z-10 pointer-events-none">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="text-center max-w-3xl mx-auto mb-10" data-reveal>
+                <span
+                    class="inline-block text-xs font-bold tracking-wider text-primary uppercase bg-blue-50 px-3 py-1 rounded-full border border-blue-100 mb-6">
+                    Course Catalog
+                </span>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-textMain mb-6 tracking-tight">Explore the Curriculum
+                </h1>
+                <p class="text-lg text-textMuted leading-relaxed">
+                    Enroll in comprehensive career bundles or pick specific language tracks to build your custom tech
+                    stack.
+                </p>
+            </div>
+
+            <div class="max-w-5xl mx-auto mb-16 space-y-6" data-reveal style="--reveal-delay: 100ms">
+                <div class="relative w-full max-w-lg mx-auto">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <input type="text" id="courseSearch"
+                        class="block w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-full text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-sm"
+                        placeholder="Search courses (e.g., Python, Docker, AWS)...">
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-2">
+                    <button
+                        class="filter-btn active bg-primary text-white px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm"
+                        data-filter="all">All Courses</button>
+                    <button
+                        class="filter-btn bg-white border border-gray-200 text-textMuted hover:border-primary/50 hover:text-primary px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm"
+                        data-filter="bundle">Bundles</button>
+                    <button
+                        class="filter-btn bg-white border border-gray-200 text-textMuted hover:border-primary/50 hover:text-primary px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm"
+                        data-filter="front-end">Front-End</button>
+                    <button
+                        class="filter-btn bg-white border border-gray-200 text-textMuted hover:border-primary/50 hover:text-primary px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm"
+                        data-filter="back-end">Back-End</button>
+                    <button
+                        class="filter-btn bg-white border border-gray-200 text-textMuted hover:border-primary/50 hover:text-primary px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm"
+                        data-filter="design">UI/UX Design</button>
+                    <button
+                        class="filter-btn bg-white border border-gray-200 text-textMuted hover:border-primary/50 hover:text-primary px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm"
+                        data-filter="cybersecurity">Cybersecurity</button>
+                    <button
+                        class="filter-btn bg-white border border-gray-200 text-textMuted hover:border-primary/50 hover:text-primary px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm"
+                        data-filter="ai">AI & Automation</button>
+                    <!-- NEW FILTER BUTTON -->
+                    <button
+                        class="filter-btn bg-white border border-gray-200 text-textMuted hover:border-primary/50 hover:text-primary px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm"
+                        data-filter="cloud">Cloud Computing</button>
+                </div>
+            </div>
+
+            <!-- Container for the grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" id="courseGrid">
+
+                <!-- ========================================== -->
+                <!-- BUNDLES (Styled with premium Indigo theme) -->
+                <!-- ========================================== -->
+
+                <!-- FRONT-END BUNDLE -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:ring-indigo-500 overflow-hidden"
+                    data-category="bundle front-end">
+                    <!-- Subtle Background Glow -->
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/5 blur-3xl transition-all duration-300 group-hover:bg-indigo-500/15">
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 11h16M9 4v16"></path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-600 ring-1 ring-inset ring-indigo-500/20">Full
+                                Bundle</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Front-End Mastery Track</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">The complete path. Includes HTML, CSS, Tailwind
+                            CSS, JavaScript, and React components.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- BACK-END BUNDLE -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:ring-indigo-500 overflow-hidden"
+                    data-category="bundle back-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/5 blur-3xl transition-all duration-300 group-hover:bg-indigo-500/15">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-600 ring-1 ring-inset ring-indigo-500/20">Full
+                                Bundle</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Back-End Architecture Track
+                        </h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Includes Java, C#, Python, Rust, and Backend
+                            JS. Architect robust server-side systems.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- CLOUD COMPUTING BUNDLE -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:ring-indigo-500 overflow-hidden"
+                    data-category="bundle cloud">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/5 blur-3xl transition-all duration-300 group-hover:bg-indigo-500/15">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-600 ring-1 ring-inset ring-indigo-500/20">Full
+                                Bundle</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Cloud Computing Track</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Master modern infrastructure. Includes AWS,
+                            Azure, Google Cloud, and Docker containerization workflows.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on cloud labs</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Real-world deployment</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- DESIGN BUNDLE -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:ring-indigo-500 overflow-hidden"
+                    data-category="bundle design">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/5 blur-3xl transition-all duration-300 group-hover:bg-indigo-500/15">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-600 ring-1 ring-inset ring-indigo-500/20">Full
+                                Bundle</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">UI/UX Design Track</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Includes Figma, Canva, and Interaction Systems.
+                            Turn ideas into pixel-perfect mockups.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- CYBERSECURITY BUNDLE -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:ring-indigo-500 overflow-hidden"
+                    data-category="bundle cybersecurity">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/5 blur-3xl transition-all duration-300 group-hover:bg-indigo-500/15">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-600 ring-1 ring-inset ring-indigo-500/20">Full
+                                Bundle</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Cybersecurity Bootcamp</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Includes Fundamentals, Nmap, Wireshark, and
+                            Burp Suite. The ultimate defense training.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- AI BUNDLE -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:ring-indigo-500 overflow-hidden"
+                    data-category="bundle ai">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/5 blur-3xl transition-all duration-300 group-hover:bg-indigo-500/15">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-600 ring-1 ring-inset ring-indigo-500/20">Full
+                                Bundle</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">AI & Automation Track</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Includes MCP Fundamentals, N8N, and Workflow
+                            Orchestration. Multiply your engineering productivity.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+
+                <!-- ========================================== -->
+                <!-- INDIVIDUAL COURSES (Styled dynamically)  -->
+                <!-- ========================================== -->
+
+                <!-- AWS -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/10 hover:ring-orange-500 overflow-hidden"
+                    data-category="cloud">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-orange-500/5 blur-3xl transition-all duration-300 group-hover:bg-orange-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-600 shadow-sm ring-1 ring-inset ring-orange-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Amazon Web Services</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Master EC2, S3, IAM, Lambda, and architect
+                            scalable, highly available cloud infrastructure.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-orange-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on AWS labs</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-orange-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Real-world architecture</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-orange-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-orange-50 hover:ring-orange-500 hover:text-orange-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- AZURE -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 hover:ring-blue-500 overflow-hidden"
+                    data-category="cloud">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-blue-500/5 blur-3xl transition-all duration-300 group-hover:bg-blue-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shadow-sm ring-1 ring-inset ring-blue-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Microsoft Azure</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Build, deploy, and manage robust applications
+                            utilizing Azure Resource Manager and Active Directory.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-blue-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on Azure labs</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-blue-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Real-world architecture</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-blue-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-blue-50 hover:ring-blue-500 hover:text-blue-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- GOOGLE CLOUD -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-rose-500/10 hover:ring-rose-500 overflow-hidden"
+                    data-category="cloud">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-rose-500/5 blur-3xl transition-all duration-300 group-hover:bg-rose-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-50 text-rose-600 shadow-sm ring-1 ring-inset ring-rose-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Google Cloud (GCP)</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Leverage Kubernetes Engine, BigQuery, Cloud
+                            Run, and Google's high-performance global network.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-rose-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on GCP labs</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-rose-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Real-world architecture</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-rose-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-rose-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-rose-50 hover:ring-rose-500 hover:text-rose-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- DOCKER -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 hover:ring-cyan-500 overflow-hidden"
+                    data-category="cloud">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-cyan-500/5 blur-3xl transition-all duration-300 group-hover:bg-cyan-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 shadow-sm ring-1 ring-inset ring-cyan-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Docker</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Containerize applications for ultimate
+                            portability, scale, and seamless continuous integration and deployment.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-cyan-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on container labs</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-cyan-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Real-world deployment</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-cyan-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-cyan-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-cyan-50 hover:ring-cyan-500 hover:text-cyan-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- HTML -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-orange-400/10 hover:ring-orange-400 overflow-hidden"
+                    data-category="front-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-orange-400/5 blur-3xl transition-all duration-300 group-hover:bg-orange-400/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-500 shadow-sm ring-1 ring-inset ring-orange-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">HTML</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Master semantic structure and document
+                            architecture.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-orange-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-orange-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-orange-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-orange-500">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-orange-50 hover:ring-orange-500 hover:text-orange-600 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- CSS -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 hover:ring-blue-500 overflow-hidden"
+                    data-category="front-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-blue-500/5 blur-3xl transition-all duration-300 group-hover:bg-blue-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-500 shadow-sm ring-1 ring-inset ring-blue-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">CSS</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Learn Flexbox, Grid, animations, and advanced
+                            responsive styling concepts.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-blue-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-blue-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-blue-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-500">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-blue-50 hover:ring-blue-500 hover:text-blue-600 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- TAILWIND CSS -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/10 hover:ring-teal-500 overflow-hidden"
+                    data-category="front-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-teal-500/5 blur-3xl transition-all duration-300 group-hover:bg-teal-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-600 shadow-sm ring-1 ring-inset ring-teal-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Tailwind CSS</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Stop writing custom CSS. Build beautiful
+                            designs rapidly using utility classes.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-teal-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-teal-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-teal-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-teal-50 hover:ring-teal-500 hover:text-teal-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- JAVASCRIPT -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/10 hover:ring-yellow-500 overflow-hidden"
+                    data-category="front-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-yellow-500/5 blur-3xl transition-all duration-300 group-hover:bg-yellow-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-yellow-50 text-yellow-600 shadow-sm ring-1 ring-inset ring-yellow-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">JavaScript</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">ES6+ syntax, closures, asynchronous
+                            programming, and advanced DOM manipulation.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-yellow-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-yellow-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-yellow-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-yellow-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-yellow-50 hover:ring-yellow-500 hover:text-yellow-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- REACT -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 hover:ring-cyan-500 overflow-hidden"
+                    data-category="front-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-cyan-500/5 blur-3xl transition-all duration-300 group-hover:bg-cyan-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 shadow-sm ring-1 ring-inset ring-cyan-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">React</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Build scalable single-page apps using
+                            components, hooks, and advanced state management.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-cyan-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-cyan-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-cyan-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-cyan-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-cyan-50 hover:ring-cyan-500 hover:text-cyan-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- JAVA -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-red-500/10 hover:ring-red-500 overflow-hidden"
+                    data-category="back-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-red-500/5 blur-3xl transition-all duration-300 group-hover:bg-red-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-600 shadow-sm ring-1 ring-inset ring-red-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Java</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Learn enterprise infrastructure, JVM tuning,
+                            and Spring Boot architecture.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-red-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-red-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-red-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-red-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-red-50 hover:ring-red-500 hover:text-red-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- C# -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 hover:ring-purple-500 overflow-hidden"
+                    data-category="back-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-purple-500/5 blur-3xl transition-all duration-300 group-hover:bg-purple-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600 shadow-sm ring-1 ring-inset ring-purple-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">C#</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Master .NET Core fundamentals, Entity
+                            Framework, and secure API development.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-purple-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-purple-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-purple-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-purple-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-purple-50 hover:ring-purple-500 hover:text-purple-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- PYTHON -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-sky-500/10 hover:ring-sky-500 overflow-hidden"
+                    data-category="back-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-sky-500/5 blur-3xl transition-all duration-300 group-hover:bg-sky-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-sky-600 shadow-sm ring-1 ring-inset ring-sky-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Python</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Go beyond scripts. Architect robust backends
+                            using FastAPI and manage complex data structures.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-sky-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-sky-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-sky-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-sky-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-sky-50 hover:ring-sky-500 hover:text-sky-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- RUST -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-orange-600/10 hover:ring-orange-600 overflow-hidden"
+                    data-category="back-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-orange-600/5 blur-3xl transition-all duration-300 group-hover:bg-orange-600/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-600 shadow-sm ring-1 ring-inset ring-orange-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Rust</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Master memory safety, fearless concurrency, and
+                            ultra-high-performance system programming.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-orange-600"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-orange-600"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-orange-600"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-orange-50 hover:ring-orange-600 hover:text-orange-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- JAVASCRIPT (BACKEND) -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-600/10 hover:ring-yellow-500 overflow-hidden"
+                    data-category="back-end">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-yellow-500/5 blur-3xl transition-all duration-300 group-hover:bg-yellow-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-yellow-50 text-yellow-600 shadow-sm ring-1 ring-inset ring-yellow-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">JavaScript (Backend)</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Use Node.js and Express to build scalable APIs
+                            and manage real-time server connections.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-yellow-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-yellow-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-yellow-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-yellow-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-yellow-50 hover:ring-yellow-500 hover:text-yellow-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- FIGMA -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-pink-500/10 hover:ring-pink-500 overflow-hidden"
+                    data-category="design">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-pink-500/5 blur-3xl transition-all duration-300 group-hover:bg-pink-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-pink-50 text-pink-500 shadow-sm ring-1 ring-inset ring-pink-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Figma</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Master auto-layout, build reusable components,
+                            and create high-fidelity interactive prototypes.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-pink-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-pink-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-pink-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-pink-500">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-pink-50 hover:ring-pink-500 hover:text-pink-600 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- CANVA -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:ring-indigo-500 overflow-hidden"
+                    data-category="design">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/5 blur-3xl transition-all duration-300 group-hover:bg-indigo-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-500 shadow-sm ring-1 ring-inset ring-indigo-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Canva</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Rapid asset creation. Learn layout principles
+                            to quickly deploy beautiful marketing materials.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-500">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-indigo-50 hover:ring-indigo-500 hover:text-indigo-600 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- INTERACTION SYSTEMS -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 hover:ring-cyan-500 overflow-hidden"
+                    data-category="design">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-cyan-500/5 blur-3xl transition-all duration-300 group-hover:bg-cyan-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 shadow-sm ring-1 ring-inset ring-cyan-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Interaction Systems</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Design cohesive user experiences. Focus on
+                            state changes, micro-interactions, and usability rules.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-cyan-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-cyan-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-cyan-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-cyan-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-cyan-50 hover:ring-cyan-500 hover:text-cyan-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- CYBERSECURITY FUNDAMENTALS -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10 hover:ring-emerald-500 overflow-hidden"
+                    data-category="cybersecurity">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-emerald-500/5 blur-3xl transition-all duration-300 group-hover:bg-emerald-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-500 shadow-sm ring-1 ring-inset ring-emerald-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Fundamentals</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Understand the core principles of networking,
+                            threat models, and basic defensive architectures.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-emerald-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-emerald-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-emerald-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-emerald-50 hover:ring-emerald-500 hover:text-emerald-600 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- NMAP -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-green-500/10 hover:ring-green-500 overflow-hidden"
+                    data-category="cybersecurity">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-green-500/5 blur-3xl transition-all duration-300 group-hover:bg-green-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-green-500 shadow-sm ring-1 ring-inset ring-green-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Nmap</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Master network discovery and security auditing.
+                            Learn aggressive scanning and vulnerability detection.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-green-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-green-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-green-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-green-500">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-green-50 hover:ring-green-500 hover:text-green-600 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- WIRESHARK -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/10 hover:ring-teal-500 overflow-hidden"
+                    data-category="cybersecurity">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-teal-500/5 blur-3xl transition-all duration-300 group-hover:bg-teal-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-500 shadow-sm ring-1 ring-inset ring-teal-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Wireshark</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Gain absolute visibility into networks. Learn
+                            to capture, filter, and analyze packets to identify breaches.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-teal-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-teal-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-teal-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-teal-500">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-teal-50 hover:ring-teal-500 hover:text-teal-600 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- BURP SUITE -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-red-500/10 hover:ring-red-500 overflow-hidden"
+                    data-category="cybersecurity">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-red-500/5 blur-3xl transition-all duration-300 group-hover:bg-red-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-500 shadow-sm ring-1 ring-inset ring-red-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Burp Suite</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">The industry standard for web pentesting.
+                            Manipulate traffic, intercept requests, and exploit OWASP flaws.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-red-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-red-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-red-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-red-500">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-red-50 hover:ring-red-500 hover:text-red-600 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- MCP FUNDAMENTALS -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 hover:ring-purple-500 overflow-hidden"
+                    data-category="ai">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-purple-500/5 blur-3xl transition-all duration-300 group-hover:bg-purple-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600 shadow-sm ring-1 ring-inset ring-purple-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">MCP Fundamentals</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Integrate tools securely using the Model
+                            Context Protocol. Provide deep context to LLM agents.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-purple-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-purple-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-purple-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-purple-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-purple-50 hover:ring-purple-500 hover:text-purple-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- N8N AUTOMATION -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-600/10 hover:ring-indigo-600 overflow-hidden"
+                    data-category="ai">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-600/5 blur-3xl transition-all duration-300 group-hover:bg-indigo-600/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">N8N Automation</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Map logical processes using low-code
+                            orchestration. Connect APIs and eliminate manual operations.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-600"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-600"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-indigo-600"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-indigo-50 hover:ring-indigo-600 hover:text-indigo-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+                <!-- WORKFLOW ORCHESTRATION -->
+                <div class="group relative flex flex-col justify-between rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-fuchsia-600/10 hover:ring-fuchsia-600 overflow-hidden"
+                    data-category="ai">
+                    <div
+                        class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-fuchsia-500/5 blur-3xl transition-all duration-300 group-hover:bg-fuchsia-500/10">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-fuchsia-50 text-fuchsia-600 shadow-sm ring-1 ring-inset ring-fuchsia-500/20">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Individual</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Workflow Orchestration</h3>
+                        <p class="text-sm leading-6 text-slate-500 mb-6">Design complex, multi-agent AI workflows. Chain
+                            models together to execute multi-step engineering tasks.</p>
+                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-fuchsia-600"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Beginner Friendly</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-fuchsia-600"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Hands-on projects</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 shrink-0 text-fuchsia-600"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg> Certificate of completion</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-6 border-t border-slate-100 relative z-10">
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-2xl font-bold tracking-tight text-slate-900">Free</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-fuchsia-600">Early Bird</span>
+                        </div>
+                        <a href="https://buildbyteacademy.pythonanywhere.com"
+                            class="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-fuchsia-50 hover:ring-fuchsia-600 hover:text-fuchsia-700 transition-all duration-300">Enroll
+                            now</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="emptyState" class="hidden text-center py-20">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 class="text-xl font-bold text-textMain mb-2">No courses found</h3>
+                <p class="text-textMuted">Try adjusting your search or filter criteria.</p>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-slate-950 border-t border-slate-900 pt-16 pb-8 text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <img src="./Icon.png" alt="BuildByte Academy Logo" class="w-8 h-8 object-contain">
+                        <span class="font-bold text-xl text-white tracking-tight">BuildByte Academy</span>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed pr-4">
+                        The modern standard for elite tech specializations. Empowering students with the actual, direct
+                        expertise demanded by scaling global software corporations.
+                    </p>
+
+                    <!-- Social Links -->
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="Twitter">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="GitHub">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="LinkedIn">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">Courses</a></li>
+                        <li><a href="certificate.html" class="hover:text-primary transition-colors">Verified
+                                Certificate</a></li>
+                        <li><a href="contact.html" class="hover:text-primary transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-4">Specializations</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="course.html" class="hover:text-primary transition-colors">Front-End Development</a>
+                        </li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">Back-End Development</a>
+                        </li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">Cloud Computing</a>
+                        </li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">AI & Automation</a></li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">UI/UX Design</a></li>
+                        <li><a href="course.html" class="hover:text-primary transition-colors">Cybersecurity</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter Section -->
+                <div>
+                    <h4 class="font-bold text-white mb-4">Join our Newsletter</h4>
+                    <p class="text-sm text-slate-400 mb-5">Get weekly engineering digests, code sandboxes, and
+                        curriculum drops delivered to your inbox.</p>
+
+                    <form class="relative group" onsubmit="event.preventDefault();">
+                        <input type="email" placeholder="Email address"
+                            class="w-full pl-4 pr-12 py-3 bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 text-sm text-white transition-all placeholder-slate-500"
+                            required>
+                        <button type="submit"
+                            class="absolute right-1.5 top-1.5 bottom-1.5 flex items-center justify-center w-9 bg-primary hover:bg-primaryHover text-white rounded-lg transition-all shadow-sm active:scale-95"
+                            aria-label="Subscribe">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800/70 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-slate-500">© 2026 BuildByte Academy Platforms, Inc. All rights reserved.</p>
+                <div class="flex gap-6 text-xs text-slate-500">
+                    <a href="#" class="hover:text-primary transition-colors">Privacy Protocol</a>
+                    <a href="#" class="hover:text-primary transition-colors">Terms of Use</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top -->
+    <button id="back-to-top" aria-label="Back to top"
+        class="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-slate-900 text-white shadow-lg shadow-slate-900/20 flex items-center justify-center opacity-0 translate-y-3 pointer-events-none transition-all duration-300 hover:bg-primary hover:-translate-y-1">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+        </svg>
+    </button>
+
+    <script>
+        // 1. Mobile Menu Logic
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const line1 = document.getElementById('line-1');
+        const line2 = document.getElementById('line-2');
+        const line3 = document.getElementById('line-3');
+        let isMenuOpen = false;
+
+        mobileBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                line1.classList.add('translate-y-[8px]', 'rotate-45', 'text-primary');
+                line2.classList.add('opacity-0', 'scale-0');
+                line3.classList.add('-translate-y-[8px]', '-rotate-45', 'text-primary');
+                mobileMenu.classList.remove('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                mobileMenu.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            } else {
+                line1.classList.remove('translate-y-[8px]', 'rotate-45', 'text-primary');
+                line2.classList.remove('opacity-0', 'scale-0');
+                line3.classList.remove('-translate-y-[8px]', '-rotate-45', 'text-primary');
+                mobileMenu.classList.add('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                mobileMenu.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+        });
+
+        // Frosted navbar on scroll
+        const siteNav = document.getElementById('site-nav');
+        const backToTop = document.getElementById('back-to-top');
+
+        function handleScroll() {
+            const scrolled = window.scrollY > 8;
+            siteNav.classList.toggle('nav-scrolled', scrolled);
+
+            const showTop = window.scrollY > 600;
+            backToTop.classList.toggle('opacity-0', !showTop);
+            backToTop.classList.toggle('translate-y-3', !showTop);
+            backToTop.classList.toggle('pointer-events-none', !showTop);
+        }
+
+        handleScroll();
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Scroll-reveal animations (staggers children of [data-reveal-group] containers)
+        document.querySelectorAll('[data-reveal-group]').forEach(group => {
+            Array.from(group.children).forEach((child, i) => {
+                child.setAttribute('data-reveal', '');
+                child.style.setProperty('--reveal-delay', `${Math.min(i * 80, 400)}ms`);
+            });
+        });
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+        // 2. Filter & Search Logic
+        const searchInput = document.getElementById('courseSearch');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        // Course cards do not have a .course-card class; data-category is the reliable hook.
+        const courseCards = document.querySelectorAll('#courseGrid > [data-category]');
+        const emptyState = document.getElementById('emptyState');
+        let currentFilter = 'all';
+
+        function applyFilters() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            courseCards.forEach(card => {
+                const categories = (card.dataset.category || '').toLowerCase().split(/\s+/);
+                const searchableText = card.textContent.toLowerCase();
+
+                const matchesFilter = currentFilter === 'all' || categories.includes(currentFilter);
+                const matchesSearch = !searchTerm || searchableText.includes(searchTerm);
+                const isVisible = matchesFilter && matchesSearch;
+
+                // Apply state synchronously so rapid clicks/typing cannot be overridden by stale timers.
+                card.style.display = isVisible ? 'flex' : 'none';
+                card.style.opacity = isVisible ? '1' : '0';
+                card.style.transform = isVisible ? 'scale(1)' : 'scale(0.95)';
+
+                if (isVisible) visibleCount++;
+            });
+
+            emptyState.classList.toggle('hidden', visibleCount !== 0);
+        }
+
+        // Search Input Event
+        searchInput.addEventListener('input', applyFilters);
+
+        // Filter Button Events
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                const selectedButton = event.currentTarget;
+
+                filterBtns.forEach(button => {
+                    button.classList.remove('active', 'bg-primary', 'text-white');
+                    button.classList.add('bg-white', 'text-textMuted');
+                });
+
+                selectedButton.classList.add('active', 'bg-primary', 'text-white');
+                selectedButton.classList.remove('bg-white', 'text-textMuted');
+
+                currentFilter = selectedButton.dataset.filter || 'all';
+                applyFilters();
+            });
+        });
+
+        // Normalize the initial state.
+        applyFilters();
+    </script>
+
+</body>
+
+</html>
